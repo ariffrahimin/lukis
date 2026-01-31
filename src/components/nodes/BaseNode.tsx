@@ -90,9 +90,112 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
 
   if (isTextNode) {
     return (
-      <div className="px-2 py-1">
-        <Handle type="target" position={Position.Top} className="!opacity-0" />
-        <Handle type="source" position={Position.Bottom} className="!opacity-0" />
+      <div className="px-2 py-1 relative">
+        <Handle 
+          type="target" 
+          position={Position.Top} 
+          id="target-top"
+          style={{ 
+            background: 'red', 
+            width: 8, 
+            height: 8, 
+            top: -4,
+            left: '50%',
+            transform: 'translateX(-50%)'
+          }} 
+        />
+        <Handle 
+          type="target" 
+          position={Position.Right} 
+          id="target-right"
+          style={{ 
+            background: 'red', 
+            width: 8, 
+            height: 8, 
+            right: -4,
+            top: '50%',
+            transform: 'translateY(-50%)'
+          }} 
+        />
+        <Handle 
+          type="target" 
+          position={Position.Bottom} 
+          id="target-bottom"
+          style={{ 
+            background: 'red', 
+            width: 8, 
+            height: 8, 
+            bottom: -4,
+            left: '50%',
+            transform: 'translateX(-50%)'
+          }} 
+        />
+        <Handle 
+          type="target" 
+          position={Position.Left} 
+          id="target-left"
+          style={{ 
+            background: 'red', 
+            width: 8, 
+            height: 8, 
+            left: -4,
+            top: '50%',
+            transform: 'translateY(-50%)'
+          }} 
+        />
+        
+        <Handle 
+          type="source" 
+          position={Position.Top} 
+          id="source-top"
+          style={{ 
+            background: 'green', 
+            width: 8, 
+            height: 8, 
+            top: -4,
+            left: '50%',
+            transform: 'translateX(-50%)'
+          }} 
+        />
+        <Handle 
+          type="source" 
+          position={Position.Right} 
+          id="source-right"
+          style={{ 
+            background: 'green', 
+            width: 8, 
+            height: 8, 
+            right: -4,
+            top: '50%',
+            transform: 'translateY(-50%)'
+          }} 
+        />
+        <Handle 
+          type="source" 
+          position={Position.Bottom} 
+          id="source-bottom"
+          style={{ 
+            background: 'green', 
+            width: 8, 
+            height: 8, 
+            bottom: -4,
+            left: '50%',
+            transform: 'translateX(-50%)'
+          }} 
+        />
+        <Handle 
+          type="source" 
+          position={Position.Left} 
+          id="source-left"
+          style={{ 
+            background: 'green', 
+            width: 8, 
+            height: 8, 
+            left: -4,
+            top: '50%',
+            transform: 'translateY(-50%)'
+          }} 
+        />
         <span className="text-foreground font-medium text-sm">{data.label}</span>
       </div>
     );
@@ -111,12 +214,54 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
       <Handle
         type="target"
         position={Position.Top}
-        className="!bg-border hover:!bg-primary transition-colors"
+        id="target-top"
+        style={{ 
+          background: 'red', 
+          width: 8, 
+          height: 8, 
+          top: -4,
+          left: '50%',
+          transform: 'translateX(-50%)'
+        }}
+      />
+      <Handle
+        type="target"
+        position={Position.Right}
+        id="target-right"
+        style={{ 
+          background: 'red', 
+          width: 8, 
+          height: 8, 
+          right: -4,
+          top: '50%',
+          transform: 'translateY(-50%)'
+        }}
+      />
+      <Handle
+        type="target"
+        position={Position.Bottom}
+        id="target-bottom"
+        style={{ 
+          background: 'red', 
+          width: 8, 
+          height: 8, 
+          bottom: -4,
+          left: '50%',
+          transform: 'translateX(-50%)'
+        }}
       />
       <Handle
         type="target"
         position={Position.Left}
-        className="!bg-border hover:!bg-primary transition-colors"
+        id="target-left"
+        style={{ 
+          background: 'red', 
+          width: 8, 
+          height: 8, 
+          left: -4,
+          top: '50%',
+          transform: 'translateY(-50%)'
+        }}
       />
 
       <div className={cn('p-3', isGroupNode && 'pb-16')}>
@@ -135,13 +280,55 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
 
       <Handle
         type="source"
-        position={Position.Bottom}
-        className="!bg-border hover:!bg-primary transition-colors"
+        position={Position.Top}
+        id="source-top"
+        style={{ 
+          background: 'green', 
+          width: 8, 
+          height: 8, 
+          top: -4,
+          left: '50%',
+          transform: 'translateX(-50%)'
+        }}
       />
       <Handle
         type="source"
         position={Position.Right}
-        className="!bg-border hover:!bg-primary transition-colors"
+        id="source-right"
+        style={{ 
+          background: 'green', 
+          width: 8, 
+          height: 8, 
+          right: -4,
+          top: '50%',
+          transform: 'translateY(-50%)'
+        }}
+      />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="source-bottom"
+        style={{ 
+          background: 'green', 
+          width: 8, 
+          height: 8, 
+          bottom: -4,
+          left: '50%',
+          transform: 'translateX(-50%)'
+        }}
+      />
+      <Handle
+        type="source"
+        position={Position.Left}
+        id="source-left"
+        style={{ 
+          background: 'green', 
+          width: 8, 
+          height: 8, 
+          left: -4,
+          top: '50%',
+          transform: 'translateY(-50%)'
+        }}
       />
     </div>
   );

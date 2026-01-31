@@ -14,6 +14,7 @@ import {
   type ReactFlowInstance,
   BackgroundVariant,
   Panel,
+  ConnectionMode,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -395,6 +396,7 @@ export const DiagramCanvas = () => {
         fitView
         panOnDrag={selectedTool === 'pan'}
         selectionOnDrag={selectedTool === 'select'}
+        connectionMode={ConnectionMode.Loose}
         defaultEdgeOptions={{
           type: 'smoothstep',
           style: { strokeWidth: 2 },
