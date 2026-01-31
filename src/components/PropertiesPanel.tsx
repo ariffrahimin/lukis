@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { type Node, type Edge } from '@xyflow/react';
-import { type NodeType } from '../types/diagrams';
+import { type DiagramNodeData } from '../types/diagrams';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
@@ -9,21 +9,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { X, Layers, GitBranch } from 'lucide-react';
 import { cn } from '../lib/utils';
 
-interface NodeData {
-  label: string;
-  description?: string;
-  nodeType: NodeType;
-  [key: string]: unknown;
-}
+// Use the centralized type from types/diagrams
+type NodeData = DiagramNodeData;
 
 // Type guard function to safely cast node data
 const isValidNodeData = (data: unknown): data is NodeData => {
-  return typeof data === 'object' && 
-         data !== null && 
-         'label' in data && 
-         typeof (data as any).label === 'string' &&
-         'nodeType' in data &&
-         typeof (data as any).nodeType === 'string';
+  if (!data || typeof data !== 'object') {
+    return false;
+  }
+  
+  const obj = data as Record<string, unknown>;
+  
+  return (
+    'label' in obj &&
+    typeof obj.label === 'string' &&
+    'nodeType' in obj &&
+    typeof obj.nodeType === 'string' &&
+    ['service', 'database', 'server', 'client', 'storage', 'api', 'text', 'group'].includes(obj.nodeType)
+  );
 };
 
 interface PropertiesPanelProps {

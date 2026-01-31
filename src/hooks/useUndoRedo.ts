@@ -23,16 +23,22 @@ export const useUndoRedo = (maxHistory: number = 50) => {
   const saveState = useCallback((nodes: Node[], edges: Edge[]) => {
     setHistory((prev) => {
       const newHistory = prev.slice(0, currentIndex + 1);
-      newHistory.push({ nodes: JSON.parse(JSON.stringify(nodes)), edges: JSON.parse(JSON.stringify(edges)) });
+      // Use structured cloning for better performance and safety
+      const clonedState = {
+        nodes: structuredClone(nodes),
+        edges: structuredClone(edges)
+      };
+      newHistory.push(clonedState);
+      
+      // Remove oldest entries if exceeding max history
       if (newHistory.length > maxHistory) {
         newHistory.shift();
-        return newHistory;
       }
+      
+      // Update index to point to the latest state
+      setCurrentIndex(newHistory.length - 1);
+      
       return newHistory;
-    });
-    setCurrentIndex((prev) => {
-      const newIndex = Math.min(prev + 1, maxHistory - 1);
-      return newIndex;
     });
   }, [currentIndex, maxHistory]);
 

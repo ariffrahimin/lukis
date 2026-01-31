@@ -17,19 +17,15 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { v4 as uuidv4 } from 'uuid';
-import { type NodeType } from '../types/diagrams';
+import { type NodeType, type DiagramNodeData } from '../types/diagrams';
 import BaseNode from './nodes/BaseNode';
 import { Toolbar } from './Toolbar';
 import { PropertiesPanel } from './PropertiesPanel';
 import { useUndoRedo } from '..//hooks/useUndoRedo';
 import { toast } from 'sonner';
 
-interface NodeData {
-  label: string;
-  description?: string;
-  nodeType: NodeType;
-  [key: string]: unknown;
-}
+// Use the centralized type from types/diagrams
+type NodeData = DiagramNodeData;
 
 const defaultNodeLabels: Record<NodeType, string> = {
   service: 'Service',
@@ -225,11 +221,15 @@ export const DiagramCanvas = () => {
     const data = { nodes, edges };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'diagram.json';
-    a.click();
-    URL.revokeObjectURL(url);
+    
+    try {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'diagram.json';
+      a.click();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
     toast.success('Diagram exported');
   }, [nodes, edges]);
 
@@ -272,7 +272,14 @@ export const DiagramCanvas = () => {
               return node && typeof node === 'object' && 
                      typeof node.id === 'string' && 
                      typeof node.position === 'object' &&
-                     typeof node.data === 'object';
+                     node.position !== null &&
+                     typeof node.position.x === 'number' &&
+                     typeof node.position.y === 'number' &&
+                     typeof node.data === 'object' &&
+                     node.data !== null &&
+                     typeof node.data.label === 'string' &&
+                     typeof node.data.nodeType === 'string' &&
+                     ['service', 'database', 'server', 'client', 'storage', 'api', 'text', 'group'].includes(node.data.nodeType);
             });
             
             if (!validNodes) {
@@ -293,10 +300,27 @@ export const DiagramCanvas = () => {
               return;
             }
             
-            setNodes(data.nodes);
-            setEdges(data.edges);
-            saveState(data.nodes, data.edges);
-            toast.success(`Diagram imported: ${data.nodes.length} nodes, ${data.edges.length} edges`);
+            // Sanitize imported data
+            const sanitizedNodes = data.nodes.map((node: any) => ({
+              ...node,
+              data: {
+                ...node.data,
+                label: String(node.data.label || '').slice(0, 100), // Limit length
+                description: node.data.description ? String(node.data.description).slice(0, 500) : undefined
+              }
+            }));
+            
+            const sanitizedEdges = data.edges.map((edge: any) => ({
+              ...edge,
+              id: String(edge.id),
+              source: String(edge.source),
+              target: String(edge.target)
+            }));
+            
+            setNodes(sanitizedNodes);
+            setEdges(sanitizedEdges);
+            saveState(sanitizedNodes, sanitizedEdges);
+            toast.success(`Diagram imported: ${sanitizedNodes.length} nodes, ${sanitizedEdges.length} edges`);
             
           } catch (error) {
             console.error('Import error:', error);
@@ -326,10 +350,13 @@ export const DiagramCanvas = () => {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger shortcuts when typing in input fields
+      if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') {
+        return;
+      }
+      
       if (e.key === 'Delete' || e.key === 'Backspace') {
-        if (document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
-          handleDelete();
-        }
+        handleDelete();
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
         if (e.shiftKey) {
@@ -338,9 +365,12 @@ export const DiagramCanvas = () => {
           handleUndo();
         }
       }
-      if (e.key === 'v') setSelectedTool('select');
-      if (e.key === 'h') setSelectedTool('pan');
-      if (e.key === 'f' && reactFlowInstance) reactFlowInstance.fitView();
+      // Only trigger single-key shortcuts when no modifier keys are pressed
+      if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+        if (e.key === 'v') setSelectedTool('select');
+        if (e.key === 'h') setSelectedTool('pan');
+        if (e.key === 'f' && reactFlowInstance) reactFlowInstance.fitView();
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
