@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { type Node, type Edge } from '@xyflow/react';
 
 interface HistoryState {
@@ -10,6 +10,12 @@ interface HistoryState {
 export const useUndoRedo = (maxHistory: number = 50) => {
   const [history, setHistory] = useState<HistoryState[]>([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
+  const historyRef = useRef<HistoryState[]>([]);
+  const currentIndexRef = useRef(-1);
+
+  // Update refs when state changes
+  historyRef.current = history;
+  currentIndexRef.current = currentIndex;
 
   const canUndo = currentIndex > 0;
   const canRedo = currentIndex < history.length - 1;
@@ -20,27 +26,33 @@ export const useUndoRedo = (maxHistory: number = 50) => {
       newHistory.push({ nodes: JSON.parse(JSON.stringify(nodes)), edges: JSON.parse(JSON.stringify(edges)) });
       if (newHistory.length > maxHistory) {
         newHistory.shift();
+        return newHistory;
       }
       return newHistory;
     });
-    setCurrentIndex((prev) => Math.min(prev + 1, maxHistory - 1));
+    setCurrentIndex((prev) => {
+      const newIndex = Math.min(prev + 1, maxHistory - 1);
+      return newIndex;
+    });
   }, [currentIndex, maxHistory]);
 
   const undo = useCallback(() => {
-    if (canUndo) {
-      setCurrentIndex((prev) => prev - 1);
-      return history[currentIndex - 1];
+    if (currentIndexRef.current > 0) {
+      const newIndex = currentIndexRef.current - 1;
+      setCurrentIndex(newIndex);
+      return historyRef.current[newIndex];
     }
     return null;
-  }, [canUndo, history, currentIndex]);
+  }, []);
 
   const redo = useCallback(() => {
-    if (canRedo) {
-      setCurrentIndex((prev) => prev + 1);
-      return history[currentIndex + 1];
+    if (currentIndexRef.current < historyRef.current.length - 1) {
+      const newIndex = currentIndexRef.current + 1;
+      setCurrentIndex(newIndex);
+      return historyRef.current[newIndex];
     }
     return null;
-  }, [canRedo, history, currentIndex]);
+  }, []);
 
   return {
     saveState,

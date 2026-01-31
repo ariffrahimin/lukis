@@ -112,8 +112,7 @@ export const DiagramCanvas = () => {
 
   const onConnect = useCallback((connection: Connection) => {
     setEdges((eds) => addEdge({ ...connection, type: 'smoothstep' }, eds));
-    setTimeout(() => saveState(nodes, edges), 0);
-  }, [setEdges, nodes, edges, saveState]);
+  }, [setEdges]);
 
   const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
     setSelectedNode(node);
@@ -144,9 +143,8 @@ export const DiagramCanvas = () => {
       },
     };
     setNodes((nds) => [...nds, newNode]);
-    setTimeout(() => saveState([...nodes, newNode], edges), 0);
     toast.success(`Added ${defaultNodeLabels[type]} node`);
-  }, [setNodes, nodes, edges, saveState]);
+  }, [setNodes]);
 
   const onDrop = useCallback(
     (event: React.DragEvent) => {
@@ -171,9 +169,8 @@ export const DiagramCanvas = () => {
       };
 
       setNodes((nds) => [...nds, newNode]);
-      setTimeout(() => saveState([...nodes, newNode], edges), 0);
     },
-    [reactFlowInstance, setNodes, nodes, edges, saveState]
+    [reactFlowInstance, setNodes]
   );
 
   const onDragOver = useCallback((event: React.DragEvent) => {
@@ -187,14 +184,12 @@ export const DiagramCanvas = () => {
       setEdges((eds) => eds.filter((e) => e.source !== selectedNode.id && e.target !== selectedNode.id));
       setSelectedNode(null);
       toast.success('Node deleted');
-    }
-    if (selectedEdge) {
+    } else if (selectedEdge) {
       setEdges((eds) => eds.filter((e) => e.id !== selectedEdge.id));
       setSelectedEdge(null);
       toast.success('Edge deleted');
     }
-    setTimeout(() => saveState(nodes, edges), 0);
-  }, [selectedNode, selectedEdge, setNodes, setEdges, nodes, edges, saveState]);
+  }, [selectedNode, selectedEdge, setNodes, setEdges]);
 
   const handleUndo = useCallback(() => {
     const state = undo();
@@ -248,22 +243,85 @@ export const DiagramCanvas = () => {
         const reader = new FileReader();
         reader.onload = (e) => {
           try {
-            const data = JSON.parse(e.target?.result as string);
-            if (data.nodes && data.edges) {
-              setNodes(data.nodes);
-              setEdges(data.edges);
-              saveState(data.nodes, data.edges);
-              toast.success('Diagram imported');
+            const content = e.target?.result as string;
+            if (!content || content.trim() === '') {
+              toast.error('File is empty');
+              return;
             }
-          } catch {
-            toast.error('Invalid file format');
+            
+            const data = JSON.parse(content);
+            
+            // Validate imported data structure
+            if (!data || typeof data !== 'object') {
+              toast.error('Invalid file format: expected JSON object');
+              return;
+            }
+            
+            if (!Array.isArray(data.nodes)) {
+              toast.error('Invalid file format: nodes array is required');
+              return;
+            }
+            
+            if (!Array.isArray(data.edges)) {
+              toast.error('Invalid file format: edges array is required');
+              return;
+            }
+            
+            // Validate node structure
+            const validNodes = data.nodes.every((node: any) => {
+              return node && typeof node === 'object' && 
+                     typeof node.id === 'string' && 
+                     typeof node.position === 'object' &&
+                     typeof node.data === 'object';
+            });
+            
+            if (!validNodes) {
+              toast.error('Invalid file format: nodes have invalid structure');
+              return;
+            }
+            
+            // Validate edge structure
+            const validEdges = data.edges.every((edge: any) => {
+              return edge && typeof edge === 'object' && 
+                     typeof edge.id === 'string' && 
+                     typeof edge.source === 'string' &&
+                     typeof edge.target === 'string';
+            });
+            
+            if (!validEdges) {
+              toast.error('Invalid file format: edges have invalid structure');
+              return;
+            }
+            
+            setNodes(data.nodes);
+            setEdges(data.edges);
+            saveState(data.nodes, data.edges);
+            toast.success(`Diagram imported: ${data.nodes.length} nodes, ${data.edges.length} edges`);
+            
+          } catch (error) {
+            console.error('Import error:', error);
+            if (error instanceof SyntaxError) {
+              toast.error('Invalid JSON format');
+            } else {
+              toast.error('Failed to import file');
+            }
           }
+        };
+        reader.onerror = () => {
+          toast.error('Failed to read file');
         };
         reader.readAsText(file);
       }
     };
     input.click();
   }, [setNodes, setEdges, saveState]);
+
+  // Save state when nodes or edges change
+  useEffect(() => {
+    if (nodes.length > 0 || edges.length > 0) {
+      saveState(nodes, edges);
+    }
+  }, [nodes, edges, saveState]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -287,7 +345,7 @@ export const DiagramCanvas = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleDelete, handleUndo, handleRedo, reactFlowInstance]);
+  }, [handleDelete, handleUndo, handleRedo, reactFlowInstance, setSelectedTool]);
 
   return (
     <div ref={reactFlowWrapper} className="w-full h-screen bg-[hsl(var(--canvas-bg))]">

@@ -13,7 +13,18 @@ interface NodeData {
   label: string;
   description?: string;
   nodeType: NodeType;
+  [key: string]: unknown;
 }
+
+// Type guard function to safely cast node data
+const isValidNodeData = (data: unknown): data is NodeData => {
+  return typeof data === 'object' && 
+         data !== null && 
+         'label' in data && 
+         typeof (data as any).label === 'string' &&
+         'nodeType' in data &&
+         typeof (data as any).nodeType === 'string';
+};
 
 interface PropertiesPanelProps {
   selectedNode: Node | null;
@@ -35,7 +46,7 @@ export const PropertiesPanel = ({
   const [edgeType, setEdgeType] = useState('default');
   const [animated, setAnimated] = useState(false);
 
-  const nodeData = selectedNode?.data as unknown as NodeData | undefined;
+  const nodeData = selectedNode?.data && isValidNodeData(selectedNode.data) ? selectedNode.data : undefined;
 
   useEffect(() => {
     if (nodeData) {
@@ -53,14 +64,14 @@ export const PropertiesPanel = ({
 
   const handleLabelChange = (value: string) => {
     setLabel(value);
-    if (selectedNode) {
+    if (selectedNode && isValidNodeData(selectedNode.data)) {
       onNodeUpdate(selectedNode.id, { label: value });
     }
   };
 
   const handleDescriptionChange = (value: string) => {
     setDescription(value);
-    if (selectedNode) {
+    if (selectedNode && isValidNodeData(selectedNode.data)) {
       onNodeUpdate(selectedNode.id, { description: value });
     }
   };
