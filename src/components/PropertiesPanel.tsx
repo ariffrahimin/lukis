@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
-import { type Node, type Edge } from '@xyflow/react';
-import { type DiagramNodeData } from '../types/diagrams';
+import { type Node, type Edge, MarkerType as ReactFlowMarkerType } from '@xyflow/react';
+import { type DiagramNodeData, type MarkerType } from '../types/diagrams';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
@@ -47,6 +47,8 @@ export const PropertiesPanel = ({
   const [label, setLabel] = useState('');
   const [description, setDescription] = useState('');
   const [edgeType, setEdgeType] = useState('default');
+  const [markerStart, setMarkerStart] = useState<MarkerType>('none');
+  const [markerEnd, setMarkerEnd] = useState<MarkerType>('arrow');
   const [animated, setAnimated] = useState(false);
 
   const nodeData = selectedNode?.data && isValidNodeData(selectedNode.data) ? selectedNode.data : undefined;
@@ -61,6 +63,8 @@ export const PropertiesPanel = ({
   useEffect(() => {
     if (selectedEdge) {
       setEdgeType(selectedEdge.type || 'default');
+      setMarkerStart((selectedEdge.markerStart as any)?.type || 'none');
+      setMarkerEnd((selectedEdge.markerEnd as any)?.type || 'arrow');
       setAnimated(selectedEdge.animated || false);
     }
   }, [selectedEdge]);
@@ -90,6 +94,24 @@ export const PropertiesPanel = ({
     setAnimated(value);
     if (selectedEdge) {
       onEdgeUpdate(selectedEdge.id, { animated: value });
+    }
+  };
+
+  const handleMarkerStartChange = (value: MarkerType) => {
+    setMarkerStart(value);
+    if (selectedEdge) {
+      onEdgeUpdate(selectedEdge.id, { 
+        markerStart: value === 'none' ? undefined : { type: value as ReactFlowMarkerType } 
+      });
+    }
+  };
+
+  const handleMarkerEndChange = (value: MarkerType) => {
+    setMarkerEnd(value);
+    if (selectedEdge) {
+      onEdgeUpdate(selectedEdge.id, { 
+        markerEnd: value === 'none' ? undefined : { type: value as ReactFlowMarkerType } 
+      });
     }
   };
 
@@ -181,6 +203,34 @@ export const PropertiesPanel = ({
                   <SelectItem value="straight">Straight</SelectItem>
                   <SelectItem value="step">Step</SelectItem>
                   <SelectItem value="smoothstep">Smooth Step</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs text-muted-foreground">Start Marker</Label>
+              <Select value={markerStart} onValueChange={handleMarkerStartChange}>
+                <SelectTrigger className="h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="arrow">Arrow</SelectItem>
+                  <SelectItem value="arrowclosed">Arrow Closed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs text-muted-foreground">End Marker</Label>
+              <Select value={markerEnd} onValueChange={handleMarkerEndChange}>
+                <SelectTrigger className="h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="arrow">Arrow</SelectItem>
+                  <SelectItem value="arrowclosed">Arrow Closed</SelectItem>
                 </SelectContent>
               </Select>
             </div>

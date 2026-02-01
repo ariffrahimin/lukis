@@ -15,6 +15,7 @@ import {
   BackgroundVariant,
   Panel,
   ConnectionMode,
+  MarkerType,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -39,46 +40,9 @@ const defaultNodeLabels: Record<NodeType, string> = {
   group: 'Group',
 };
 
-const initialNodes: Node[] = [
-  {
-    id: '1',
-    type: 'client',
-    position: { x: 100, y: 200 },
-    data: { label: 'Web App', nodeType: 'client', description: 'React Frontend' },
-  },
-  {
-    id: '2',
-    type: 'api',
-    position: { x: 350, y: 200 },
-    data: { label: 'API Gateway', nodeType: 'api', description: 'REST API' },
-  },
-  {
-    id: '3',
-    type: 'service',
-    position: { x: 600, y: 100 },
-    data: { label: 'Auth Service', nodeType: 'service', description: 'JWT Auth' },
-  },
-  {
-    id: '4',
-    type: 'service',
-    position: { x: 600, y: 300 },
-    data: { label: 'User Service', nodeType: 'service' },
-  },
-  {
-    id: '5',
-    type: 'database',
-    position: { x: 850, y: 200 },
-    data: { label: 'PostgreSQL', nodeType: 'database', description: 'Primary DB' },
-  },
-];
+const initialNodes: Node[] = [];
 
-const initialEdges: Edge[] = [
-  { id: 'e1-2', source: '1', target: '2', animated: true },
-  { id: 'e2-3', source: '2', target: '3' },
-  { id: 'e2-4', source: '2', target: '4' },
-  { id: 'e3-5', source: '3', target: '5' },
-  { id: 'e4-5', source: '4', target: '5' },
-];
+const initialEdges: Edge[] = [];
 
 export const DiagramCanvas = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -108,7 +72,11 @@ export const DiagramCanvas = () => {
   }, []);
 
   const onConnect = useCallback((connection: Connection) => {
-    setEdges((eds) => addEdge({ ...connection, type: 'smoothstep' }, eds));
+    setEdges((eds) => addEdge({ 
+      ...connection, 
+      type: 'smoothstep',
+      markerEnd: { type: MarkerType.Arrow }
+    }, eds));
   }, [setEdges]);
 
   const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
@@ -400,6 +368,7 @@ export const DiagramCanvas = () => {
         defaultEdgeOptions={{
           type: 'smoothstep',
           style: { strokeWidth: 2 },
+          markerEnd: { type: MarkerType.Arrow },
         }}
         connectionLineStyle={{ strokeWidth: 2 }}
         snapToGrid

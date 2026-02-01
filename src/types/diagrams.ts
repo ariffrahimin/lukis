@@ -30,3 +30,5 @@ export interface ToolbarItem {
 }
 
 export type EdgeType = 'default' | 'step' | 'smoothstep' | 'straight';
+
+export type MarkerType = 'none' | 'arrow' | 'arrowclosed';
