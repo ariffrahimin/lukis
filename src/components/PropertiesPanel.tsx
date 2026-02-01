@@ -25,7 +25,10 @@ const isValidNodeData = (data: unknown): data is NodeData => {
     typeof obj.label === 'string' &&
     'nodeType' in obj &&
     typeof obj.nodeType === 'string' &&
-    ['service', 'database', 'server', 'client', 'storage', 'api', 'text', 'group'].includes(obj.nodeType)
+    ['service', 'database', 'server', 'client', 'storage', 'api', 'text', 'group', 
+     'gcp-cloud-run', 'gcp-cloud-storage', 'gcp-bigquery', 'gcp-pub-sub',
+     'aws-ec2', 'aws-s3', 'aws-lambda', 'aws-rds',
+     'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database'].includes(obj.nodeType)
   );
 };
 
@@ -51,12 +54,25 @@ export const PropertiesPanel = ({
   const [markerEnd, setMarkerEnd] = useState<MarkerType>('arrow');
   const [animated, setAnimated] = useState(false);
 
+  // Cloud service specific states
+  const [region, setRegion] = useState('');
+  const [instanceType, setInstanceType] = useState('');
+  const [environment, setEnvironment] = useState('');
+
   const nodeData = selectedNode?.data && isValidNodeData(selectedNode.data) ? selectedNode.data : undefined;
+  const isCloudService = nodeData?.nodeType && [
+    'gcp-cloud-run', 'gcp-cloud-storage', 'gcp-bigquery', 'gcp-pub-sub',
+    'aws-ec2', 'aws-s3', 'aws-lambda', 'aws-rds',
+    'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database'
+  ].includes(nodeData.nodeType);
 
   useEffect(() => {
     if (nodeData) {
       setLabel(nodeData.label || '');
       setDescription(nodeData.description || '');
+      setRegion(nodeData.region || '');
+      setInstanceType(nodeData.instanceType || '');
+      setEnvironment(nodeData.environment || '');
     }
   }, [nodeData]);
 
@@ -80,6 +96,27 @@ export const PropertiesPanel = ({
     setDescription(value);
     if (selectedNode && isValidNodeData(selectedNode.data)) {
       onNodeUpdate(selectedNode.id, { description: value });
+    }
+  };
+
+  const handleRegionChange = (value: string) => {
+    setRegion(value);
+    if (selectedNode && isValidNodeData(selectedNode.data)) {
+      onNodeUpdate(selectedNode.id, { region: value });
+    }
+  };
+
+  const handleInstanceTypeChange = (value: string) => {
+    setInstanceType(value);
+    if (selectedNode && isValidNodeData(selectedNode.data)) {
+      onNodeUpdate(selectedNode.id, { instanceType: value });
+    }
+  };
+
+  const handleEnvironmentChange = (value: string) => {
+    setEnvironment(value);
+    if (selectedNode && isValidNodeData(selectedNode.data)) {
+      onNodeUpdate(selectedNode.id, { environment: value as any });
     }
   };
 
@@ -172,9 +209,57 @@ export const PropertiesPanel = ({
             <div className="space-y-2">
               <Label className="text-xs text-muted-foreground">Type</Label>
               <div className="px-3 py-2 bg-secondary/50 rounded-lg text-sm capitalize">
-                {nodeData.nodeType}
+                {nodeData.nodeType.replace(/-/g, ' ')}
               </div>
             </div>
+
+            {/* Cloud Service Specific Properties */}
+            {isCloudService && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="region" className="text-xs text-muted-foreground">
+                    Region
+                  </Label>
+                  <Input
+                    id="region"
+                    value={region}
+                    onChange={(e) => handleRegionChange(e.target.value)}
+                    placeholder="us-west-2, europe-west1, etc."
+                    className="h-9"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="instance-type" className="text-xs text-muted-foreground">
+                    Instance Type
+                  </Label>
+                  <Input
+                    id="instance-type"
+                    value={instanceType}
+                    onChange={(e) => handleInstanceTypeChange(e.target.value)}
+                    placeholder="t3.micro, n1-standard-1, etc."
+                    className="h-9"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="environment" className="text-xs text-muted-foreground">
+                    Environment
+                  </Label>
+                  <Select value={environment} onValueChange={handleEnvironmentChange}>
+                    <SelectTrigger className="h-9">
+                      <SelectValue placeholder="Select environment" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="development">Development</SelectItem>
+                      <SelectItem value="staging">Staging</SelectItem>
+                      <SelectItem value="production">Production</SelectItem>
+                      <SelectItem value="testing">Testing</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
 
             <div className="space-y-2">
               <Label className="text-xs text-muted-foreground">Position</Label>

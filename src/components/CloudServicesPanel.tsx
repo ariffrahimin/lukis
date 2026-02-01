@@ -1,0 +1,170 @@
+import { useState } from 'react';
+import { type NodeType } from '../types/diagrams';
+import { Switch } from './ui/switch';
+import { Label } from './ui/label';
+import { Separator } from './ui/separator';
+import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+
+interface CloudService {
+  type: NodeType;
+  label: string;
+  icon: string;
+}
+
+interface CloudProvider {
+  name: string;
+  services: CloudService[];
+}
+
+const cloudProviders: CloudProvider[] = [
+  {
+    name: 'GCP',
+    services: [
+      { type: 'gcp-cloud-run', label: 'Cloud Run', icon: '/src/components/cloud-services/gcp/cloud-run.svg' },
+      { type: 'gcp-cloud-storage', label: 'Cloud Storage', icon: '/src/components/cloud-services/gcp/cloud-storage.svg' },
+      { type: 'gcp-bigquery', label: 'BigQuery', icon: '/src/components/cloud-services/gcp/bigquery.svg' },
+      { type: 'gcp-pub-sub', label: 'Pub/Sub', icon: '/src/components/cloud-services/gcp/pub-sub.svg' },
+    ]
+  },
+  {
+    name: 'AWS',
+    services: [
+      { type: 'aws-ec2', label: 'EC2', icon: '/src/components/cloud-services/aws/ec2.svg' },
+      { type: 'aws-s3', label: 'S3', icon: '/src/components/cloud-services/aws/s3.svg' },
+      { type: 'aws-lambda', label: 'Lambda', icon: '/src/components/cloud-services/aws/lambda.svg' },
+      { type: 'aws-rds', label: 'RDS', icon: '/src/components/cloud-services/aws/rds.svg' },
+    ]
+  },
+  {
+    name: 'Azure',
+    services: [
+      { type: 'azure-vm', label: 'VM', icon: '/src/components/cloud-services/azure/vm.svg' },
+      { type: 'azure-blob-storage', label: 'Blob Storage', icon: '/src/components/cloud-services/azure/blob-storage.svg' },
+      { type: 'azure-functions', label: 'Functions', icon: '/src/components/cloud-services/azure/functions.svg' },
+      { type: 'azure-sql-database', label: 'SQL Database', icon: '/src/components/cloud-services/azure/sql-database.svg' },
+    ]
+  }
+];
+
+interface CloudServicesPanelProps {
+  onServiceSelect: (type: NodeType) => void;
+}
+
+export const CloudServicesPanel = ({ onServiceSelect }: CloudServicesPanelProps) => {
+  const [showLabels, setShowLabels] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [expandedProviders, setExpandedProviders] = useState<Set<string>>(new Set(['GCP']));
+
+  const handleDragStart = (event: React.DragEvent, nodeType: NodeType) => {
+    event.dataTransfer.setData('application/reactflow', nodeType);
+    event.dataTransfer.effectAllowed = 'move';
+  };
+
+  const toggleProvider = (providerName: string) => {
+    const newExpanded = new Set(expandedProviders);
+    if (newExpanded.has(providerName)) {
+      newExpanded.delete(providerName);
+    } else {
+      newExpanded.add(providerName);
+    }
+    setExpandedProviders(newExpanded);
+  };
+
+  if (isCollapsed) {
+    return (
+      <div className="w-12 bg-background border-r border-border h-full flex flex-col items-center py-4">
+        <button
+          onClick={() => setIsCollapsed(false)}
+          className="p-2 rounded-lg hover:bg-muted transition-colors"
+          title="Show Cloud Services"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-64 bg-background border-r border-border h-full flex flex-col">
+      <div className="p-4 border-b border-border">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold text-foreground">Cloud Services</h3>
+          <button
+            onClick={() => setIsCollapsed(true)}
+            className="p-1 rounded hover:bg-muted transition-colors"
+            title="Hide Panel"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="show-labels"
+            checked={showLabels}
+            onCheckedChange={setShowLabels}
+          />
+          <Label htmlFor="show-labels" className="text-sm text-muted-foreground">
+            Show Labels
+          </Label>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        {cloudProviders.map((provider) => (
+          <div key={provider.name}>
+            <button
+              onClick={() => toggleProvider(provider.name)}
+              className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 transition-colors"
+            >
+              <h4 className="text-sm font-medium text-foreground">
+                {provider.name}
+              </h4>
+              <ChevronDown 
+                className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
+                  expandedProviders.has(provider.name) ? '' : 'rotate-270'
+                }`}
+              />
+            </button>
+            
+            {expandedProviders.has(provider.name) && (
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                {provider.services.map((service) => (
+                  <div
+                    key={service.type}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, service.type)}
+                    onClick={() => onServiceSelect(service.type)}
+                    className="flex flex-col items-center justify-center p-2 rounded-lg border border-border bg-card hover:bg-muted/50 cursor-grab active:cursor-grabbing transition-all duration-200 min-h-[60px]"
+                  >
+                    <div className="w-8 h-8 flex-shrink-0">
+                      <img 
+                        src={service.icon} 
+                        alt={service.label}
+                        className="w-full h-full object-contain"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const fallback = target.nextElementSibling as HTMLDivElement;
+                          if (fallback) fallback.style.display = 'flex';
+                        }}
+                      />
+                      <div className="w-8 h-8 bg-muted rounded flex items-center justify-center text-xs font-medium" style={{display: 'none'}}>
+                        {service.label.substring(0, 2).toUpperCase()}
+                      </div>
+                    </div>
+                    {showLabels && (
+                      <div className="text-xs text-foreground text-center mt-1 leading-tight">
+                        {service.label}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            <Separator className="mt-3" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};

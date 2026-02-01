@@ -9,13 +9,29 @@ export type NodeType =
   | 'storage'
   | 'api'
   | 'text'
-  | 'group';
+  | 'group'
+  | 'gcp-cloud-run'
+  | 'gcp-cloud-storage'
+  | 'gcp-bigquery'
+  | 'gcp-pub-sub'
+  | 'aws-ec2'
+  | 'aws-s3'
+  | 'aws-lambda'
+  | 'aws-rds'
+  | 'azure-vm'
+  | 'azure-blob-storage'
+  | 'azure-functions'
+  | 'azure-sql-database';
 
 export interface DiagramNodeData {
   label: string;
   description?: string;
   nodeType: NodeType;
   icon?: string;
+  // Cloud service specific properties
+  region?: string;
+  instanceType?: string;
+  environment?: 'development' | 'staging' | 'production' | 'testing';
   [key: string]: unknown;
 }
 

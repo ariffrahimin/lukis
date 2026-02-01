@@ -24,6 +24,7 @@ import { type NodeType, type DiagramNodeData } from '../types/diagrams';
 import BaseNode from './nodes/BaseNode';
 import { Toolbar } from './Toolbar';
 import { PropertiesPanel } from './PropertiesPanel';
+import { CloudServicesPanel } from './CloudServicesPanel';
 import { useUndoRedo } from '..//hooks/useUndoRedo';
 import { toast } from 'sonner';
 
@@ -39,6 +40,18 @@ const defaultNodeLabels: Record<NodeType, string> = {
   api: 'API Gateway',
   text: 'Label',
   group: 'Group',
+  'gcp-cloud-run': 'Cloud Run',
+  'gcp-cloud-storage': 'Cloud Storage',
+  'gcp-bigquery': 'BigQuery',
+  'gcp-pub-sub': 'Pub/Sub',
+  'aws-ec2': 'EC2',
+  'aws-s3': 'S3',
+  'aws-lambda': 'Lambda',
+  'aws-rds': 'RDS',
+  'azure-vm': 'Virtual Machine',
+  'azure-blob-storage': 'Blob Storage',
+  'azure-functions': 'Functions',
+  'azure-sql-database': 'SQL Database',
 };
 
 const initialNodes: Node[] = [];
@@ -67,6 +80,18 @@ export const DiagramCanvas = () => {
     api: BaseNode,
     text: BaseNode,
     group: BaseNode,
+    'gcp-cloud-run': BaseNode,
+    'gcp-cloud-storage': BaseNode,
+    'gcp-bigquery': BaseNode,
+    'gcp-pub-sub': BaseNode,
+    'aws-ec2': BaseNode,
+    'aws-s3': BaseNode,
+    'aws-lambda': BaseNode,
+    'aws-rds': BaseNode,
+    'azure-vm': BaseNode,
+    'azure-blob-storage': BaseNode,
+    'azure-functions': BaseNode,
+    'azure-sql-database': BaseNode,
   }), []);
 
   // Save initial state
@@ -437,88 +462,92 @@ export const DiagramCanvas = () => {
   }, [handleDelete, handleUndo, handleRedo, reactFlowInstance, setSelectedTool]);
 
   return (
-    <div ref={reactFlowWrapper} className="w-full h-screen bg-[hsl(var(--canvas-bg))]">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onReconnect={onReconnect}
-        onInit={setReactFlowInstance}
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-        onNodeClick={onNodeClick}
-        onEdgeClick={onEdgeClick}
-        onPaneClick={onPaneClick}
-        nodeTypes={nodeTypes}
-        fitView
-        onSelectionChange={onSelectionChange}
-        multiSelectionKeyCode="Meta"
-        deleteKeyCode="Delete"
-        panOnDrag={selectedTool === 'pan'}
-        selectionOnDrag={selectedTool === 'select'}
-        connectionMode={ConnectionMode.Loose}
-        defaultEdgeOptions={{
-          type: 'smoothstep',
-          style: { strokeWidth: 2 },
-          markerEnd: { type: MarkerType.Arrow },
-          reconnectable: true,
-        }}
-        connectionLineStyle={{ strokeWidth: 2 }}
-        snapToGrid
-        snapGrid={[15, 15]}
-      >
-        <Background
-          variant={BackgroundVariant.Dots}
-          gap={20}
-          size={1}
-          color="hsl(var(--canvas-grid))"
-        />
-        <MiniMap
-          nodeStrokeWidth={3}
-          zoomable
-          pannable
-          className="!bottom-4 !right-4"
-        />
-        <Controls
-          className="!bottom-4 !left-4"
-          showInteractive={false}
+    <div className="flex w-full h-screen bg-[hsl(var(--canvas-bg))]">
+      <CloudServicesPanel onServiceSelect={addNode} />
+      
+      <div ref={reactFlowWrapper} className="flex-1 relative">
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onReconnect={onReconnect}
+          onInit={setReactFlowInstance}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onNodeClick={onNodeClick}
+          onEdgeClick={onEdgeClick}
+          onPaneClick={onPaneClick}
+          nodeTypes={nodeTypes}
+          fitView
+          onSelectionChange={onSelectionChange}
+          multiSelectionKeyCode="Meta"
+          deleteKeyCode="Delete"
+          panOnDrag={selectedTool === 'pan'}
+          selectionOnDrag={selectedTool === 'select'}
+          connectionMode={ConnectionMode.Loose}
+          defaultEdgeOptions={{
+            type: 'smoothstep',
+            style: { strokeWidth: 2 },
+            markerEnd: { type: MarkerType.Arrow },
+            reconnectable: true,
+          }}
+          connectionLineStyle={{ strokeWidth: 2 }}
+          snapToGrid
+          snapGrid={[15, 15]}
+        >
+          <Background
+            variant={BackgroundVariant.Dots}
+            gap={20}
+            size={1}
+            color="hsl(var(--canvas-grid))"
+          />
+          <MiniMap
+            nodeStrokeWidth={3}
+            zoomable
+            pannable
+            className="!bottom-4 !right-4"
+          />
+          <Controls
+            className="!bottom-4 !left-4"
+            showInteractive={false}
+          />
+
+          <Panel position="bottom-center" className="mb-4">
+            <div className="text-xs text-muted-foreground bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-border">
+              {nodes.length} nodes • {edges.length} edges
+            </div>
+          </Panel>
+        </ReactFlow>
+
+        <Toolbar
+          selectedTool={selectedTool}
+          onToolSelect={setSelectedTool}
+          onAddNode={addNode}
+          onDelete={handleDelete}
+          onZoomIn={() => reactFlowInstance?.zoomIn()}
+          onZoomOut={() => reactFlowInstance?.zoomOut()}
+          onFitView={() => reactFlowInstance?.fitView()}
+          onUndo={handleUndo}
+          onRedo={handleRedo}
+          canUndo={canUndo}
+          canRedo={canRedo}
+          onExport={handleExport}
+          onImport={handleImport}
         />
 
-        <Panel position="bottom-center" className="mb-4">
-          <div className="text-xs text-muted-foreground bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-border">
-            {nodes.length} nodes • {edges.length} edges
-          </div>
-        </Panel>
-      </ReactFlow>
-
-      <Toolbar
-        selectedTool={selectedTool}
-        onToolSelect={setSelectedTool}
-        onAddNode={addNode}
-        onDelete={handleDelete}
-        onZoomIn={() => reactFlowInstance?.zoomIn()}
-        onZoomOut={() => reactFlowInstance?.zoomOut()}
-        onFitView={() => reactFlowInstance?.fitView()}
-        onUndo={handleUndo}
-        onRedo={handleRedo}
-        canUndo={canUndo}
-        canRedo={canRedo}
-        onExport={handleExport}
-        onImport={handleImport}
-      />
-
-      <PropertiesPanel
-        selectedNode={selectedNode}
-        selectedEdge={selectedEdge}
-        onNodeUpdate={handleNodeUpdate}
-        onEdgeUpdate={handleEdgeUpdate}
-        onClose={() => {
-          setSelectedNode(null);
-          setSelectedEdge(null);
-        }}
-      />
+        <PropertiesPanel
+          selectedNode={selectedNode}
+          selectedEdge={selectedEdge}
+          onNodeUpdate={handleNodeUpdate}
+          onEdgeUpdate={handleEdgeUpdate}
+          onClose={() => {
+            setSelectedNode(null);
+            setSelectedEdge(null);
+          }}
+        />
+      </div>
     </div>
   );
 };
