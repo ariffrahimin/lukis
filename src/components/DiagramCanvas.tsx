@@ -16,6 +16,7 @@ import {
   Panel,
   ConnectionMode,
   MarkerType,
+  reconnectEdge,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -75,7 +76,8 @@ export const DiagramCanvas = () => {
     setEdges((eds) => addEdge({ 
       ...connection, 
       type: 'smoothstep',
-      markerEnd: { type: MarkerType.Arrow }
+      markerEnd: { type: MarkerType.Arrow },
+      reconnectable: true
     }, eds));
   }, [setEdges]);
 
@@ -179,6 +181,19 @@ export const DiagramCanvas = () => {
       nds.map((n) => (n.id === nodeId ? { ...n, data: { ...n.data, ...data } } : n))
     );
   }, [setNodes]);
+
+  const onReconnect = useCallback((oldEdge: Edge, newConnection: Connection) => {
+    setEdges((eds) => {
+      const reconnectedEdge = reconnectEdge(oldEdge, newConnection, eds);
+      if (reconnectedEdge) {
+        return Array.isArray(reconnectedEdge) ? reconnectedEdge : eds.map((edge) => 
+          edge.id === oldEdge.id ? reconnectedEdge : edge
+        );
+      }
+      return eds;
+    });
+    toast.success('Edge updated');
+  }, [setEdges]);
 
   const handleEdgeUpdate = useCallback((edgeId: string, data: Partial<Edge>) => {
     setEdges((eds) =>
@@ -354,6 +369,7 @@ export const DiagramCanvas = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onReconnect={onReconnect}
         onInit={setReactFlowInstance}
         onDrop={onDrop}
         onDragOver={onDragOver}
@@ -369,6 +385,7 @@ export const DiagramCanvas = () => {
           type: 'smoothstep',
           style: { strokeWidth: 2 },
           markerEnd: { type: MarkerType.Arrow },
+          reconnectable: true,
         }}
         connectionLineStyle={{ strokeWidth: 2 }}
         snapToGrid
