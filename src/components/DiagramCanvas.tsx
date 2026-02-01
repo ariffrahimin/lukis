@@ -53,6 +53,8 @@ export const DiagramCanvas = () => {
   const [selectedTool, setSelectedTool] = useState<'select' | 'pan' | NodeType>('select');
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
+  const [selectedNodes, setSelectedNodes] = useState<Node[]>([]);
+  const [selectedEdges, setSelectedEdges] = useState<Edge[]>([]);
 
   const { saveState, undo, redo, canUndo, canRedo } = useUndoRedo();
 
@@ -81,19 +83,37 @@ export const DiagramCanvas = () => {
     }, eds));
   }, [setEdges]);
 
-  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
-    setSelectedNode(node);
-    setSelectedEdge(null);
+  const onSelectionChange = useCallback(({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) => {
+    setSelectedNodes(nodes);
+    setSelectedEdges(edges);
+    
+    // Update single selection state for properties panel
+    if (nodes.length === 1) {
+      setSelectedNode(nodes[0]);
+    } else {
+      setSelectedNode(null);
+    }
+    
+    if (edges.length === 1) {
+      setSelectedEdge(edges[0]);
+    } else {
+      setSelectedEdge(null);
+    }
+  }, [setSelectedNodes, setSelectedEdges]);
+
+  const onNodeClick = useCallback((_: React.MouseEvent, _node: Node) => {
+    // Let onSelectionChange handle the selection state
   }, []);
 
-  const onEdgeClick = useCallback((_: React.MouseEvent, edge: Edge) => {
-    setSelectedEdge(edge);
-    setSelectedNode(null);
+  const onEdgeClick = useCallback((_: React.MouseEvent, _edge: Edge) => {
+    // Let onSelectionChange handle the selection state
   }, []);
 
   const onPaneClick = useCallback(() => {
     setSelectedNode(null);
     setSelectedEdge(null);
+    setSelectedNodes([]);
+    setSelectedEdges([]);
   }, []);
 
   const addNode = useCallback((type: NodeType) => {
@@ -146,17 +166,30 @@ export const DiagramCanvas = () => {
   }, []);
 
   const handleDelete = useCallback(() => {
-    if (selectedNode) {
-      setNodes((nds) => nds.filter((n) => n.id !== selectedNode.id));
-      setEdges((eds) => eds.filter((e) => e.source !== selectedNode.id && e.target !== selectedNode.id));
+    const nodeIdsToDelete = selectedNodes.map((n: Node) => n.id);
+    const edgeIdsToDelete = selectedEdges.map((e: Edge) => e.id);
+    
+    if (nodeIdsToDelete.length > 0 || edgeIdsToDelete.length > 0) {
+      // Delete selected nodes
+      setNodes((nds) => nds.filter((n) => !nodeIdsToDelete.includes(n.id)));
+      
+      // Delete edges connected to deleted nodes
+      setEdges((eds) => eds.filter((e) => 
+        !nodeIdsToDelete.includes(e.source) && 
+        !nodeIdsToDelete.includes(e.target) &&
+        !edgeIdsToDelete.includes(e.id)
+      ));
+      
+      // Clear selection
+      setSelectedNodes([]);
+      setSelectedEdges([]);
       setSelectedNode(null);
-      toast.success('Node deleted');
-    } else if (selectedEdge) {
-      setEdges((eds) => eds.filter((e) => e.id !== selectedEdge.id));
       setSelectedEdge(null);
-      toast.success('Edge deleted');
+      
+      const totalDeleted = nodeIdsToDelete.length + edgeIdsToDelete.length;
+      toast.success(`${totalDeleted} item${totalDeleted > 1 ? 's' : ''} deleted`);
     }
-  }, [selectedNode, selectedEdge, setNodes, setEdges]);
+  }, [selectedNodes, selectedEdges, setNodes, setEdges, setSelectedNodes, setSelectedEdges]);
 
   const handleUndo = useCallback(() => {
     const state = undo();
@@ -378,6 +411,9 @@ export const DiagramCanvas = () => {
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
         fitView
+        onSelectionChange={onSelectionChange}
+        multiSelectionKeyCode="Meta"
+        deleteKeyCode="Delete"
         panOnDrag={selectedTool === 'pan'}
         selectionOnDrag={selectedTool === 'select'}
         connectionMode={ConnectionMode.Loose}
