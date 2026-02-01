@@ -99,14 +99,26 @@ export const DiagramCanvas = () => {
     } else {
       setSelectedEdge(null);
     }
-  }, [setSelectedNodes, setSelectedEdges]);
-
-  const onNodeClick = useCallback((_: React.MouseEvent, _node: Node) => {
-    // Let onSelectionChange handle the selection state
   }, []);
 
-  const onEdgeClick = useCallback((_: React.MouseEvent, _edge: Edge) => {
-    // Let onSelectionChange handle the selection state
+  const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+    // Handle single click selection when not using multi-selection
+    if (!event.metaKey && !event.ctrlKey) {
+      setSelectedNodes([node]);
+      setSelectedEdges([]);
+      setSelectedNode(node);
+      setSelectedEdge(null);
+    }
+  }, []);
+
+  const onEdgeClick = useCallback((event: React.MouseEvent, edge: Edge) => {
+    // Handle single click selection when not using multi-selection
+    if (!event.metaKey && !event.ctrlKey) {
+      setSelectedNodes([]);
+      setSelectedEdges([edge]);
+      setSelectedNode(null);
+      setSelectedEdge(edge);
+    }
   }, []);
 
   const onPaneClick = useCallback(() => {
@@ -170,26 +182,30 @@ export const DiagramCanvas = () => {
     const edgeIdsToDelete = selectedEdges.map((e: Edge) => e.id);
     
     if (nodeIdsToDelete.length > 0 || edgeIdsToDelete.length > 0) {
-      // Delete selected nodes
-      setNodes((nds) => nds.filter((n) => !nodeIdsToDelete.includes(n.id)));
+      // Perform atomic updates to prevent race conditions
+      setNodes((nds) => {
+        const remainingNodes = nds.filter((n) => !nodeIdsToDelete.includes(n.id));
+        
+        // Update edges in the same callback to ensure consistency
+        setEdges((eds) => eds.filter((e) => 
+          !nodeIdsToDelete.includes(e.source) && 
+          !nodeIdsToDelete.includes(e.target) &&
+          !edgeIdsToDelete.includes(e.id)
+        ));
+        
+        return remainingNodes;
+      });
       
-      // Delete edges connected to deleted nodes
-      setEdges((eds) => eds.filter((e) => 
-        !nodeIdsToDelete.includes(e.source) && 
-        !nodeIdsToDelete.includes(e.target) &&
-        !edgeIdsToDelete.includes(e.id)
-      ));
-      
-      // Clear selection
+      // Clear selection state
       setSelectedNodes([]);
       setSelectedEdges([]);
       setSelectedNode(null);
       setSelectedEdge(null);
       
       const totalDeleted = nodeIdsToDelete.length + edgeIdsToDelete.length;
-      toast.success(`${totalDeleted} item${totalDeleted > 1 ? 's' : ''} deleted`);
+      toast.success(`${totalDeleted} item${totalDeleted !== 1 ? 's' : ''} deleted`);
     }
-  }, [selectedNodes, selectedEdges, setNodes, setEdges, setSelectedNodes, setSelectedEdges]);
+  }, [selectedNodes, selectedEdges, setNodes, setEdges]);
 
   const handleUndo = useCallback(() => {
     const state = undo();
@@ -315,6 +331,32 @@ export const DiagramCanvas = () => {
             if (!validEdges) {
               toast.error('Invalid file format: edges have invalid structure');
               return;
+            }
+            
+            // Check for circular references in edges
+            const hasCircularReference = (function detectCircular(nodeId: string, visited: Set<string>, path: Set<string>): boolean {
+              if (path.has(nodeId)) return true;
+              if (visited.has(nodeId)) return false;
+              
+              visited.add(nodeId);
+              path.add(nodeId);
+              
+              const outgoingEdges = data.edges.filter((edge: any) => edge.source === nodeId);
+              for (const edge of outgoingEdges) {
+                if (detectCircular(edge.target, visited, path)) {
+                  return true;
+                }
+              }
+              
+              path.delete(nodeId);
+              return false;
+            });
+            
+            for (const node of data.nodes) {
+              if (hasCircularReference(node.id, new Set(), new Set())) {
+                toast.error('Invalid file format: circular references detected in edges');
+                return;
+              }
             }
             
             // Sanitize imported data
