@@ -149,19 +149,6 @@ const NodeIcon = ({ type, className }: { type: NodeType; className?: string }) =
     case 'api': return <Globe {...iconProps} />;
     case 'text': return <Type {...iconProps} />;
     case 'group': return <Square {...iconProps} />;
-    case 'gcp-cloud-run':
-    case 'gcp-cloud-storage':
-    case 'gcp-bigquery':
-    case 'gcp-pub-sub':
-    case 'aws-ec2':
-    case 'aws-s3':
-    case 'aws-lambda':
-    case 'aws-rds':
-    case 'azure-vm':
-    case 'azure-blob-storage':
-    case 'azure-functions':
-    case 'azure-sql-database':
-      return <Cloud {...iconProps} />;
     default: return <Cloud {...iconProps} />;
   }
 };
@@ -193,94 +180,94 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
 
   if (isTextNode) {
     return (
-      <div 
+      <div
         className="px-2 py-1 relative"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <Handle 
-          type="target" 
-          position={Position.Top} 
+        <Handle
+          type="target"
+          position={Position.Top}
           id="target-top"
-          style={{ 
+          style={{
             ...getHandleStyle(false),
             top: -4,
             left: '50%',
             transform: 'translateX(-50%)'
           }}
         />
-        <Handle 
-          type="target" 
-          position={Position.Right} 
+        <Handle
+          type="target"
+          position={Position.Right}
           id="target-right"
-          style={{ 
+          style={{
             ...getHandleStyle(false),
             right: -4,
             top: '50%',
             transform: 'translateY(-50%)'
           }}
         />
-        <Handle 
-          type="target" 
-          position={Position.Bottom} 
+        <Handle
+          type="target"
+          position={Position.Bottom}
           id="target-bottom"
-          style={{ 
+          style={{
             ...getHandleStyle(false),
             bottom: -4,
             left: '50%',
             transform: 'translateX(-50%)'
           }}
         />
-        <Handle 
-          type="target" 
-          position={Position.Left} 
+        <Handle
+          type="target"
+          position={Position.Left}
           id="target-left"
-          style={{ 
+          style={{
             ...getHandleStyle(false),
             left: -4,
             top: '50%',
             transform: 'translateY(-50%)'
           }}
         />
-        
-        <Handle 
-          type="source" 
-          position={Position.Top} 
+
+        <Handle
+          type="source"
+          position={Position.Top}
           id="source-top"
-          style={{ 
+          style={{
             ...getHandleStyle(true),
             top: -4,
             left: '50%',
             transform: 'translateX(-50%)'
           }}
         />
-        <Handle 
-          type="source" 
-          position={Position.Right} 
+        <Handle
+          type="source"
+          position={Position.Right}
           id="source-right"
-          style={{ 
+          style={{
             ...getHandleStyle(true),
             right: -4,
             top: '50%',
             transform: 'translateY(-50%)'
           }}
         />
-        <Handle 
-          type="source" 
-          position={Position.Bottom} 
+        <Handle
+          type="source"
+          position={Position.Bottom}
           id="source-bottom"
-          style={{ 
+          style={{
             ...getHandleStyle(true),
             bottom: -4,
             left: '50%',
             transform: 'translateX(-50%)'
           }}
         />
-        <Handle 
-          type="source" 
-          position={Position.Left} 
+        <Handle
+          type="source"
+          position={Position.Left}
           id="source-left"
-          style={{ 
+          style={{
             ...getHandleStyle(true),
             left: -4,
             top: '50%',
@@ -295,7 +282,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
   // Cloud service nodes - display as icon with optional label
   if (isCloudServiceNode) {
     return (
-      <div 
+      <div
         className="flex flex-col items-center relative"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -305,7 +292,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           type="target"
           position={Position.Top}
           id="target-top"
-          style={{ 
+          style={{
             ...getHandleStyle(false),
             top: -4,
             left: '50%',
@@ -316,7 +303,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           type="target"
           position={Position.Right}
           id="target-right"
-          style={{ 
+          style={{
             ...getHandleStyle(false),
             right: -4,
             top: '50%',
@@ -327,7 +314,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           type="target"
           position={Position.Bottom}
           id="target-bottom"
-          style={{ 
+          style={{
             ...getHandleStyle(false),
             bottom: -4,
             left: '50%',
@@ -338,7 +325,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           type="target"
           position={Position.Left}
           id="target-left"
-          style={{ 
+          style={{
             ...getHandleStyle(false),
             left: -4,
             top: '50%',
@@ -352,8 +339,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           selected && 'ring-2 ring-primary ring-offset-2 ring-offset-background'
         )}>
           <div className="w-12 h-12 flex-shrink-0">
-            <img 
-              src={cloudServiceIcons[data.nodeType]} 
+            <img
+              src={cloudServiceIcons[data.nodeType]}
               alt={data.label}
               className="w-full h-full object-contain"
               onError={(e) => {
@@ -363,7 +350,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
                 if (fallback) fallback.style.display = 'flex';
               }}
             />
-            <div className="w-12 h-12 bg-muted rounded flex items-center justify-center text-xs font-medium" style={{display: 'none'}}>
+            <div className="w-12 h-12 bg-muted rounded flex items-center justify-center text-xs font-medium" style={{ display: 'none' }}>
               {data.label.substring(0, 2).toUpperCase()}
             </div>
           </div>
@@ -390,7 +377,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           type="source"
           position={Position.Top}
           id="source-top"
-          style={{ 
+          style={{
             ...getHandleStyle(true),
             top: -4,
             left: '50%',
@@ -401,7 +388,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           type="source"
           position={Position.Right}
           id="source-right"
-          style={{ 
+          style={{
             ...getHandleStyle(true),
             right: -4,
             top: '50%',
@@ -412,7 +399,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           type="source"
           position={Position.Bottom}
           id="source-bottom"
-          style={{ 
+          style={{
             ...getHandleStyle(true),
             bottom: -4,
             left: '50%',
@@ -423,7 +410,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           type="source"
           position={Position.Left}
           id="source-left"
-          style={{ 
+          style={{
             ...getHandleStyle(true),
             left: -4,
             top: '50%',
@@ -450,7 +437,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         type="target"
         position={Position.Top}
         id="target-top"
-        style={{ 
+        style={{
           ...getHandleStyle(false),
           top: -4,
           left: '50%',
@@ -461,7 +448,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         type="target"
         position={Position.Right}
         id="target-right"
-        style={{ 
+        style={{
           ...getHandleStyle(false),
           right: -4,
           top: '50%',
@@ -472,7 +459,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         type="target"
         position={Position.Bottom}
         id="target-bottom"
-        style={{ 
+        style={{
           ...getHandleStyle(false),
           bottom: -4,
           left: '50%',
@@ -483,7 +470,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         type="target"
         position={Position.Left}
         id="target-left"
-        style={{ 
+        style={{
           ...getHandleStyle(false),
           left: -4,
           top: '50%',
@@ -509,7 +496,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         type="source"
         position={Position.Top}
         id="source-top"
-        style={{ 
+        style={{
           ...getHandleStyle(true),
           top: -4,
           left: '50%',
@@ -520,7 +507,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         type="source"
         position={Position.Right}
         id="source-right"
-        style={{ 
+        style={{
           ...getHandleStyle(true),
           right: -4,
           top: '50%',
@@ -531,7 +518,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         type="source"
         position={Position.Bottom}
         id="source-bottom"
-        style={{ 
+        style={{
           ...getHandleStyle(true),
           bottom: -4,
           left: '50%',
@@ -542,7 +529,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         type="source"
         position={Position.Left}
         id="source-left"
-        style={{ 
+        style={{
           ...getHandleStyle(true),
           left: -4,
           top: '50%',
