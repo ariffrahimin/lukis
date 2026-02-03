@@ -1,7 +1,7 @@
-import { memo, useState } from 'react';
-import { Handle, Position } from '@xyflow/react';
-import { cn } from '../../lib/utils';
-import { type NodeType } from '../../types/diagrams';
+import { memo, useState } from "react";
+import { Handle, Position } from "@xyflow/react";
+import { cn } from "../../lib/utils";
+import { type NodeType } from "../../types/diagrams";
 import {
   Server,
   Database,
@@ -10,146 +10,180 @@ import {
   HardDrive,
   Globe,
   Type,
-  Square
-} from 'lucide-react';
+  Square,
+} from "lucide-react";
 
+// GCP Icons
+import cloudRunIcon from "../cloud-services/gcp/cloud-run.svg";
+import cloudStorageIcon from "../cloud-services/gcp/cloud-storage.svg";
+import bigqueryIcon from "../cloud-services/gcp/bigquery.svg";
+import pubSubIcon from "../cloud-services/gcp/pub-sub.svg";
+
+// AWS Icons
+import ec2Icon from "../cloud-services/aws/ec2.svg";
+import s3Icon from "../cloud-services/aws/s3.svg";
+import lambdaIcon from "../cloud-services/aws/lambda.svg";
+import rdsIcon from "../cloud-services/aws/rds.svg";
+
+// Azure Icons
+import vmIcon from "../cloud-services/azure/vm.svg";
+import blobStorageIcon from "../cloud-services/azure/blob-storage.svg";
+import functionsIcon from "../cloud-services/azure/functions.svg";
+import sqlDatabaseIcon from "../cloud-services/azure/sql-database.svg";
 // Cloud service icon mapping
 const cloudServiceIcons: Record<string, string> = {
-  'gcp-cloud-run': '/src/components/cloud-services/gcp/cloud-run.svg',
-  'gcp-cloud-storage': '/src/components/cloud-services/gcp/cloud-storage.svg',
-  'gcp-bigquery': '/src/components/cloud-services/gcp/bigquery.svg',
-  'gcp-pub-sub': '/src/components/cloud-services/gcp/pub-sub.svg',
-  'aws-ec2': '/src/components/cloud-services/aws/ec2.svg',
-  'aws-s3': '/src/components/cloud-services/aws/s3.svg',
-  'aws-lambda': '/src/components/cloud-services/aws/lambda.svg',
-  'aws-rds': '/src/components/cloud-services/aws/rds.svg',
-  'azure-vm': '/src/components/cloud-services/azure/vm.svg',
-  'azure-blob-storage': '/src/components/cloud-services/azure/blob-storage.svg',
-  'azure-functions': '/src/components/cloud-services/azure/functions.svg',
-  'azure-sql-database': '/src/components/cloud-services/azure/sql-database.svg',
+  "gcp-cloud-run": cloudRunIcon,
+  "gcp-cloud-storage": cloudStorageIcon,
+  "gcp-bigquery": bigqueryIcon,
+  "gcp-pub-sub": pubSubIcon,
+  "aws-ec2": ec2Icon,
+  "aws-s3": s3Icon,
+  "aws-lambda": lambdaIcon,
+  "aws-rds": rdsIcon,
+  "azure-vm": vmIcon,
+  "azure-blob-storage": blobStorageIcon,
+  "azure-functions": functionsIcon,
+  "azure-sql-database": sqlDatabaseIcon,
 };
-
 // Helper function to check if node type is a cloud service
 const isCloudService = (nodeType: NodeType): boolean => {
   return nodeType in cloudServiceIcons;
 };
 
-const nodeTypeStyles: Record<NodeType, { bg: string; border: string; icon: string }> = {
+const nodeTypeStyles: Record<
+  NodeType,
+  { bg: string; border: string; icon: string }
+> = {
   service: {
-    bg: 'bg-[hsl(187_72%_50%/0.15)]',
-    border: 'border-[hsl(187_72%_50%/0.5)]',
-    icon: 'text-[hsl(187_72%_50%)]'
+    bg: "bg-[hsl(187_72%_50%/0.15)]",
+    border: "border-[hsl(187_72%_50%/0.5)]",
+    icon: "text-[hsl(187_72%_50%)]",
   },
   database: {
-    bg: 'bg-[hsl(262_83%_58%/0.15)]',
-    border: 'border-[hsl(262_83%_58%/0.5)]',
-    icon: 'text-[hsl(262_83%_58%)]'
+    bg: "bg-[hsl(262_83%_58%/0.15)]",
+    border: "border-[hsl(262_83%_58%/0.5)]",
+    icon: "text-[hsl(262_83%_58%)]",
   },
   server: {
-    bg: 'bg-[hsl(142_71%_45%/0.15)]',
-    border: 'border-[hsl(142_71%_45%/0.5)]',
-    icon: 'text-[hsl(142_71%_45%)]'
+    bg: "bg-[hsl(142_71%_45%/0.15)]",
+    border: "border-[hsl(142_71%_45%/0.5)]",
+    icon: "text-[hsl(142_71%_45%)]",
   },
   client: {
-    bg: 'bg-[hsl(38_92%_50%/0.15)]',
-    border: 'border-[hsl(38_92%_50%/0.5)]',
-    icon: 'text-[hsl(38_92%_50%)]'
+    bg: "bg-[hsl(38_92%_50%/0.15)]",
+    border: "border-[hsl(38_92%_50%/0.5)]",
+    icon: "text-[hsl(38_92%_50%)]",
   },
   storage: {
-    bg: 'bg-[hsl(346_77%_50%/0.15)]',
-    border: 'border-[hsl(346_77%_50%/0.5)]',
-    icon: 'text-[hsl(346_77%_50%)]'
+    bg: "bg-[hsl(346_77%_50%/0.15)]",
+    border: "border-[hsl(346_77%_50%/0.5)]",
+    icon: "text-[hsl(346_77%_50%)]",
   },
   api: {
-    bg: 'bg-[hsl(199_89%_48%/0.15)]',
-    border: 'border-[hsl(199_89%_48%/0.5)]',
-    icon: 'text-[hsl(199_89%_48%)]'
+    bg: "bg-[hsl(199_89%_48%/0.15)]",
+    border: "border-[hsl(199_89%_48%/0.5)]",
+    icon: "text-[hsl(199_89%_48%)]",
   },
   text: {
-    bg: 'bg-transparent',
-    border: 'border-transparent',
-    icon: 'text-foreground'
+    bg: "bg-transparent",
+    border: "border-transparent",
+    icon: "text-foreground",
   },
   group: {
-    bg: 'bg-secondary/30',
-    border: 'border-border border-dashed',
-    icon: 'text-muted-foreground'
+    bg: "bg-secondary/30",
+    border: "border-border border-dashed",
+    icon: "text-muted-foreground",
   },
-  'gcp-cloud-run': {
-    bg: 'bg-blue-100/20',
-    border: 'border-blue-300/50',
-    icon: 'text-blue-600'
+  "gcp-cloud-run": {
+    bg: "bg-blue-100/20",
+    border: "border-blue-300/50",
+    icon: "text-blue-600",
   },
-  'gcp-cloud-storage': {
-    bg: 'bg-red-100/20',
-    border: 'border-red-300/50',
-    icon: 'text-red-600'
+  "gcp-cloud-storage": {
+    bg: "bg-red-100/20",
+    border: "border-red-300/50",
+    icon: "text-red-600",
   },
-  'gcp-bigquery': {
-    bg: 'bg-blue-100/20',
-    border: 'border-blue-300/50',
-    icon: 'text-blue-600'
+  "gcp-bigquery": {
+    bg: "bg-blue-100/20",
+    border: "border-blue-300/50",
+    icon: "text-blue-600",
   },
-  'gcp-pub-sub': {
-    bg: 'bg-yellow-100/20',
-    border: 'border-yellow-300/50',
-    icon: 'text-yellow-600'
+  "gcp-pub-sub": {
+    bg: "bg-yellow-100/20",
+    border: "border-yellow-300/50",
+    icon: "text-yellow-600",
   },
-  'aws-ec2': {
-    bg: 'bg-orange-100/20',
-    border: 'border-orange-300/50',
-    icon: 'text-orange-600'
+  "aws-ec2": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
   },
-  'aws-s3': {
-    bg: 'bg-orange-100/20',
-    border: 'border-orange-300/50',
-    icon: 'text-orange-600'
+  "aws-s3": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
   },
-  'aws-lambda': {
-    bg: 'bg-orange-100/20',
-    border: 'border-orange-300/50',
-    icon: 'text-orange-600'
+  "aws-lambda": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
   },
-  'aws-rds': {
-    bg: 'bg-orange-100/20',
-    border: 'border-orange-300/50',
-    icon: 'text-orange-600'
+  "aws-rds": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
   },
-  'azure-vm': {
-    bg: 'bg-cyan-100/20',
-    border: 'border-cyan-300/50',
-    icon: 'text-cyan-600'
+  "azure-vm": {
+    bg: "bg-cyan-100/20",
+    border: "border-cyan-300/50",
+    icon: "text-cyan-600",
   },
-  'azure-blob-storage': {
-    bg: 'bg-cyan-100/20',
-    border: 'border-cyan-300/50',
-    icon: 'text-cyan-600'
+  "azure-blob-storage": {
+    bg: "bg-cyan-100/20",
+    border: "border-cyan-300/50",
+    icon: "text-cyan-600",
   },
-  'azure-functions': {
-    bg: 'bg-cyan-100/20',
-    border: 'border-cyan-300/50',
-    icon: 'text-cyan-600'
+  "azure-functions": {
+    bg: "bg-cyan-100/20",
+    border: "border-cyan-300/50",
+    icon: "text-cyan-600",
   },
-  'azure-sql-database': {
-    bg: 'bg-cyan-100/20',
-    border: 'border-cyan-300/50',
-    icon: 'text-cyan-600'
+  "azure-sql-database": {
+    bg: "bg-cyan-100/20",
+    border: "border-cyan-300/50",
+    icon: "text-cyan-600",
   },
 };
 
-const NodeIcon = ({ type, className }: { type: NodeType; className?: string }) => {
-  const iconProps = { className: cn('w-5 h-5', className) };
+const NodeIcon = ({
+  type,
+  className,
+}: {
+  type: NodeType;
+  className?: string;
+}) => {
+  const iconProps = { className: cn("w-5 h-5", className) };
 
   switch (type) {
-    case 'service': return <Cloud {...iconProps} />;
-    case 'database': return <Database {...iconProps} />;
-    case 'server': return <Server {...iconProps} />;
-    case 'client': return <Monitor {...iconProps} />;
-    case 'storage': return <HardDrive {...iconProps} />;
-    case 'api': return <Globe {...iconProps} />;
-    case 'text': return <Type {...iconProps} />;
-    case 'group': return <Square {...iconProps} />;
-    default: return <Cloud {...iconProps} />;
+    case "service":
+      return <Cloud {...iconProps} />;
+    case "database":
+      return <Database {...iconProps} />;
+    case "server":
+      return <Server {...iconProps} />;
+    case "client":
+      return <Monitor {...iconProps} />;
+    case "storage":
+      return <HardDrive {...iconProps} />;
+    case "api":
+      return <Globe {...iconProps} />;
+    case "text":
+      return <Type {...iconProps} />;
+    case "group":
+      return <Square {...iconProps} />;
+    default:
+      return <Cloud {...iconProps} />;
   }
 };
 
@@ -165,17 +199,17 @@ interface BaseNodeProps {
 
 const BaseNode = ({ data, selected }: BaseNodeProps) => {
   const styles = nodeTypeStyles[data.nodeType];
-  const isTextNode = data.nodeType === 'text';
-  const isGroupNode = data.nodeType === 'group';
+  const isTextNode = data.nodeType === "text";
+  const isGroupNode = data.nodeType === "group";
   const isCloudServiceNode = isCloudService(data.nodeType);
   const [isHovered, setIsHovered] = useState(false);
 
   const getHandleStyle = (isSource: boolean = false) => ({
-    background: isSource ? '#10b981' : '#3b82f6',
+    background: isSource ? "#10b981" : "#3b82f6",
     width: 8,
     height: 8,
     opacity: selected || isHovered ? 1 : 0,
-    transition: 'opacity 0.2s ease-in-out'
+    transition: "opacity 0.2s ease-in-out",
   });
 
   if (isTextNode) {
@@ -192,8 +226,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(false),
             top: -4,
-            left: '50%',
-            transform: 'translateX(-50%)'
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
         />
         <Handle
@@ -203,8 +237,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(false),
             right: -4,
-            top: '50%',
-            transform: 'translateY(-50%)'
+            top: "50%",
+            transform: "translateY(-50%)",
           }}
         />
         <Handle
@@ -214,8 +248,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(false),
             bottom: -4,
-            left: '50%',
-            transform: 'translateX(-50%)'
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
         />
         <Handle
@@ -225,8 +259,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(false),
             left: -4,
-            top: '50%',
-            transform: 'translateY(-50%)'
+            top: "50%",
+            transform: "translateY(-50%)",
           }}
         />
 
@@ -237,8 +271,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(true),
             top: -4,
-            left: '50%',
-            transform: 'translateX(-50%)'
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
         />
         <Handle
@@ -248,8 +282,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(true),
             right: -4,
-            top: '50%',
-            transform: 'translateY(-50%)'
+            top: "50%",
+            transform: "translateY(-50%)",
           }}
         />
         <Handle
@@ -259,8 +293,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(true),
             bottom: -4,
-            left: '50%',
-            transform: 'translateX(-50%)'
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
         />
         <Handle
@@ -270,11 +304,13 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(true),
             left: -4,
-            top: '50%',
-            transform: 'translateY(-50%)'
+            top: "50%",
+            transform: "translateY(-50%)",
           }}
         />
-        <span className="text-foreground font-medium text-sm">{data.label}</span>
+        <span className="text-foreground font-medium text-sm">
+          {data.label}
+        </span>
       </div>
     );
   }
@@ -295,8 +331,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(false),
             top: -4,
-            left: '50%',
-            transform: 'translateX(-50%)'
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
         />
         <Handle
@@ -306,8 +342,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(false),
             right: -4,
-            top: '50%',
-            transform: 'translateY(-50%)'
+            top: "50%",
+            transform: "translateY(-50%)",
           }}
         />
         <Handle
@@ -317,8 +353,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(false),
             bottom: -4,
-            left: '50%',
-            transform: 'translateX(-50%)'
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
         />
         <Handle
@@ -328,16 +364,19 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(false),
             left: -4,
-            top: '50%',
-            transform: 'translateY(-50%)'
+            top: "50%",
+            transform: "translateY(-50%)",
           }}
         />
 
         {/* Icon container */}
-        <div className={cn(
-          'p-2 rounded-lg transition-all duration-200',
-          selected && 'ring-2 ring-primary ring-offset-2 ring-offset-background'
-        )}>
+        <div
+          className={cn(
+            "p-2 rounded-lg transition-all duration-200",
+            selected &&
+              "ring-2 ring-primary ring-offset-2 ring-offset-background",
+          )}
+        >
           <div className="w-12 h-12 flex-shrink-0">
             <img
               src={cloudServiceIcons[data.nodeType]}
@@ -345,12 +384,15 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
               className="w-full h-full object-contain"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
+                target.style.display = "none";
                 const fallback = target.nextElementSibling as HTMLDivElement;
-                if (fallback) fallback.style.display = 'flex';
+                if (fallback) fallback.style.display = "flex";
               }}
             />
-            <div className="w-12 h-12 bg-muted rounded flex items-center justify-center text-xs font-medium" style={{ display: 'none' }}>
+            <div
+              className="w-12 h-12 bg-muted rounded flex items-center justify-center text-xs font-medium"
+              style={{ display: "none" }}
+            >
               {data.label.substring(0, 2).toUpperCase()}
             </div>
           </div>
@@ -380,8 +422,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(true),
             top: -4,
-            left: '50%',
-            transform: 'translateX(-50%)'
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
         />
         <Handle
@@ -391,8 +433,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(true),
             right: -4,
-            top: '50%',
-            transform: 'translateY(-50%)'
+            top: "50%",
+            transform: "translateY(-50%)",
           }}
         />
         <Handle
@@ -402,8 +444,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(true),
             bottom: -4,
-            left: '50%',
-            transform: 'translateX(-50%)'
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
         />
         <Handle
@@ -413,8 +455,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
           style={{
             ...getHandleStyle(true),
             left: -4,
-            top: '50%',
-            transform: 'translateY(-50%)'
+            top: "50%",
+            transform: "translateY(-50%)",
           }}
         />
       </div>
@@ -424,11 +466,11 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
   return (
     <div
       className={cn(
-        'min-w-[140px] rounded-lg border-2 backdrop-blur-sm transition-all duration-200',
+        "min-w-[140px] rounded-lg border-2 backdrop-blur-sm transition-all duration-200",
         styles.bg,
         styles.border,
-        selected && 'ring-2 ring-primary ring-offset-2 ring-offset-background',
-        isGroupNode && 'min-w-[200px] min-h-[120px]'
+        selected && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+        isGroupNode && "min-w-[200px] min-h-[120px]",
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -440,8 +482,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         style={{
           ...getHandleStyle(false),
           top: -4,
-          left: '50%',
-          transform: 'translateX(-50%)'
+          left: "50%",
+          transform: "translateX(-50%)",
         }}
       />
       <Handle
@@ -451,8 +493,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         style={{
           ...getHandleStyle(false),
           right: -4,
-          top: '50%',
-          transform: 'translateY(-50%)'
+          top: "50%",
+          transform: "translateY(-50%)",
         }}
       />
       <Handle
@@ -462,8 +504,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         style={{
           ...getHandleStyle(false),
           bottom: -4,
-          left: '50%',
-          transform: 'translateX(-50%)'
+          left: "50%",
+          transform: "translateX(-50%)",
         }}
       />
       <Handle
@@ -473,12 +515,12 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         style={{
           ...getHandleStyle(false),
           left: -4,
-          top: '50%',
-          transform: 'translateY(-50%)'
+          top: "50%",
+          transform: "translateY(-50%)",
         }}
       />
 
-      <div className={cn('p-3', isGroupNode && 'pb-16')}>
+      <div className={cn("p-3", isGroupNode && "pb-16")}>
         <div className="flex items-center gap-2">
           <NodeIcon type={data.nodeType} className={styles.icon} />
           <span className="font-medium text-sm text-foreground truncate max-w-[120px]">
@@ -499,8 +541,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         style={{
           ...getHandleStyle(true),
           top: -4,
-          left: '50%',
-          transform: 'translateX(-50%)'
+          left: "50%",
+          transform: "translateX(-50%)",
         }}
       />
       <Handle
@@ -510,8 +552,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         style={{
           ...getHandleStyle(true),
           right: -4,
-          top: '50%',
-          transform: 'translateY(-50%)'
+          top: "50%",
+          transform: "translateY(-50%)",
         }}
       />
       <Handle
@@ -521,8 +563,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         style={{
           ...getHandleStyle(true),
           bottom: -4,
-          left: '50%',
-          transform: 'translateX(-50%)'
+          left: "50%",
+          transform: "translateX(-50%)",
         }}
       />
       <Handle
@@ -532,8 +574,8 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         style={{
           ...getHandleStyle(true),
           left: -4,
-          top: '50%',
-          transform: 'translateY(-50%)'
+          top: "50%",
+          transform: "translateY(-50%)",
         }}
       />
     </div>

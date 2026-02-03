@@ -1,9 +1,26 @@
-import { useState } from 'react';
-import { type NodeType } from '../types/diagrams';
-import { Switch } from './ui/switch';
-import { Label } from './ui/label';
-import { Separator } from './ui/separator';
-import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { useState } from "react";
+import { type NodeType } from "../types/diagrams";
+import { Switch } from "./ui/switch";
+import { Label } from "./ui/label";
+import { Separator } from "./ui/separator";
+import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+// GCP Icons
+import cloudRunIcon from "./cloud-services/gcp/cloud-run.svg";
+import cloudStorageIcon from "./cloud-services/gcp/cloud-storage.svg";
+import bigqueryIcon from "./cloud-services/gcp/bigquery.svg";
+import pubSubIcon from "./cloud-services/gcp/pub-sub.svg";
+
+// AWS Icons
+import ec2Icon from "./cloud-services/aws/ec2.svg";
+import s3Icon from "./cloud-services/aws/s3.svg";
+import lambdaIcon from "./cloud-services/aws/lambda.svg";
+import rdsIcon from "./cloud-services/aws/rds.svg";
+
+// Azure Icons
+import vmIcon from "./cloud-services/azure/vm.svg";
+import blobStorageIcon from "./cloud-services/azure/blob-storage.svg";
+import functionsIcon from "./cloud-services/azure/functions.svg";
+import sqlDatabaseIcon from "./cloud-services/azure/sql-database.svg";
 
 interface CloudService {
   type: NodeType;
@@ -16,48 +33,98 @@ interface CloudProvider {
   services: CloudService[];
 }
 
-const cloudProviders: CloudProvider[] = [
-  {
-    name: 'GCP',
-    services: [
-      { type: 'gcp-cloud-run', label: 'Cloud Run', icon: '/src/components/cloud-services/gcp/cloud-run.svg' },
-      { type: 'gcp-cloud-storage', label: 'Cloud Storage', icon: '/src/components/cloud-services/gcp/cloud-storage.svg' },
-      { type: 'gcp-bigquery', label: 'BigQuery', icon: '/src/components/cloud-services/gcp/bigquery.svg' },
-      { type: 'gcp-pub-sub', label: 'Pub/Sub', icon: '/src/components/cloud-services/gcp/pub-sub.svg' },
-    ]
-  },
-  {
-    name: 'AWS',
-    services: [
-      { type: 'aws-ec2', label: 'EC2', icon: '/src/components/cloud-services/aws/ec2.svg' },
-      { type: 'aws-s3', label: 'S3', icon: '/src/components/cloud-services/aws/s3.svg' },
-      { type: 'aws-lambda', label: 'Lambda', icon: '/src/components/cloud-services/aws/lambda.svg' },
-      { type: 'aws-rds', label: 'RDS', icon: '/src/components/cloud-services/aws/rds.svg' },
-    ]
-  },
-  {
-    name: 'Azure',
-    services: [
-      { type: 'azure-vm', label: 'VM', icon: '/src/components/cloud-services/azure/vm.svg' },
-      { type: 'azure-blob-storage', label: 'Blob Storage', icon: '/src/components/cloud-services/azure/blob-storage.svg' },
-      { type: 'azure-functions', label: 'Functions', icon: '/src/components/cloud-services/azure/functions.svg' },
-      { type: 'azure-sql-database', label: 'SQL Database', icon: '/src/components/cloud-services/azure/sql-database.svg' },
-    ]
-  }
-];
-
 interface CloudServicesPanelProps {
   onServiceSelect: (type: NodeType) => void;
 }
 
-export const CloudServicesPanel = ({ onServiceSelect }: CloudServicesPanelProps) => {
+export const CloudServicesPanel = ({
+  onServiceSelect,
+}: CloudServicesPanelProps) => {
   const [showLabels, setShowLabels] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [expandedProviders, setExpandedProviders] = useState<Set<string>>(new Set(['GCP']));
-
+  const [expandedProviders, setExpandedProviders] = useState<Set<string>>(
+    new Set(["GCP"]),
+  );
+  const cloudProviders: CloudProvider[] = [
+    {
+      name: "GCP",
+      services: [
+        {
+          type: "gcp-cloud-run",
+          label: "Cloud Run",
+          icon: cloudRunIcon,
+        },
+        {
+          type: "gcp-cloud-storage",
+          label: "Cloud Storage",
+          icon: cloudStorageIcon,
+        },
+        {
+          type: "gcp-bigquery",
+          label: "BigQuery",
+          icon: bigqueryIcon,
+        },
+        {
+          type: "gcp-pub-sub",
+          label: "Pub/Sub",
+          icon: pubSubIcon,
+        },
+      ],
+    },
+    {
+      name: "AWS",
+      services: [
+        {
+          type: "aws-ec2",
+          label: "EC2",
+          icon: ec2Icon,
+        },
+        {
+          type: "aws-s3",
+          label: "S3",
+          icon: s3Icon,
+        },
+        {
+          type: "aws-lambda",
+          label: "Lambda",
+          icon: lambdaIcon,
+        },
+        {
+          type: "aws-rds",
+          label: "RDS",
+          icon: rdsIcon,
+        },
+      ],
+    },
+    {
+      name: "Azure",
+      services: [
+        {
+          type: "azure-vm",
+          label: "VM",
+          icon: vmIcon,
+        },
+        {
+          type: "azure-blob-storage",
+          label: "Blob Storage",
+          icon: blobStorageIcon,
+        },
+        {
+          type: "azure-functions",
+          label: "Functions",
+          icon: functionsIcon,
+        },
+        {
+          type: "azure-sql-database",
+          label: "SQL Database",
+          icon: sqlDatabaseIcon,
+        },
+      ],
+    },
+  ];
   const handleDragStart = (event: React.DragEvent, nodeType: NodeType) => {
-    event.dataTransfer.setData('application/reactflow', nodeType);
-    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData("application/reactflow", nodeType);
+    event.dataTransfer.effectAllowed = "move";
   };
 
   const toggleProvider = (providerName: string) => {
@@ -103,7 +170,10 @@ export const CloudServicesPanel = ({ onServiceSelect }: CloudServicesPanelProps)
             checked={showLabels}
             onCheckedChange={setShowLabels}
           />
-          <Label htmlFor="show-labels" className="text-sm text-muted-foreground">
+          <Label
+            htmlFor="show-labels"
+            className="text-sm text-muted-foreground"
+          >
             Show Labels
           </Label>
         </div>
@@ -119,13 +189,13 @@ export const CloudServicesPanel = ({ onServiceSelect }: CloudServicesPanelProps)
               <h4 className="text-sm font-medium text-foreground">
                 {provider.name}
               </h4>
-              <ChevronDown 
+              <ChevronDown
                 className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
-                  expandedProviders.has(provider.name) ? '' : 'rotate-270'
+                  expandedProviders.has(provider.name) ? "" : "rotate-270"
                 }`}
               />
             </button>
-            
+
             {expandedProviders.has(provider.name) && (
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {provider.services.map((service) => (
@@ -137,18 +207,22 @@ export const CloudServicesPanel = ({ onServiceSelect }: CloudServicesPanelProps)
                     className="flex flex-col items-center justify-center p-2 rounded-lg border border-border bg-card hover:bg-muted/50 cursor-grab active:cursor-grabbing transition-all duration-200 min-h-[60px]"
                   >
                     <div className="w-8 h-8 flex-shrink-0">
-                      <img 
-                        src={service.icon} 
+                      <img
+                        src={service.icon}
                         alt={service.label}
                         className="w-full h-full object-contain"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const fallback = target.nextElementSibling as HTMLDivElement;
-                          if (fallback) fallback.style.display = 'flex';
+                          target.style.display = "none";
+                          const fallback =
+                            target.nextElementSibling as HTMLDivElement;
+                          if (fallback) fallback.style.display = "flex";
                         }}
                       />
-                      <div className="w-8 h-8 bg-muted rounded flex items-center justify-center text-xs font-medium" style={{display: 'none'}}>
+                      <div
+                        className="w-8 h-8 bg-muted rounded flex items-center justify-center text-xs font-medium"
+                        style={{ display: "none" }}
+                      >
                         {service.label.substring(0, 2).toUpperCase()}
                       </div>
                     </div>
