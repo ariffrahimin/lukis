@@ -20,17 +20,14 @@ jobs:
         with:
           node-version: '22.x'
       
-      # Install pnpm
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
       
-      # Install dependencies with pnpm
       - name: Install dependencies
         run: pnpm install
       
-      # Build the application
       - name: Build application
         run: pnpm build
       
@@ -39,15 +36,17 @@ jobs:
         with:
           name: node-app
           path: |
-            .next
-            public
+            dist
+            build
             package.json
             pnpm-lock.yaml
-            node_modules
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     
     steps:
       - name: Download artifact from build job
