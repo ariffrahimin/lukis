@@ -1,5 +1,4 @@
 name: Build and deploy Node.js app to Azure Web App - basically
-
 on:
   push:
     branches:
@@ -31,12 +30,30 @@ jobs:
       - name: Build application
         run: pnpm build
       
+      - name: Verify build output
+        run: |
+          echo "Checking dist directory..."
+          ls -la dist/
+          echo "Checking for assets..."
+          ls -la dist/assets/ || echo "No assets directory"
+      
       - name: Create deployment package
         run: |
           mkdir -p deployment
-          cp -r dist deployment/ || cp -r build deployment/
+          cp -r dist/* deployment/
           cp package.json deployment/
-          echo '{"name":"lukis","version":"0.0.0","scripts":{"start":"npx serve -s dist -l 8080"}}' > deployment/package.json
+          cp pnpm-lock.yaml deployment/ || true
+          
+          # Create a minimal package.json for serving
+          cat > deployment/package.json << 'EOF'
+          {
+            "name": "basically",
+            "version": "0.0.0",
+            "scripts": {
+              "start": "npx serve -s . -l 8080"
+            }
+          }
+          EOF
       
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -57,6 +74,11 @@ jobs:
         with:
           name: node-app
       
+      - name: Verify deployment package
+        run: |
+          echo "Deployment package contents:"
+          ls -la
+          
       - name: Create .deployment file
         run: |
           echo '[config]' > .deployment
