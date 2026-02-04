@@ -9,6 +9,15 @@ import cloudRunIcon from "./cloud-services/gcp/cloud-run.svg";
 import cloudStorageIcon from "./cloud-services/gcp/cloud-storage.svg";
 import bigqueryIcon from "./cloud-services/gcp/bigquery.svg";
 import pubSubIcon from "./cloud-services/gcp/pub-sub.svg";
+import apigeeIcon from "./cloud-services/gcp/apigee.svg";
+import billingIcon from "./cloud-services/gcp/billing.svg";
+import cloudBuildIcon from "./cloud-services/gcp/cloud-build.svg";
+import cloudMonitoringIcon from "./cloud-services/gcp/cloud-monitoring.svg";
+import cloudSqlIcon from "./cloud-services/gcp/cloud-sql.svg";
+import computeEngineIcon from "./cloud-services/gcp/compute-engine.svg";
+import iamIcon from "./cloud-services/gcp/iam.svg";
+import kubernetesIcon from "./cloud-services/gcp/kubernetes.svg";
+import securityIcon from "./cloud-services/gcp/security.svg";
 
 // AWS Icons
 import ec2Icon from "./cloud-services/aws/ec2.svg";
@@ -68,6 +77,51 @@ export const CloudServicesPanel = ({
           type: "gcp-pub-sub",
           label: "Pub/Sub",
           icon: pubSubIcon,
+        },
+        {
+          type: "gcp-apigee",
+          label: "Apigee",
+          icon: apigeeIcon,
+        },
+        {
+          type: "gcp-billing",
+          label: "Billing",
+          icon: billingIcon,
+        },
+        {
+          type: "gcp-cloud-build",
+          label: "Cloud Build",
+          icon: cloudBuildIcon,
+        },
+        {
+          type: "gcp-cloud-monitoring",
+          label: "Cloud Monitoring",
+          icon: cloudMonitoringIcon,
+        },
+        {
+          type: "gcp-cloud-sql",
+          label: "Cloud SQL",
+          icon: cloudSqlIcon,
+        },
+        {
+          type: "gcp-compute-engine",
+          label: "Compute Engine",
+          icon: computeEngineIcon,
+        },
+        {
+          type: "gcp-iam",
+          label: "IAM",
+          icon: iamIcon,
+        },
+        {
+          type: "gcp-kubernetes",
+          label: "Kubernetes",
+          icon: kubernetesIcon,
+        },
+        {
+          type: "gcp-security",
+          label: "Security",
+          icon: securityIcon,
         },
       ],
     },

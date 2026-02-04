@@ -26,7 +26,7 @@ const isValidNodeData = (data: unknown): data is NodeData => {
     'nodeType' in obj &&
     typeof obj.nodeType === 'string' &&
     ['service', 'database', 'server', 'client', 'storage', 'api', 'text', 'group', 
-     'gcp-cloud-run', 'gcp-cloud-storage', 'gcp-bigquery', 'gcp-pub-sub',
+     'gcp-cloud-run', 'gcp-cloud-storage', 'gcp-bigquery', 'gcp-pub-sub','gcp-apigee','gcp-billing','gcp-cloud-build','gcp-cloud-monitoring','gcp-compute-engine','gcp-iam','gcp-kubernetes','gcp-security','gcp-cloud-sql',
      'aws-ec2', 'aws-s3', 'aws-lambda', 'aws-rds',
      'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database'].includes(obj.nodeType)
   );
@@ -61,7 +61,7 @@ export const PropertiesPanel = ({
 
   const nodeData = selectedNode?.data && isValidNodeData(selectedNode.data) ? selectedNode.data : undefined;
   const isCloudService = nodeData?.nodeType && [
-    'gcp-cloud-run', 'gcp-cloud-storage', 'gcp-bigquery', 'gcp-pub-sub',
+    'gcp-cloud-run', 'gcp-cloud-storage', 'gcp-bigquery', 'gcp-pub-sub','gcp-apigee','gcp-billing','gcp-cloud-build','gcp-cloud-monitoring','gcp-compute-engine','gcp-iam','gcp-kubernetes','gcp-security','gcp-cloud-sql',
     'aws-ec2', 'aws-s3', 'aws-lambda', 'aws-rds',
     'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database'
   ].includes(nodeData.nodeType);
@@ -338,12 +338,7 @@ export const PropertiesPanel = ({
               </button>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Connection</Label>
-              <div className="text-xs text-muted-foreground px-3 py-2 bg-secondary/50 rounded-lg">
-                {selectedEdge.source} → {selectedEdge.target}
-              </div>
-            </div>
+    
           </>
         )}
       </div>

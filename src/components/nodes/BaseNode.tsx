@@ -18,6 +18,15 @@ import cloudRunIcon from "../cloud-services/gcp/cloud-run.svg";
 import cloudStorageIcon from "../cloud-services/gcp/cloud-storage.svg";
 import bigqueryIcon from "../cloud-services/gcp/bigquery.svg";
 import pubSubIcon from "../cloud-services/gcp/pub-sub.svg";
+import apigeeIcon from "../cloud-services/gcp/apigee.svg";
+import billingIcon from "../cloud-services/gcp/billing.svg";
+import cloudBuildIcon from "../cloud-services/gcp/cloud-build.svg";
+import cloudMonitoringIcon from "../cloud-services/gcp/cloud-monitoring.svg";
+import cloudSqlIcon from "../cloud-services/gcp/cloud-sql.svg";
+import computeEngineIcon from "../cloud-services/gcp/compute-engine.svg";
+import iamIcon from "../cloud-services/gcp/iam.svg";
+import kubernetesIcon from "../cloud-services/gcp/kubernetes.svg";
+import securityIcon from "../cloud-services/gcp/security.svg";
 
 // AWS Icons
 import ec2Icon from "../cloud-services/aws/ec2.svg";
@@ -36,6 +45,15 @@ const cloudServiceIcons: Record<string, string> = {
   "gcp-cloud-storage": cloudStorageIcon,
   "gcp-bigquery": bigqueryIcon,
   "gcp-pub-sub": pubSubIcon,
+  "gcp-apigee": apigeeIcon,
+  "gcp-billing": billingIcon,
+  "gcp-cloud-build": cloudBuildIcon,
+  "gcp-cloud-monitoring": cloudMonitoringIcon,
+  "gcp-cloud-sql": cloudSqlIcon,
+  "gcp-compute-engine": computeEngineIcon,
+  "gcp-iam": iamIcon,
+  "gcp-kubernetes": kubernetesIcon,
+  "gcp-security": securityIcon,
   "aws-ec2": ec2Icon,
   "aws-s3": s3Icon,
   "aws-lambda": lambdaIcon,
@@ -113,6 +131,51 @@ const nodeTypeStyles: Record<
     bg: "bg-yellow-100/20",
     border: "border-yellow-300/50",
     icon: "text-yellow-600",
+  },
+  "gcp-apigee": {
+    bg: "bg-blue-100/20",
+    border: "border-blue-300/50",
+    icon: "text-blue-600",
+  },
+  "gcp-billing": {
+    bg: "bg-green-100/20",
+    border: "border-green-300/50",
+    icon: "text-green-600",
+  },
+  "gcp-cloud-build": {
+    bg: "bg-blue-100/20",
+    border: "border-blue-300/50",
+    icon: "text-blue-600",
+  },
+  "gcp-cloud-monitoring": {
+    bg: "bg-red-100/20",
+    border: "border-red-300/50",
+    icon: "text-red-600",
+  },
+  "gcp-cloud-sql": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
+  },
+  "gcp-compute-engine": {
+    bg: "bg-blue-100/20",
+    border: "border-blue-300/50",
+    icon: "text-blue-600",
+  },
+  "gcp-iam": {
+    bg: "bg-purple-100/20",
+    border: "border-purple-300/50",
+    icon: "text-purple-600",
+  },
+  "gcp-kubernetes": {
+    bg: "bg-blue-100/20",
+    border: "border-blue-300/50",
+    icon: "text-blue-600",
+  },
+  "gcp-security": {
+    bg: "bg-red-100/20",
+    border: "border-red-300/50",
+    icon: "text-red-600",
   },
   "aws-ec2": {
     bg: "bg-orange-100/20",
