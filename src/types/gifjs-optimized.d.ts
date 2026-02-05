@@ -17,7 +17,7 @@ declare module 'gif.js.optimized' {
 
   export default class GIF {
     constructor(options?: GifOptions);
-    addFrame(image: CanvasImageSource, options?: AddFrameOptions): void;
+    addFrame(image: CanvasImageSource | CanvasRenderingContext2D, options?: AddFrameOptions): void;
     on(event: 'finished', callback: (blob: Blob) => void): void;
     on(event: 'abort', callback: () => void): void;
     on(event: 'progress', callback: (progress: number) => void): void;

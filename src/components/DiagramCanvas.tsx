@@ -22,8 +22,7 @@ import '@xyflow/react/dist/style.css';
 import { v4 as uuidv4 } from 'uuid';
 import { type NodeType, type DiagramNodeData } from '../types/diagrams';
 import { toBlob, toCanvas } from 'html-to-image';
-import GIF from 'gif.js.optimized';
-import gifWorkerUrl from 'gif.js.optimized/dist/gif.worker.js?url';
+import { GIFEncoder, quantize, applyPalette } from 'gifenc';
 import BaseNode from './nodes/BaseNode';
 import { Toolbar } from './Toolbar';
 import { PropertiesPanel } from './PropertiesPanel';
@@ -349,6 +348,7 @@ export const DiagramCanvas = () => {
       strokeAttr: path.getAttribute('stroke'),
       strokeWidthAttr: path.getAttribute('stroke-width'),
       strokeDasharrayAttr: path.getAttribute('stroke-dasharray'),
+      strokeDashoffsetAttr: path.getAttribute('stroke-dashoffset'),
       styleCssText: path.style.cssText,
     }));
 
@@ -361,10 +361,16 @@ export const DiagramCanvas = () => {
       if (cs.strokeDasharray && cs.strokeDasharray !== 'none') {
         path.setAttribute('stroke-dasharray', cs.strokeDasharray);
       }
+      if (cs.strokeDashoffset && cs.strokeDashoffset !== 'none') {
+        path.setAttribute('stroke-dashoffset', cs.strokeDashoffset);
+      }
       path.style.stroke = cs.stroke;
       path.style.strokeWidth = cs.strokeWidth;
       if (cs.strokeDasharray && cs.strokeDasharray !== 'none') {
         path.style.strokeDasharray = cs.strokeDasharray;
+      }
+      if (cs.strokeDashoffset && cs.strokeDashoffset !== 'none') {
+        path.style.strokeDashoffset = cs.strokeDashoffset;
       }
     });
 
@@ -380,6 +386,9 @@ export const DiagramCanvas = () => {
 
         if (o.strokeDasharrayAttr === null) o.path.removeAttribute('stroke-dasharray');
         else o.path.setAttribute('stroke-dasharray', o.strokeDasharrayAttr);
+
+        if (o.strokeDashoffsetAttr === null) o.path.removeAttribute('stroke-dashoffset');
+        else o.path.setAttribute('stroke-dashoffset', o.strokeDashoffsetAttr);
 
         o.path.style.cssText = o.styleCssText;
       });
@@ -413,7 +422,7 @@ export const DiagramCanvas = () => {
 
       void (async () => {
         try {
-          const backgroundColor = getComputedStyle(el).backgroundColor;
+          const backgroundColor = '#ffffff';
           const blob = await withInlinedEdgeStrokeStyles(el, () =>
             toBlob(el, {
               cacheBust: true,
@@ -448,21 +457,33 @@ export const DiagramCanvas = () => {
       try {
         toast.info('Rendering GIF…');
 
-        const fps = 15;
-        const durationMs = 2500;
+        const fps = 10;
+        const durationMs = 1500;
         const delay = Math.round(1000 / fps);
         const frameCount = Math.max(1, Math.round(durationMs / delay));
 
-        const gif = new GIF({
-          workers: 2,
-          quality: 10,
-          workerScript: gifWorkerUrl,
-        });
+        const backgroundColor = '#ffffff';
 
-        const backgroundColor = getComputedStyle(el).backgroundColor;
+        const downscaleCanvas = (src: HTMLCanvasElement, maxDimension: number) => {
+          const scale = Math.min(1, maxDimension / src.width, maxDimension / src.height);
+          if (scale >= 1) return src;
+
+          const dst = document.createElement('canvas');
+          dst.width = Math.max(1, Math.round(src.width * scale));
+          dst.height = Math.max(1, Math.round(src.height * scale));
+          const ctx = dst.getContext('2d');
+          if (!ctx) return src;
+          ctx.fillStyle = backgroundColor;
+          ctx.fillRect(0, 0, dst.width, dst.height);
+          ctx.drawImage(src, 0, 0, dst.width, dst.height);
+          return dst;
+        };
+
+        const encoder = GIFEncoder();
+        let palette: ReturnType<typeof quantize> | null = null;
 
         for (let i = 0; i < frameCount; i++) {
-          const canvas = await withInlinedEdgeStrokeStyles(el, () =>
+          const rawCanvas = await withInlinedEdgeStrokeStyles(el, () =>
             toCanvas(el, {
               cacheBust: true,
               pixelRatio: 1,
@@ -471,20 +492,32 @@ export const DiagramCanvas = () => {
             }),
           );
 
-          gif.addFrame(canvas, { delay, copy: true });
+          const canvas = downscaleCanvas(rawCanvas, 900);
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            toast.error('GIF export failed');
+            return;
+          }
+
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          if (!palette) {
+            palette = quantize(imageData.data, 256);
+          }
+          const index = applyPalette(imageData.data, palette);
+          encoder.writeFrame(index, canvas.width, canvas.height, {
+            palette,
+            delay,
+            repeat: 0,
+          });
           await new Promise((resolve) => setTimeout(resolve, delay));
         }
 
-        gif.on('finished', (blob: Blob) => {
-          downloadBlob(blob, 'diagram.gif');
-          toast.success('Diagram exported');
-        });
-
-        gif.on('abort', () => {
-          toast.error('GIF export failed');
-        });
-
-        gif.render();
+        encoder.finish();
+        const bytes = encoder.bytes();
+        const bytesCopy = new Uint8Array(bytes);
+        const blob = new Blob([bytesCopy], { type: 'image/gif' });
+        downloadBlob(blob, 'diagram.gif');
+        toast.success('Diagram exported');
       } catch (error) {
         console.error('GIF export error:', error);
         toast.error('GIF export failed');
