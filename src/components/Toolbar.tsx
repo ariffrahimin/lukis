@@ -237,20 +237,13 @@ export const Toolbar = ({
 
       {/* Import/Export */}
       <div className="flex items-center gap-1">
-        <Tooltip>
-          <TooltipTrigger asChild>
             <button
               onClick={onImport}
               className="p-2 rounded-lg hover:bg-secondary text-foreground transition-all duration-200"
             >
               <Upload className="w-4 h-4" />
             </button>
-          </TooltipTrigger>
-          <TooltipContent>Import</TooltipContent>
-        </Tooltip>
 
-        <Tooltip>
-          <TooltipTrigger asChild>
             <span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -273,9 +266,6 @@ export const Toolbar = ({
                 </DropdownMenuContent>
               </DropdownMenu>
             </span>
-          </TooltipTrigger>
-          <TooltipContent>Export</TooltipContent>
-        </Tooltip>
       </div>
     </div>
   );
