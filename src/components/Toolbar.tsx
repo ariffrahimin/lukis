@@ -1,11 +1,5 @@
 
 import {
-  Server,
-  Database,
-  Cloud,
-  Monitor,
-  HardDrive,
-  Globe,
   Type,
   Square,
   MousePointer2,
@@ -25,23 +19,11 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { Separator } from './ui/separator';
 
 const nodeTypes: ToolbarItem[] = [
-  { type: 'service', label: 'Service', icon: 'cloud', description: 'Cloud service or microservice' },
-  { type: 'database', label: 'Database', icon: 'database', description: 'Database or data store' },
-  { type: 'server', label: 'Server', icon: 'server', description: 'Server or compute instance' },
-  { type: 'client', label: 'Client', icon: 'monitor', description: 'Client application or frontend' },
-  { type: 'storage', label: 'Storage', icon: 'hard-drive', description: 'File storage or CDN' },
-  { type: 'api', label: 'API', icon: 'globe', description: 'API gateway or endpoint' },
   { type: 'text', label: 'Text', icon: 'type', description: 'Text label annotation' },
   { type: 'group', label: 'Group', icon: 'square', description: 'Group container' },
 ];
 
 const IconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  'cloud': Cloud,
-  'database': Database,
-  'server': Server,
-  'monitor': Monitor,
-  'hard-drive': HardDrive,
-  'globe': Globe,
   'type': Type,
   'square': Square,
 };

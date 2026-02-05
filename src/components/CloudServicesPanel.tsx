@@ -4,6 +4,9 @@ import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 import { Separator } from "./ui/separator";
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+// Basic Icons (using Lucide React icons)
+import { Cloud, Database, Server, Monitor, HardDrive, Globe } from "lucide-react";
+
 // GCP Icons
 import cloudRunIcon from "./cloud-services/gcp/cloud-run.svg";
 import cloudStorageIcon from "./cloud-services/gcp/cloud-storage.svg";
@@ -34,7 +37,7 @@ import sqlDatabaseIcon from "./cloud-services/azure/sql-database.svg";
 interface CloudService {
   type: NodeType;
   label: string;
-  icon: string;
+  icon: string | React.ComponentType<{ className?: string }>;
 }
 
 interface CloudProvider {
@@ -52,9 +55,44 @@ export const CloudServicesPanel = ({
   const [showLabels, setShowLabels] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedProviders, setExpandedProviders] = useState<Set<string>>(
-    new Set(["GCP"]),
+    new Set(["Basic", "GCP"]),
   );
   const cloudProviders: CloudProvider[] = [
+    {
+      name: "Basic",
+      services: [
+        {
+          type: "service",
+          label: "Service",
+          icon: Cloud,
+        },
+        {
+          type: "database",
+          label: "Database",
+          icon: Database,
+        },
+        {
+          type: "server",
+          label: "Server",
+          icon: Server,
+        },
+        {
+          type: "client",
+          label: "Client",
+          icon: Monitor,
+        },
+        {
+          type: "storage",
+          label: "Storage",
+          icon: HardDrive,
+        },
+        {
+          type: "api",
+          label: "API Gateway",
+          icon: Globe,
+        },
+      ],
+    },
     {
       name: "GCP",
       services: [
@@ -209,7 +247,7 @@ export const CloudServicesPanel = ({
     <div className="w-64 bg-background border-r border-border h-full flex flex-col">
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-foreground">Cloud Services</h3>
+          <h3 className="font-semibold text-foreground">Node & Shapes</h3>
           <button
             onClick={() => setIsCollapsed(true)}
             className="p-1 rounded hover:bg-muted transition-colors"
@@ -261,24 +299,30 @@ export const CloudServicesPanel = ({
                     className="flex flex-col items-center justify-center p-2 rounded-lg border border-border bg-card hover:bg-muted/50 cursor-grab active:cursor-grabbing transition-all duration-200 min-h-[60px]"
                   >
                     <div className="w-8 h-8 flex-shrink-0">
-                      <img
-                        src={service.icon}
-                        alt={service.label}
-                        className="w-full h-full object-contain"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = "none";
-                          const fallback =
-                            target.nextElementSibling as HTMLDivElement;
-                          if (fallback) fallback.style.display = "flex";
-                        }}
-                      />
-                      <div
-                        className="w-8 h-8 bg-muted rounded flex items-center justify-center text-xs font-medium"
-                        style={{ display: "none" }}
-                      >
-                        {service.label.substring(0, 2).toUpperCase()}
-                      </div>
+                      {typeof service.icon === 'string' ? (
+                        <>
+                          <img
+                            src={service.icon}
+                            alt={service.label}
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = "none";
+                              const fallback =
+                                target.nextElementSibling as HTMLDivElement;
+                              if (fallback) fallback.style.display = "flex";
+                            }}
+                          />
+                          <div
+                            className="w-8 h-8 bg-muted rounded flex items-center justify-center text-xs font-medium"
+                            style={{ display: "none" }}
+                          >
+                            {service.label.substring(0, 2).toUpperCase()}
+                          </div>
+                        </>
+                      ) : (
+                        <service.icon className="w-full h-full text-muted-foreground" />
+                      )}
                     </div>
                     {showLabels && (
                       <div className="text-xs text-foreground text-center mt-1 leading-tight">
