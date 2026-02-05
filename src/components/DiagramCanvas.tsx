@@ -21,6 +21,9 @@ import {
 import '@xyflow/react/dist/style.css';
 import { v4 as uuidv4 } from 'uuid';
 import { type NodeType, type DiagramNodeData } from '../types/diagrams';
+import { toBlob, toCanvas } from 'html-to-image';
+import GIF from 'gif.js.optimized';
+import gifWorkerUrl from 'gif.js.optimized/dist/gif.worker.js?url';
 import BaseNode from './nodes/BaseNode';
 import { Toolbar } from './Toolbar';
 import { PropertiesPanel } from './PropertiesPanel';
@@ -126,8 +129,8 @@ export const DiagramCanvas = () => {
 
   // Save initial state
   useEffect(() => {
-    saveState(nodes, edges);
-  }, []);
+    saveState(initialNodes, initialEdges);
+  }, [saveState]);
 
   const onConnect = useCallback((connection: Connection) => {
     setEdges((eds) => addEdge({ 
@@ -305,21 +308,189 @@ export const DiagramCanvas = () => {
     );
   }, [setEdges]);
 
-  const handleExport = useCallback(() => {
-    const data = { nodes, edges };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const getExportElement = useCallback(() => {
+    const wrapper = reactFlowWrapper.current;
+    if (!wrapper) return null;
+
+    const rendererEl = wrapper.querySelector('.react-flow__renderer') as HTMLElement | null;
+    const reactFlowEl = wrapper.querySelector('.react-flow') as HTMLElement | null;
+    return rendererEl ?? reactFlowEl ?? wrapper;
+  }, []);
+
+  const exportFilter = useCallback((node: HTMLElement) => {
+    const el = node as unknown as HTMLElement;
+    const classList = el.classList;
+    if (!classList) return true;
+
+    if (classList.contains('react-flow__minimap')) return false;
+    if (classList.contains('react-flow__controls')) return false;
+    if (classList.contains('react-flow__panel')) return false;
+    if (classList.contains('react-flow__attribution')) return false;
+
+    return true;
+  }, []);
+
+  const downloadBlob = useCallback((blob: Blob, filename: string) => {
     const url = URL.createObjectURL(blob);
-    
     try {
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'diagram.json';
+      a.download = filename;
       a.click();
     } finally {
       URL.revokeObjectURL(url);
     }
-    toast.success('Diagram exported');
-  }, [nodes, edges]);
+  }, []);
+
+  const withInlinedEdgeStrokeStyles = useCallback(async <T,>(root: HTMLElement, fn: () => Promise<T>): Promise<T> => {
+    const edgePaths = root.querySelectorAll<SVGPathElement>('.react-flow__edge-path');
+    const originals = Array.from(edgePaths).map((path) => ({
+      path,
+      strokeAttr: path.getAttribute('stroke'),
+      strokeWidthAttr: path.getAttribute('stroke-width'),
+      strokeDasharrayAttr: path.getAttribute('stroke-dasharray'),
+      styleCssText: path.style.cssText,
+    }));
+
+    edgePaths.forEach((path) => {
+      const cs = getComputedStyle(path);
+      // Inline computed stroke values so exports don't lose stylesheet/CSS variable strokes.
+      path.setAttribute('stroke', cs.stroke);
+      path.setAttribute('stroke-width', cs.strokeWidth);
+      // Preserve dashes if present (helps animated edges); don't touch dashoffset to keep animation.
+      if (cs.strokeDasharray && cs.strokeDasharray !== 'none') {
+        path.setAttribute('stroke-dasharray', cs.strokeDasharray);
+      }
+      path.style.stroke = cs.stroke;
+      path.style.strokeWidth = cs.strokeWidth;
+      if (cs.strokeDasharray && cs.strokeDasharray !== 'none') {
+        path.style.strokeDasharray = cs.strokeDasharray;
+      }
+    });
+
+    try {
+      return await fn();
+    } finally {
+      originals.forEach((o) => {
+        if (o.strokeAttr === null) o.path.removeAttribute('stroke');
+        else o.path.setAttribute('stroke', o.strokeAttr);
+
+        if (o.strokeWidthAttr === null) o.path.removeAttribute('stroke-width');
+        else o.path.setAttribute('stroke-width', o.strokeWidthAttr);
+
+        if (o.strokeDasharrayAttr === null) o.path.removeAttribute('stroke-dasharray');
+        else o.path.setAttribute('stroke-dasharray', o.strokeDasharrayAttr);
+
+        o.path.style.cssText = o.styleCssText;
+      });
+    }
+  }, []);
+
+  const handleExport = useCallback((format: 'json' | 'png' | 'gif') => {
+    if (format === 'json') {
+      const data = { nodes, edges };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      try {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'diagram.json';
+        a.click();
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+      toast.success('Diagram exported');
+      return;
+    }
+
+    if (format === 'png') {
+      const el = getExportElement();
+      if (!el) {
+        toast.error('Export failed');
+        return;
+      }
+
+      void (async () => {
+        try {
+          const backgroundColor = getComputedStyle(el).backgroundColor;
+          const blob = await withInlinedEdgeStrokeStyles(el, () =>
+            toBlob(el, {
+              cacheBust: true,
+              pixelRatio: window.devicePixelRatio || 2,
+              backgroundColor,
+              filter: exportFilter,
+            }),
+          );
+
+          if (!blob) {
+            toast.error('PNG export failed');
+            return;
+          }
+
+          downloadBlob(blob, 'diagram.png');
+          toast.success('Diagram exported');
+        } catch (error) {
+          console.error('PNG export error:', error);
+          toast.error('PNG export failed');
+        }
+      })();
+      return;
+    }
+
+    const el = getExportElement();
+    if (!el) {
+      toast.error('Export failed');
+      return;
+    }
+
+    void (async () => {
+      try {
+        toast.info('Rendering GIF…');
+
+        const fps = 15;
+        const durationMs = 2500;
+        const delay = Math.round(1000 / fps);
+        const frameCount = Math.max(1, Math.round(durationMs / delay));
+
+        const gif = new GIF({
+          workers: 2,
+          quality: 10,
+          workerScript: gifWorkerUrl,
+        });
+
+        const backgroundColor = getComputedStyle(el).backgroundColor;
+
+        for (let i = 0; i < frameCount; i++) {
+          const canvas = await withInlinedEdgeStrokeStyles(el, () =>
+            toCanvas(el, {
+              cacheBust: true,
+              pixelRatio: 1,
+              backgroundColor,
+              filter: exportFilter,
+            }),
+          );
+
+          gif.addFrame(canvas, { delay, copy: true });
+          await new Promise((resolve) => setTimeout(resolve, delay));
+        }
+
+        gif.on('finished', (blob: Blob) => {
+          downloadBlob(blob, 'diagram.gif');
+          toast.success('Diagram exported');
+        });
+
+        gif.on('abort', () => {
+          toast.error('GIF export failed');
+        });
+
+        gif.render();
+      } catch (error) {
+        console.error('GIF export error:', error);
+        toast.error('GIF export failed');
+      }
+    })();
+  }, [downloadBlob, edges, exportFilter, getExportElement, nodes, withInlinedEdgeStrokeStyles]);
 
   const handleImport = useCallback(() => {
     const input = document.createElement('input');
@@ -337,13 +508,15 @@ export const DiagramCanvas = () => {
               return;
             }
             
-            const data = JSON.parse(content);
+            const parsed: unknown = JSON.parse(content);
             
             // Validate imported data structure
-            if (!data || typeof data !== 'object') {
+            if (!parsed || typeof parsed !== 'object') {
               toast.error('Invalid file format: expected JSON object');
               return;
             }
+
+            const data = parsed as Record<string, unknown>;
             
             if (!Array.isArray(data.nodes)) {
               toast.error('Invalid file format: nodes array is required');
@@ -354,75 +527,51 @@ export const DiagramCanvas = () => {
               toast.error('Invalid file format: edges array is required');
               return;
             }
+
+            const isNodeType = (value: unknown): value is NodeType => {
+              return (
+                typeof value === 'string' &&
+                Object.prototype.hasOwnProperty.call(defaultNodeLabels, value)
+              );
+            };
+
+            const isImportedNode = (node: unknown): node is Node<NodeData> => {
+              if (!node || typeof node !== 'object') return false;
+              const n = node as Record<string, unknown>;
+              if (typeof n.id !== 'string') return false;
+              if (!n.position || typeof n.position !== 'object') return false;
+              const pos = n.position as Record<string, unknown>;
+              if (typeof pos.x !== 'number' || typeof pos.y !== 'number') return false;
+              if (!n.data || typeof n.data !== 'object') return false;
+              const d = n.data as Record<string, unknown>;
+              if (typeof d.label !== 'string') return false;
+              if (!isNodeType(d.nodeType)) return false;
+              return true;
+            };
+
+            const isImportedEdge = (edge: unknown): edge is Edge => {
+              if (!edge || typeof edge !== 'object') return false;
+              const e = edge as Record<string, unknown>;
+              return (
+                typeof e.id === 'string' &&
+                typeof e.source === 'string' &&
+                typeof e.target === 'string'
+              );
+            };
             
             // Validate node structure
-            const validNodes = data.nodes.every((node: any) => {
-              return node && typeof node === 'object' && 
-                     typeof node.id === 'string' && 
-                     typeof node.position === 'object' &&
-                     node.position !== null &&
-                     typeof node.position.x === 'number' &&
-                     typeof node.position.y === 'number' &&
-                     typeof node.data === 'object' &&
-                     node.data !== null &&
-                     typeof node.data.label === 'string' &&
-                     typeof node.data.nodeType === 'string' &&
-                     [
-                       'service',
-                       'database',
-                       'server',
-                       'client',
-                       'storage',
-                       'api',
-                       'text',
-                       'group',
-                       'process-requirements',
-                       'process-design',
-                       'process-development',
-                       'process-testing',
-                       'process-deployment',
-                       'process-monitoring',
-                       'gcp-cloud-run',
-                       'gcp-cloud-storage',
-                       'gcp-bigquery',
-                       'gcp-pub-sub',
-                       'gcp-apigee',
-                       'gcp-billing',
-                       'gcp-cloud-build',
-                       'gcp-cloud-monitoring',
-                       'gcp-cloud-sql',
-                       'gcp-compute-engine',
-                       'gcp-iam',
-                       'gcp-kubernetes',
-                       'gcp-security',
-                       'aws-ec2',
-                       'aws-s3',
-                       'aws-lambda',
-                       'aws-rds',
-                       'azure-vm',
-                       'azure-blob-storage',
-                       'azure-functions',
-                       'azure-sql-database',
-                     ].includes(node.data.nodeType);
-            });
-            
-            if (!validNodes) {
+            if (!data.nodes.every(isImportedNode)) {
               toast.error('Invalid file format: nodes have invalid structure');
               return;
             }
-            
-            // Validate edge structure
-            const validEdges = data.edges.every((edge: any) => {
-              return edge && typeof edge === 'object' && 
-                     typeof edge.id === 'string' && 
-                     typeof edge.source === 'string' &&
-                     typeof edge.target === 'string';
-            });
-            
-            if (!validEdges) {
+
+            if (!data.edges.every(isImportedEdge)) {
               toast.error('Invalid file format: edges have invalid structure');
               return;
             }
+
+            const importedNodes = data.nodes.filter(isImportedNode);
+            const importedEdges = data.edges.filter(isImportedEdge);
             
             // Check for circular references in edges
             const hasCircularReference = (function detectCircular(nodeId: string, visited: Set<string>, path: Set<string>): boolean {
@@ -432,7 +581,7 @@ export const DiagramCanvas = () => {
               visited.add(nodeId);
               path.add(nodeId);
               
-              const outgoingEdges = data.edges.filter((edge: any) => edge.source === nodeId);
+              const outgoingEdges = importedEdges.filter((edge) => edge.source === nodeId);
               for (const edge of outgoingEdges) {
                 if (detectCircular(edge.target, visited, path)) {
                   return true;
@@ -443,7 +592,7 @@ export const DiagramCanvas = () => {
               return false;
             });
             
-            for (const node of data.nodes) {
+            for (const node of importedNodes) {
               if (hasCircularReference(node.id, new Set(), new Set())) {
                 toast.error('Invalid file format: circular references detected in edges');
                 return;
@@ -451,7 +600,7 @@ export const DiagramCanvas = () => {
             }
             
             // Sanitize imported data
-            const sanitizedNodes = data.nodes.map((node: any) => ({
+            const sanitizedNodes = importedNodes.map((node) => ({
               ...node,
               data: {
                 ...node.data,
@@ -460,7 +609,7 @@ export const DiagramCanvas = () => {
               }
             }));
             
-            const sanitizedEdges = data.edges.map((edge: any) => ({
+            const sanitizedEdges = importedEdges.map((edge) => ({
               ...edge,
               id: String(edge.id),
               source: String(edge.source),

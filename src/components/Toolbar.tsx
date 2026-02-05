@@ -17,6 +17,12 @@ import { cn } from '../lib/utils';
 import { type NodeType, type ToolbarItem } from '../types/diagrams';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { Separator } from './ui/separator';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 const nodeTypes: ToolbarItem[] = [
   { type: 'text', label: 'Text', icon: 'type', description: 'Text label annotation' },
@@ -40,7 +46,7 @@ interface ToolbarProps {
   onRedo: () => void;
   canUndo: boolean;
   canRedo: boolean;
-  onExport: () => void;
+  onExport: (format: 'json' | 'png' | 'gif') => void;
   onImport: () => void;
 }
 
@@ -245,12 +251,28 @@ export const Toolbar = ({
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <button
-              onClick={onExport}
-              className="p-2 rounded-lg hover:bg-secondary text-foreground transition-all duration-200"
-            >
-              <Download className="w-4 h-4" />
-            </button>
+            <span>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className="p-2 rounded-lg hover:bg-secondary text-foreground transition-all duration-200"
+                  >
+                    <Download className="w-4 h-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" sideOffset={8}>
+                  <DropdownMenuItem onSelect={() => onExport('json')}>
+                    Export JSON
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => onExport('png')}>
+                    Export PNG
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => onExport('gif')}>
+                    Export GIF
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </span>
           </TooltipTrigger>
           <TooltipContent>Export</TooltipContent>
         </Tooltip>

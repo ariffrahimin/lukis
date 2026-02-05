@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { type NodeType } from "../types/diagrams";
-import { Switch } from "./ui/switch";
-import { Label } from "./ui/label";
 import { Separator } from "./ui/separator";
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 // Basic Icons (using Lucide React icons)
@@ -65,10 +63,9 @@ interface CloudServicesPanelProps {
 export const CloudServicesPanel = ({
   onServiceSelect,
 }: CloudServicesPanelProps) => {
-  const [showLabels, setShowLabels] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedProviders, setExpandedProviders] = useState<Set<string>>(
-    new Set(["Basic", "GCP"]),
+    new Set([]),
   );
   const cloudProviders: CloudProvider[] = [
     {
@@ -277,6 +274,17 @@ export const CloudServicesPanel = ({
     setExpandedProviders(newExpanded);
   };
 
+  const allProvidersExpanded = expandedProviders.size === cloudProviders.length;
+
+  const toggleAllProviders = () => {
+    if (allProvidersExpanded) {
+      setExpandedProviders(new Set());
+      return;
+    }
+
+    setExpandedProviders(new Set(cloudProviders.map((p) => p.name)));
+  };
+
   if (isCollapsed) {
     return (
       <div className="w-12 bg-background border-r border-border h-full flex flex-col items-center py-4">
@@ -305,17 +313,12 @@ export const CloudServicesPanel = ({
           </button>
         </div>
         <div className="flex items-center space-x-2">
-          <Switch
-            id="show-labels"
-            checked={showLabels}
-            onCheckedChange={setShowLabels}
-          />
-          <Label
-            htmlFor="show-labels"
-            className="text-sm text-muted-foreground"
+          <button
+            onClick={toggleAllProviders}
+            className="px-2 py-1 rounded hover:bg-muted transition-colors text-sm text-muted-foreground"
           >
-            Show Labels
-          </Label>
+            {allProvidersExpanded ? "Collapse All" : "Expand All"}
+          </button>
         </div>
       </div>
 
@@ -331,7 +334,7 @@ export const CloudServicesPanel = ({
               </h4>
               <ChevronDown
                 className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
-                  expandedProviders.has(provider.name) ? "" : "rotate-270"
+                  expandedProviders.has(provider.name) ? "rotate-180" : "rotate-0"
                 }`}
               />
             </button>
@@ -372,11 +375,9 @@ export const CloudServicesPanel = ({
                         <service.icon className="w-full h-full text-muted-foreground" />
                       )}
                     </div>
-                    {showLabels && (
-                      <div className="text-xs text-foreground text-center mt-1 leading-tight">
-                        {service.label}
-                      </div>
-                    )}
+                    <div className="text-xs text-foreground text-center mt-1 leading-tight">
+                      {service.label}
+                    </div>
                   </div>
                 ))}
               </div>
