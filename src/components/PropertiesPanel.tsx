@@ -26,6 +26,7 @@ const isValidNodeData = (data: unknown): data is NodeData => {
     'nodeType' in obj &&
     typeof obj.nodeType === 'string' &&
     ['service', 'database', 'server', 'client', 'storage', 'api', 'text', 'group', 
+     'process-requirements', 'process-design', 'process-development', 'process-testing', 'process-deployment', 'process-monitoring',
      'gcp-cloud-run', 'gcp-cloud-storage', 'gcp-bigquery', 'gcp-pub-sub','gcp-apigee','gcp-billing','gcp-cloud-build','gcp-cloud-monitoring','gcp-compute-engine','gcp-iam','gcp-kubernetes','gcp-security','gcp-cloud-sql',
      'aws-ec2', 'aws-s3', 'aws-lambda', 'aws-rds',
      'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database'].includes(obj.nodeType)

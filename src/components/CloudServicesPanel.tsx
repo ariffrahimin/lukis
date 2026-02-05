@@ -5,7 +5,20 @@ import { Label } from "./ui/label";
 import { Separator } from "./ui/separator";
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 // Basic Icons (using Lucide React icons)
-import { Cloud, Database, Server, Monitor, HardDrive, Globe } from "lucide-react";
+import {
+  Cloud,
+  Database,
+  Server,
+  Monitor,
+  HardDrive,
+  Globe,
+  FileText,
+  PenTool,
+  Code,
+  Bug,
+  Rocket,
+  Activity,
+} from "lucide-react";
 
 // GCP Icons
 import cloudRunIcon from "./cloud-services/gcp/cloud-run.svg";
@@ -90,6 +103,41 @@ export const CloudServicesPanel = ({
           type: "api",
           label: "API Gateway",
           icon: Globe,
+        },
+      ],
+    },
+    {
+      name: "Software Process",
+      services: [
+        {
+          type: "process-requirements",
+          label: "Requirements",
+          icon: FileText,
+        },
+        {
+          type: "process-design",
+          label: "Design",
+          icon: PenTool,
+        },
+        {
+          type: "process-development",
+          label: "Development",
+          icon: Code,
+        },
+        {
+          type: "process-testing",
+          label: "Testing",
+          icon: Bug,
+        },
+        {
+          type: "process-deployment",
+          label: "Deployment",
+          icon: Rocket,
+        },
+        {
+          type: "process-monitoring",
+          label: "Monitoring",
+          icon: Activity,
         },
       ],
     },

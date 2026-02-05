@@ -11,6 +11,12 @@ import {
   Globe,
   Type,
   Square,
+  FileText,
+  PenTool,
+  Code,
+  Bug,
+  Rocket,
+  Activity,
 } from "lucide-react";
 
 // GCP Icons
@@ -111,6 +117,36 @@ const nodeTypeStyles: Record<
     bg: "bg-secondary/30",
     border: "border-border border-dashed",
     icon: "text-muted-foreground",
+  },
+  "process-requirements": {
+    bg: "bg-indigo-100/20",
+    border: "border-indigo-300/50",
+    icon: "text-indigo-600",
+  },
+  "process-design": {
+    bg: "bg-violet-100/20",
+    border: "border-violet-300/50",
+    icon: "text-violet-600",
+  },
+  "process-development": {
+    bg: "bg-sky-100/20",
+    border: "border-sky-300/50",
+    icon: "text-sky-600",
+  },
+  "process-testing": {
+    bg: "bg-amber-100/20",
+    border: "border-amber-300/50",
+    icon: "text-amber-600",
+  },
+  "process-deployment": {
+    bg: "bg-emerald-100/20",
+    border: "border-emerald-300/50",
+    icon: "text-emerald-600",
+  },
+  "process-monitoring": {
+    bg: "bg-rose-100/20",
+    border: "border-rose-300/50",
+    icon: "text-rose-600",
   },
   "gcp-cloud-run": {
     bg: "bg-blue-100/20",
@@ -245,6 +281,18 @@ const NodeIcon = ({
       return <Type {...iconProps} />;
     case "group":
       return <Square {...iconProps} />;
+    case "process-requirements":
+      return <FileText {...iconProps} />;
+    case "process-design":
+      return <PenTool {...iconProps} />;
+    case "process-development":
+      return <Code {...iconProps} />;
+    case "process-testing":
+      return <Bug {...iconProps} />;
+    case "process-deployment":
+      return <Rocket {...iconProps} />;
+    case "process-monitoring":
+      return <Activity {...iconProps} />;
     default:
       return <Cloud {...iconProps} />;
   }
