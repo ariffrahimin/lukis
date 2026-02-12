@@ -33,6 +33,19 @@ import { toast } from 'sonner';
 // Use the centralized type from types/diagrams
 type NodeData = DiagramNodeData;
 
+const cloudServiceTypes = new Set<string>([
+  'gcp-cloud-run', 'gcp-cloud-storage', 'gcp-bigquery', 'gcp-pub-sub',
+  'gcp-apigee', 'gcp-billing', 'gcp-cloud-build', 'gcp-cloud-monitoring',
+  'gcp-cloud-sql', 'gcp-compute-engine', 'gcp-iam', 'gcp-kubernetes',
+  'gcp-security', 'aws-ec2', 'aws-s3', 'aws-lambda', 'aws-rds',
+  'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database',
+]);
+
+const getDefaultNodeStyle = (type: NodeType): { width: number; height: number } | undefined => {
+  if (cloudServiceTypes.has(type)) return { width: 80, height: 90 };
+  return undefined;
+};
+
 const defaultNodeLabels: Record<NodeType, string> = {
   service: 'Service',
   database: 'Database',
@@ -186,6 +199,7 @@ export const DiagramCanvas = () => {
   }, []);
 
   const addNode = useCallback((type: NodeType) => {
+    const defaultStyle = getDefaultNodeStyle(type);
     const newNode: Node = {
       id: uuidv4(),
       type,
@@ -197,6 +211,7 @@ export const DiagramCanvas = () => {
         label: defaultNodeLabels[type],
         nodeType: type
       },
+      ...(defaultStyle && { style: defaultStyle }),
     };
     setNodes((nds) => [...nds, newNode]);
     toast.success(`Added ${defaultNodeLabels[type]} node`);
@@ -214,6 +229,7 @@ export const DiagramCanvas = () => {
         y: event.clientY,
       });
 
+      const defaultStyle = getDefaultNodeStyle(type);
       const newNode: Node = {
         id: uuidv4(),
         type,
@@ -222,6 +238,7 @@ export const DiagramCanvas = () => {
           label: defaultNodeLabels[type],
           nodeType: type
         },
+        ...(defaultStyle && { style: defaultStyle }),
       };
 
       setNodes((nds) => [...nds, newNode]);

@@ -1,5 +1,5 @@
 import { memo, useState } from "react";
-import { Handle, Position } from "@xyflow/react";
+import { Handle, Position, NodeResizer } from "@xyflow/react";
 import { cn } from "../../lib/utils";
 import { type NodeType } from "../../types/diagrams";
 import {
@@ -326,10 +326,17 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
   if (isTextNode) {
     return (
       <div
-        className="px-2 py-1 relative"
+        className="px-2 py-1 relative w-full h-full"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
+        <NodeResizer
+          isVisible={selected}
+          minWidth={30}
+          minHeight={20}
+          lineStyle={{ borderColor: "#3b82f6" }}
+          handleStyle={{ backgroundColor: "#3b82f6", width: 8, height: 8 }}
+        />
         <Handle
           type="target"
           position={Position.Top}
@@ -430,10 +437,17 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
   if (isCloudServiceNode) {
     return (
       <div
-        className="flex flex-col items-center relative"
+        className="flex flex-col items-center relative w-full h-full"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
+        <NodeResizer
+          isVisible={selected}
+          minWidth={60}
+          minHeight={60}
+          lineStyle={{ borderColor: "#3b82f6" }}
+          handleStyle={{ backgroundColor: "#3b82f6", width: 8, height: 8 }}
+        />
         {/* Connection handles - only visible on hover/select */}
         <Handle
           type="target"
@@ -483,12 +497,12 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         {/* Icon container */}
         <div
           className={cn(
-            "p-2 rounded-lg transition-all duration-200",
+            "p-2 rounded-lg transition-all duration-200 flex-1 min-h-0 min-w-0 flex items-center justify-center",
             selected &&
               "ring-2 ring-primary ring-offset-2 ring-offset-background",
           )}
         >
-          <div className="w-12 h-12 flex-shrink-0">
+          <div className="w-full h-full min-w-[48px] min-h-[48px]">
             <img
               src={cloudServiceIcons[data.nodeType]}
               alt={data.label}
@@ -501,7 +515,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
               }}
             />
             <div
-              className="w-12 h-12 bg-muted rounded flex items-center justify-center text-xs font-medium"
+              className="w-full h-full bg-muted rounded flex items-center justify-center text-xs font-medium"
               style={{ display: "none" }}
             >
               {data.label.substring(0, 2).toUpperCase()}
@@ -577,7 +591,7 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
   return (
     <div
       className={cn(
-        "min-w-[140px] rounded-lg border-2 backdrop-blur-sm transition-all duration-200",
+        "w-full h-full rounded-lg border-2 backdrop-blur-sm transition-all duration-200",
         styles.bg,
         styles.border,
         selected && "ring-2 ring-primary ring-offset-2 ring-offset-background",
@@ -586,6 +600,13 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      <NodeResizer
+        isVisible={selected}
+        minWidth={140}
+        minHeight={50}
+        lineStyle={{ borderColor: "#3b82f6" }}
+        handleStyle={{ backgroundColor: "#3b82f6", width: 8, height: 8 }}
+      />
       <Handle
         type="target"
         position={Position.Top}
