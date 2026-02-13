@@ -30,7 +30,8 @@ const isValidNodeData = (data: unknown): data is NodeData => {
      'process-requirements', 'process-design', 'process-development', 'process-testing', 'process-deployment', 'process-monitoring',
      'gcp-cloud-run', 'gcp-cloud-storage', 'gcp-bigquery', 'gcp-pub-sub','gcp-apigee','gcp-billing','gcp-cloud-build','gcp-cloud-monitoring','gcp-compute-engine','gcp-iam','gcp-kubernetes','gcp-security','gcp-cloud-sql',
      'aws-ec2', 'aws-s3', 'aws-lambda', 'aws-rds',
-     'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database'].includes(obj.nodeType)
+     'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database',
+     'shape-circle', 'shape-square', 'shape-star', 'shape-hexagon'].includes(obj.nodeType)
   );
 };
 

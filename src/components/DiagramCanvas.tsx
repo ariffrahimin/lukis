@@ -41,6 +41,7 @@ const cloudServiceTypes = new Set<string>([
   'gcp-cloud-sql', 'gcp-compute-engine', 'gcp-iam', 'gcp-kubernetes',
   'gcp-security', 'aws-ec2', 'aws-s3', 'aws-lambda', 'aws-rds',
   'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database',
+  'shape-circle', 'shape-square', 'shape-star', 'shape-hexagon',
 ]);
 
 const getDefaultNodeStyle = (type: NodeType): { width: number; height: number } | undefined => {
@@ -84,6 +85,10 @@ const defaultNodeLabels: Record<NodeType, string> = {
   'azure-blob-storage': 'Blob Storage',
   'azure-functions': 'Functions',
   'azure-sql-database': 'SQL Database',
+  'shape-circle': 'Circle',
+  'shape-square': 'Square',
+  'shape-star': 'Star',
+  'shape-hexagon': 'Hexagon',
 };
 
 const initialNodes: Node[] = [];
@@ -106,6 +111,7 @@ export const DiagramCanvas = () => {
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [mobilePropertiesOpen, setMobilePropertiesOpen] = useState(false);
 
+  const [clipboard, setClipboard] = useState<{ nodes: Node[]; edges: Edge[] } | null>(null);
   const { saveState, undo, redo, canUndo, canRedo } = useUndoRedo();
 
   const nodeTypes = useMemo(() => ({
@@ -144,6 +150,10 @@ export const DiagramCanvas = () => {
     'azure-blob-storage': BaseNode,
     'azure-functions': BaseNode,
     'azure-sql-database': BaseNode,
+    'shape-circle': BaseNode,
+    'shape-square': BaseNode,
+    'shape-star': BaseNode,
+    'shape-hexagon': BaseNode,
   }), []);
 
   // Save initial state
@@ -287,6 +297,57 @@ export const DiagramCanvas = () => {
       toast.success(`${totalDeleted} item${totalDeleted !== 1 ? 's' : ''} deleted`);
     }
   }, [selectedNodes, selectedEdges, setNodes, setEdges]);
+
+  const handleCopy = useCallback(() => {
+    if (selectedNodes.length === 0) return;
+    const selectedNodeIds = new Set(selectedNodes.map((n) => n.id));
+    const connectedEdges = edges.filter(
+      (e) => selectedNodeIds.has(e.source) && selectedNodeIds.has(e.target)
+    );
+    setClipboard({
+      nodes: structuredClone(selectedNodes),
+      edges: structuredClone(connectedEdges),
+    });
+    toast.success(`Copied ${selectedNodes.length} node${selectedNodes.length !== 1 ? 's' : ''}`);
+  }, [selectedNodes, edges]);
+
+  const handleCut = useCallback(() => {
+    if (selectedNodes.length === 0) return;
+    const selectedNodeIds = new Set(selectedNodes.map((n) => n.id));
+    const connectedEdges = edges.filter(
+      (e) => selectedNodeIds.has(e.source) && selectedNodeIds.has(e.target)
+    );
+    setClipboard({
+      nodes: structuredClone(selectedNodes),
+      edges: structuredClone(connectedEdges),
+    });
+    handleDelete();
+    toast.success(`Cut ${selectedNodes.length} node${selectedNodes.length !== 1 ? 's' : ''}`);
+  }, [selectedNodes, edges, handleDelete]);
+
+  const handlePaste = useCallback(() => {
+    if (!clipboard || clipboard.nodes.length === 0) return;
+    const idMap = new Map<string, string>();
+    clipboard.nodes.forEach((n) => idMap.set(n.id, uuidv4()));
+
+    const newNodes = clipboard.nodes.map((n) => ({
+      ...n,
+      id: idMap.get(n.id)!,
+      position: { x: n.position.x + 50, y: n.position.y + 50 },
+      selected: true,
+    }));
+
+    const newEdges = clipboard.edges.map((e) => ({
+      ...e,
+      id: uuidv4(),
+      source: idMap.get(e.source)!,
+      target: idMap.get(e.target)!,
+    }));
+
+    setNodes((nds) => nds.map((n) => ({ ...n, selected: false })).concat(newNodes));
+    setEdges((eds) => eds.concat(newEdges));
+    toast.success(`Pasted ${newNodes.length} node${newNodes.length !== 1 ? 's' : ''}`);
+  }, [clipboard, setNodes, setEdges]);
 
   const handleUndo = useCallback(() => {
     const state = undo();
@@ -721,6 +782,15 @@ export const DiagramCanvas = () => {
           handleUndo();
         }
       }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'c') {
+        handleCopy();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'x') {
+        handleCut();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'v') {
+        handlePaste();
+      }
       // Only trigger single-key shortcuts when no modifier keys are pressed
       if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey) {
         if (e.key === 'v') setSelectedTool('select');
@@ -731,7 +801,7 @@ export const DiagramCanvas = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleDelete, handleUndo, handleRedo, reactFlowInstance, setSelectedTool]);
+  }, [handleDelete, handleUndo, handleRedo, handleCopy, handleCut, handlePaste, reactFlowInstance, setSelectedTool]);
 
   // Auto-open properties sheet on mobile/tablet when a node or edge is selected
   useEffect(() => {

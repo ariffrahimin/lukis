@@ -45,6 +45,13 @@ import vmIcon from "../cloud-services/azure/vm.svg";
 import blobStorageIcon from "../cloud-services/azure/blob-storage.svg";
 import functionsIcon from "../cloud-services/azure/functions.svg";
 import sqlDatabaseIcon from "../cloud-services/azure/sql-database.svg";
+
+// Shape Icons
+import shapeCircleIcon from "../cloud-services/shapes/circle.svg";
+import shapeSquareIcon from "../cloud-services/shapes/square.svg";
+import shapeStarIcon from "../cloud-services/shapes/star.svg";
+import shapeHexagonIcon from "../cloud-services/shapes/hexagon.svg";
+
 // Cloud service icon mapping
 const cloudServiceIcons: Record<string, string> = {
   "gcp-cloud-run": cloudRunIcon,
@@ -68,6 +75,10 @@ const cloudServiceIcons: Record<string, string> = {
   "azure-blob-storage": blobStorageIcon,
   "azure-functions": functionsIcon,
   "azure-sql-database": sqlDatabaseIcon,
+  "shape-circle": shapeCircleIcon,
+  "shape-square": shapeSquareIcon,
+  "shape-star": shapeStarIcon,
+  "shape-hexagon": shapeHexagonIcon,
 };
 // Helper function to check if node type is a cloud service
 const isCloudService = (nodeType: NodeType): boolean => {
@@ -252,6 +263,26 @@ const nodeTypeStyles: Record<
     bg: "bg-cyan-100/20",
     border: "border-cyan-300/50",
     icon: "text-cyan-600",
+  },
+  "shape-circle": {
+    bg: "bg-pink-100/20",
+    border: "border-pink-300/50",
+    icon: "text-pink-600",
+  },
+  "shape-square": {
+    bg: "bg-blue-100/20",
+    border: "border-blue-300/50",
+    icon: "text-blue-600",
+  },
+  "shape-star": {
+    bg: "bg-yellow-100/20",
+    border: "border-yellow-300/50",
+    icon: "text-yellow-600",
+  },
+  "shape-hexagon": {
+    bg: "bg-teal-100/20",
+    border: "border-teal-300/50",
+    icon: "text-teal-600",
   },
 };
 

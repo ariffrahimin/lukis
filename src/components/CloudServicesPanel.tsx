@@ -19,6 +19,12 @@ import {
   Activity,
 } from "lucide-react";
 
+// Shape Icons
+import shapeCircleIcon from "./cloud-services/shapes/circle.svg";
+import shapeSquareIcon from "./cloud-services/shapes/square.svg";
+import shapeStarIcon from "./cloud-services/shapes/star.svg";
+import shapeHexagonIcon from "./cloud-services/shapes/hexagon.svg";
+
 // GCP Icons
 import cloudRunIcon from "./cloud-services/gcp/cloud-run.svg";
 import cloudStorageIcon from "./cloud-services/gcp/cloud-storage.svg";
@@ -75,6 +81,31 @@ export const CloudServicesPanel = ({
     new Set([]),
   );
   const cloudProviders: CloudProvider[] = [
+    {
+      name: "Shapes",
+      services: [
+        {
+          type: "shape-circle",
+          label: "Circle",
+          icon: shapeCircleIcon,
+        },
+        {
+          type: "shape-square",
+          label: "Square",
+          icon: shapeSquareIcon,
+        },
+        {
+          type: "shape-star",
+          label: "Star",
+          icon: shapeStarIcon,
+        },
+        {
+          type: "shape-hexagon",
+          label: "Hexagon",
+          icon: shapeHexagonIcon,
+        },
+      ],
+    },
     {
       name: "Basic",
       services: [

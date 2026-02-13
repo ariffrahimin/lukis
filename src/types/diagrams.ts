@@ -36,7 +36,11 @@ export type NodeType =
   | 'azure-vm'
   | 'azure-blob-storage'
   | 'azure-functions'
-  | 'azure-sql-database';
+  | 'azure-sql-database'
+  | 'shape-circle'
+  | 'shape-square'
+  | 'shape-star'
+  | 'shape-hexagon';
 
 export interface DiagramNodeData {
   label: string;
