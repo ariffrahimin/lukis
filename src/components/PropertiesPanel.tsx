@@ -41,6 +41,7 @@ interface PropertiesPanelProps {
   onNodeUpdate: (nodeId: string, data: Partial<NodeData>) => void;
   onEdgeUpdate: (edgeId: string, data: Partial<Edge>) => void;
   onClose: () => void;
+  position?: { x: number; y: number } | null;
   isMobile?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -52,6 +53,7 @@ export const PropertiesPanel = ({
   onNodeUpdate,
   onEdgeUpdate,
   onClose,
+  position = null,
   isMobile = false,
   open = false,
   onOpenChange,
@@ -163,194 +165,157 @@ export const PropertiesPanel = ({
 
   const hasSelection = selectedNode || selectedEdge;
 
-  const panelContent = (
+  // Shared content for both mobile sheet and desktop popover
+  const renderFields = () => (
     <>
-      {/* Header - only show in desktop mode (Sheet has its own header) */}
-      {!isMobile && (
-        <div className="flex items-center justify-between px-4 py-3 bg-secondary/50 border-b border-border">
-          <div className="flex items-center gap-2">
-            {selectedNode ? (
-              <Layers className="w-4 h-4 text-primary" />
-            ) : (
-              <GitBranch className="w-4 h-4 text-primary" />
-            )}
-            <span className="font-medium text-sm">
-              {selectedNode ? 'Node Properties' : 'Edge Properties'}
-            </span>
+      {selectedNode && nodeData && (
+        <>
+          <div className="space-y-1">
+            <Label htmlFor="label" className="text-xs text-muted-foreground">
+              Label
+            </Label>
+            <Input
+              id="label"
+              value={label}
+              onChange={(e) => handleLabelChange(e.target.value)}
+              placeholder="Node label"
+              className="h-8 text-sm"
+            />
           </div>
-          <button
-            onClick={onClose}
-            className="p-1 hover:bg-secondary rounded transition-colors"
-          >
-            <X className="w-4 h-4 text-muted-foreground" />
-          </button>
-        </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="description" className="text-xs text-muted-foreground">
+              Description
+            </Label>
+            <Textarea
+              id="description"
+              value={description}
+              onChange={(e) => handleDescriptionChange(e.target.value)}
+              placeholder="Optional description..."
+              className="min-h-[60px] resize-none text-sm"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Type</Label>
+            <div className="px-2 py-1.5 bg-secondary/50 rounded text-xs capitalize">
+              {nodeData.nodeType.replace(/-/g, ' ')}
+            </div>
+          </div>
+
+          {isCloudService && (
+            <>
+              <div className="space-y-1">
+                <Label htmlFor="region" className="text-xs text-muted-foreground">
+                  Region
+                </Label>
+                <Input
+                  id="region"
+                  value={region}
+                  onChange={(e) => handleRegionChange(e.target.value)}
+                  placeholder="us-west-2, europe-west1, etc."
+                  className="h-8 text-sm"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label htmlFor="instance-type" className="text-xs text-muted-foreground">
+                  Instance Type
+                </Label>
+                <Input
+                  id="instance-type"
+                  value={instanceType}
+                  onChange={(e) => handleInstanceTypeChange(e.target.value)}
+                  placeholder="t3.micro, n1-standard-1, etc."
+                  className="h-8 text-sm"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label htmlFor="environment" className="text-xs text-muted-foreground">
+                  Environment
+                </Label>
+                <Select value={environment} onValueChange={handleEnvironmentChange}>
+                  <SelectTrigger className="h-8 text-sm">
+                    <SelectValue placeholder="Select environment" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="development">Development</SelectItem>
+                    <SelectItem value="staging">Staging</SelectItem>
+                    <SelectItem value="production">Production</SelectItem>
+                    <SelectItem value="testing">Testing</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
+          )}
+        </>
       )}
 
-      {/* Content */}
-      <div className="p-4 space-y-4">
-        {selectedNode && nodeData && (
-          <>
-            <div className="space-y-2">
-              <Label htmlFor="label" className="text-xs text-muted-foreground">
-                Label
-              </Label>
-              <Input
-                id="label"
-                value={label}
-                onChange={(e) => handleLabelChange(e.target.value)}
-                placeholder="Node label"
-                className="h-9"
-              />
-            </div>
+      {selectedEdge && (
+        <>
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Edge Type</Label>
+            <Select value={edgeType} onValueChange={handleEdgeTypeChange}>
+              <SelectTrigger className="h-8 text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">Bezier</SelectItem>
+                <SelectItem value="straight">Straight</SelectItem>
+                <SelectItem value="step">Step</SelectItem>
+                <SelectItem value="smoothstep">Smooth Step</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description" className="text-xs text-muted-foreground">
-                Description
-              </Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => handleDescriptionChange(e.target.value)}
-                placeholder="Optional description..."
-                className="min-h-[80px] resize-none"
-              />
-            </div>
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Start Marker</Label>
+            <Select value={markerStart} onValueChange={handleMarkerStartChange}>
+              <SelectTrigger className="h-8 text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="arrow">Arrow</SelectItem>
+                <SelectItem value="arrowclosed">Arrow Closed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Type</Label>
-              <div className="px-3 py-2 bg-secondary/50 rounded-lg text-sm capitalize">
-                {nodeData.nodeType.replace(/-/g, ' ')}
-              </div>
-            </div>
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">End Marker</Label>
+            <Select value={markerEnd} onValueChange={handleMarkerEndChange}>
+              <SelectTrigger className="h-8 text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="arrow">Arrow</SelectItem>
+                <SelectItem value="arrowclosed">Arrow Closed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            {/* Cloud Service Specific Properties */}
-            {isCloudService && (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="region" className="text-xs text-muted-foreground">
-                    Region
-                  </Label>
-                  <Input
-                    id="region"
-                    value={region}
-                    onChange={(e) => handleRegionChange(e.target.value)}
-                    placeholder="us-west-2, europe-west1, etc."
-                    className="h-9"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="instance-type" className="text-xs text-muted-foreground">
-                    Instance Type
-                  </Label>
-                  <Input
-                    id="instance-type"
-                    value={instanceType}
-                    onChange={(e) => handleInstanceTypeChange(e.target.value)}
-                    placeholder="t3.micro, n1-standard-1, etc."
-                    className="h-9"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="environment" className="text-xs text-muted-foreground">
-                    Environment
-                  </Label>
-                  <Select value={environment} onValueChange={handleEnvironmentChange}>
-                    <SelectTrigger className="h-9">
-                      <SelectValue placeholder="Select environment" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="development">Development</SelectItem>
-                      <SelectItem value="staging">Staging</SelectItem>
-                      <SelectItem value="production">Production</SelectItem>
-                      <SelectItem value="testing">Testing</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </>
-            )}
-
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Position</Label>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="px-3 py-2 bg-secondary/50 rounded-lg">
-                  X: {Math.round(selectedNode.position.x)}
-                </div>
-                <div className="px-3 py-2 bg-secondary/50 rounded-lg">
-                  Y: {Math.round(selectedNode.position.y)}
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-
-        {selectedEdge && (
-          <>
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Edge Type</Label>
-              <Select value={edgeType} onValueChange={handleEdgeTypeChange}>
-                <SelectTrigger className="h-9">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="default">Bezier</SelectItem>
-                  <SelectItem value="straight">Straight</SelectItem>
-                  <SelectItem value="step">Step</SelectItem>
-                  <SelectItem value="smoothstep">Smooth Step</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Start Marker</Label>
-              <Select value={markerStart} onValueChange={handleMarkerStartChange}>
-                <SelectTrigger className="h-9">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  <SelectItem value="arrow">Arrow</SelectItem>
-                  <SelectItem value="arrowclosed">Arrow Closed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">End Marker</Label>
-              <Select value={markerEnd} onValueChange={handleMarkerEndChange}>
-                <SelectTrigger className="h-9">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  <SelectItem value="arrow">Arrow</SelectItem>
-                  <SelectItem value="arrowclosed">Arrow Closed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label className="text-xs text-muted-foreground">Animated</Label>
-              <button
-                onClick={() => handleAnimatedChange(!animated)}
+          <div className="flex items-center justify-between">
+            <Label className="text-xs text-muted-foreground">Animated</Label>
+            <button
+              onClick={() => handleAnimatedChange(!animated)}
+              className={cn(
+                'w-10 h-6 rounded-full transition-colors relative',
+                animated ? 'bg-primary' : 'bg-secondary'
+              )}
+            >
+              <div
                 className={cn(
-                  'w-10 h-6 rounded-full transition-colors relative',
-                  animated ? 'bg-primary' : 'bg-secondary'
+                  'absolute top-1 w-4 h-4 rounded-full bg-white transition-transform',
+                  animated ? 'translate-x-5' : 'translate-x-1'
                 )}
-              >
-                <div
-                  className={cn(
-                    'absolute top-1 w-4 h-4 rounded-full bg-white transition-transform',
-                    animated ? 'translate-x-5' : 'translate-x-1'
-                  )}
-                />
-              </button>
-            </div>
-          </>
-        )}
-      </div>
+              />
+            </button>
+          </div>
+        </>
+      )}
     </>
   );
 
@@ -368,18 +333,51 @@ export const PropertiesPanel = ({
               )}
             </SheetTitle>
           </SheetHeader>
-          {panelContent}
+          <div className="p-4 space-y-4">
+            {renderFields()}
+          </div>
         </SheetContent>
       </Sheet>
     );
   }
 
-  // Desktop: absolute-positioned card
-  if (!hasSelection) return null;
+  // Desktop: compact floating popover near cursor
+  if (!hasSelection || !position) return null;
+
+  // Clamp position so panel doesn't overflow viewport
+  const panelWidth = 224;
+  const panelHeight = 400; // estimated max height
+  const margin = 8;
+  const clampedX = Math.min(position.x, window.innerWidth - panelWidth - margin);
+  const clampedY = Math.min(position.y, window.innerHeight - panelHeight - margin);
 
   return (
-    <div className="absolute right-4 top-4 w-72 bg-card border border-border rounded-xl shadow-lg overflow-hidden z-10">
-      {panelContent}
+    <div
+      className="fixed w-56 bg-card border border-border rounded-lg shadow-lg overflow-hidden z-50 max-h-[80vh] overflow-y-auto"
+      style={{ left: clampedX, top: clampedY }}
+    >
+      {/* Compact header */}
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border">
+        <div className="flex items-center gap-1.5">
+          {selectedNode ? (
+            <Layers className="w-3.5 h-3.5 text-primary" />
+          ) : (
+            <GitBranch className="w-3.5 h-3.5 text-primary" />
+          )}
+          <span className="font-medium text-xs">
+            {selectedNode ? 'Node' : 'Edge'} Properties
+          </span>
+        </div>
+        <button
+          onClick={onClose}
+          className="p-0.5 hover:bg-secondary rounded transition-colors"
+        >
+          <X className="w-3.5 h-3.5 text-muted-foreground" />
+        </button>
+      </div>
+      <div className="p-3 space-y-2">
+        {renderFields()}
+      </div>
     </div>
   );
 };

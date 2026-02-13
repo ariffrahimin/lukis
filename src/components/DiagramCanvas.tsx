@@ -105,6 +105,7 @@ export const DiagramCanvas = () => {
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
   const [selectedNodes, setSelectedNodes] = useState<Node[]>([]);
   const [selectedEdges, setSelectedEdges] = useState<Edge[]>([]);
+  const [contextMenuPos, setContextMenuPos] = useState<{ x: number; y: number } | null>(null);
 
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
@@ -189,7 +190,7 @@ export const DiagramCanvas = () => {
   }, []);
 
   const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
-    // Handle single click selection when not using multi-selection
+    // Handle single click selection when not using multi-selection (no panel)
     if (!event.metaKey && !event.ctrlKey) {
       setSelectedNodes([node]);
       setSelectedEdges([]);
@@ -199,7 +200,7 @@ export const DiagramCanvas = () => {
   }, []);
 
   const onEdgeClick = useCallback((event: React.MouseEvent, edge: Edge) => {
-    // Handle single click selection when not using multi-selection
+    // Handle single click selection when not using multi-selection (no panel)
     if (!event.metaKey && !event.ctrlKey) {
       setSelectedNodes([]);
       setSelectedEdges([edge]);
@@ -208,11 +209,26 @@ export const DiagramCanvas = () => {
     }
   }, []);
 
+  const onNodeContextMenu = useCallback((event: React.MouseEvent, node: Node) => {
+    event.preventDefault();
+    setSelectedNode(node);
+    setSelectedEdge(null);
+    setContextMenuPos({ x: event.clientX, y: event.clientY });
+  }, []);
+
+  const onEdgeContextMenu = useCallback((event: React.MouseEvent, edge: Edge) => {
+    event.preventDefault();
+    setSelectedEdge(edge);
+    setSelectedNode(null);
+    setContextMenuPos({ x: event.clientX, y: event.clientY });
+  }, []);
+
   const onPaneClick = useCallback(() => {
     setSelectedNode(null);
     setSelectedEdge(null);
     setSelectedNodes([]);
     setSelectedEdges([]);
+    setContextMenuPos(null);
   }, []);
 
   const addNode = useCallback((type: NodeType) => {
@@ -842,6 +858,8 @@ export const DiagramCanvas = () => {
           onNodeClick={onNodeClick}
           onEdgeClick={onEdgeClick}
           onPaneClick={onPaneClick}
+          onNodeContextMenu={onNodeContextMenu}
+          onEdgeContextMenu={onEdgeContextMenu}
           nodeTypes={nodeTypes}
           fitView
           onSelectionChange={onSelectionChange}
@@ -922,8 +940,10 @@ export const DiagramCanvas = () => {
           onClose={() => {
             setSelectedNode(null);
             setSelectedEdge(null);
+            setContextMenuPos(null);
             setMobilePropertiesOpen(false);
           }}
+          position={contextMenuPos}
           isMobile={isMobile || isTablet}
           open={mobilePropertiesOpen}
           onOpenChange={(open) => {
@@ -931,6 +951,7 @@ export const DiagramCanvas = () => {
             if (!open) {
               setSelectedNode(null);
               setSelectedEdge(null);
+              setContextMenuPos(null);
             }
           }}
         />

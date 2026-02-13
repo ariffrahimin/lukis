@@ -1,5 +1,5 @@
-import { memo, useState } from "react";
-import { Handle, Position, NodeResizer } from "@xyflow/react";
+import { memo, useState, useRef, useEffect, useCallback } from "react";
+import { Handle, Position, NodeResizer, useReactFlow } from "@xyflow/react";
 import { cn } from "../../lib/utils";
 import { type NodeType } from "../../types/diagrams";
 import {
@@ -329,7 +329,85 @@ const NodeIcon = ({
   }
 };
 
+const EditableLabel = ({
+  label,
+  nodeId,
+  className,
+}: {
+  label: string;
+  nodeId: string;
+  className?: string;
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [value, setValue] = useState(label);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { setNodes } = useReactFlow();
+
+  useEffect(() => {
+    setValue(label);
+  }, [label]);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const commitEdit = useCallback(() => {
+    setIsEditing(false);
+    const trimmed = value.trim();
+    if (trimmed && trimmed !== label) {
+      setNodes((nds) =>
+        nds.map((n) =>
+          n.id === nodeId ? { ...n, data: { ...n.data, label: trimmed } } : n
+        )
+      );
+    } else {
+      setValue(label);
+    }
+  }, [value, label, nodeId, setNodes]);
+
+  if (isEditing) {
+    return (
+      <input
+        ref={inputRef}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={commitEdit}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") commitEdit();
+          if (e.key === "Escape") {
+            setValue(label);
+            setIsEditing(false);
+          }
+          e.stopPropagation();
+        }}
+        className={cn(
+          "bg-transparent border-b border-primary outline-none text-center w-full",
+          className
+        )}
+        style={{ minWidth: 30 }}
+      />
+    );
+  }
+
+  return (
+    <span
+      className={className}
+      onDoubleClick={(e) => {
+        e.stopPropagation();
+        setIsEditing(true);
+      }}
+      title="Double-click to edit"
+    >
+      {label}
+    </span>
+  );
+};
+
 interface BaseNodeProps {
+  id: string;
   data: {
     label: string;
     description?: string;
@@ -339,7 +417,7 @@ interface BaseNodeProps {
   selected?: boolean;
 }
 
-const BaseNode = ({ data, selected }: BaseNodeProps) => {
+const BaseNode = ({ id, data, selected }: BaseNodeProps) => {
   const styles = nodeTypeStyles[data.nodeType];
   const isTextNode = data.nodeType === "text";
   const isGroupNode = data.nodeType === "group";
@@ -457,9 +535,11 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
             transform: "translateY(-50%)",
           }}
         />
-        <span className="text-foreground font-medium text-sm">
-          {data.label}
-        </span>
+        <EditableLabel
+          label={data.label}
+          nodeId={id}
+          className="text-foreground font-medium text-sm"
+        />
       </div>
     );
   }
@@ -557,9 +637,11 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
         {/* Optional label */}
         {data.label && (
           <div className="mt-1 text-center">
-            <span className="text-xs font-medium text-foreground leading-tight">
-              {data.label}
-            </span>
+            <EditableLabel
+              label={data.label}
+              nodeId={id}
+              className="text-xs font-medium text-foreground leading-tight"
+            />
           </div>
         )}
 
@@ -686,9 +768,11 @@ const BaseNode = ({ data, selected }: BaseNodeProps) => {
       <div className={cn("p-3", isGroupNode && "pb-16")}>
         <div className="flex items-center gap-2">
           <NodeIcon type={data.nodeType} className={styles.icon} />
-          <span className="font-medium text-sm text-foreground truncate max-w-[120px]">
-            {data.label}
-          </span>
+          <EditableLabel
+            label={data.label}
+            nodeId={id}
+            className="font-medium text-sm text-foreground truncate max-w-[120px]"
+          />
         </div>
         {data.description && (
           <p className="text-xs text-muted-foreground mt-1 truncate max-w-[160px]">
