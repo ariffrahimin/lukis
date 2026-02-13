@@ -213,3 +213,27 @@
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground));
 }
+
+/* Touch-friendly styles */
+@media (pointer: coarse) {
+  .react-flow__handle {
+    width: 14px !important;
+    height: 14px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .react-flow__minimap {
+    display: none !important;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+/* Safe area padding for mobile bottom bar */
+.safe-area-bottom {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}

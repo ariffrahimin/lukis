@@ -28,7 +28,9 @@ import { Toolbar } from './Toolbar';
 import { PropertiesPanel } from './PropertiesPanel';
 import { CloudServicesPanel } from './CloudServicesPanel';
 import { useUndoRedo } from '..//hooks/useUndoRedo';
+import { useIsMobile, useIsTablet } from '../hooks/use-mobile';
 import { toast } from 'sonner';
+import { LayoutGrid } from 'lucide-react';
 
 // Use the centralized type from types/diagrams
 type NodeData = DiagramNodeData;
@@ -98,6 +100,11 @@ export const DiagramCanvas = () => {
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
   const [selectedNodes, setSelectedNodes] = useState<Node[]>([]);
   const [selectedEdges, setSelectedEdges] = useState<Edge[]>([]);
+
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [mobilePropertiesOpen, setMobilePropertiesOpen] = useState(false);
 
   const { saveState, undo, redo, canUndo, canRedo } = useUndoRedo();
 
@@ -726,10 +733,31 @@ export const DiagramCanvas = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleDelete, handleUndo, handleRedo, reactFlowInstance, setSelectedTool]);
 
+  // Auto-open properties sheet on mobile/tablet when a node or edge is selected
+  useEffect(() => {
+    if ((isMobile || isTablet) && (selectedNode || selectedEdge)) {
+      setMobilePropertiesOpen(true);
+    }
+  }, [isMobile, isTablet, selectedNode, selectedEdge]);
+
   return (
     <div className="flex w-full h-screen bg-[hsl(var(--canvas-bg))]">
-      <CloudServicesPanel onServiceSelect={addNode} />
-      
+      {/* Desktop/Tablet: static sidebar. Mobile: Sheet overlay */}
+      {!isMobile && (
+        <CloudServicesPanel
+          onServiceSelect={addNode}
+          isMobile={false}
+        />
+      )}
+      {isMobile && (
+        <CloudServicesPanel
+          onServiceSelect={addNode}
+          isMobile={true}
+          open={mobileServicesOpen}
+          onOpenChange={setMobileServicesOpen}
+        />
+      )}
+
       <div ref={reactFlowWrapper} className="flex-1 relative">
         <ReactFlow
           nodes={nodes}
@@ -768,23 +796,36 @@ export const DiagramCanvas = () => {
             size={1}
             color="hsl(var(--canvas-grid))"
           />
-          <MiniMap
-            nodeStrokeWidth={3}
-            zoomable
-            pannable
-            className="!bottom-4 !right-4"
-          />
+          {!isMobile && (
+            <MiniMap
+              nodeStrokeWidth={3}
+              zoomable
+              pannable
+              className="!bottom-4 !right-4"
+            />
+          )}
           <Controls
             className="!bottom-4 !left-4"
             showInteractive={false}
           />
 
-          <Panel position="bottom-center" className="mb-4">
+          <Panel position="bottom-center" className={isMobile ? "mb-16" : "mb-4"}>
             <div className="text-xs text-muted-foreground bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-border">
               {nodes.length} nodes • {edges.length} edges
             </div>
           </Panel>
         </ReactFlow>
+
+        {/* Mobile: FAB button to open services panel */}
+        {isMobile && (
+          <button
+            onClick={() => setMobileServicesOpen(true)}
+            className="fixed top-4 left-4 z-10 p-3 bg-primary text-primary-foreground rounded-full shadow-lg active:scale-95 transition-transform"
+            aria-label="Open node panel"
+          >
+            <LayoutGrid className="w-5 h-5" />
+          </button>
+        )}
 
         <Toolbar
           selectedTool={selectedTool}
@@ -800,6 +841,7 @@ export const DiagramCanvas = () => {
           canRedo={canRedo}
           onExport={handleExport}
           onImport={handleImport}
+          isMobile={isMobile}
         />
 
         <PropertiesPanel
@@ -810,6 +852,16 @@ export const DiagramCanvas = () => {
           onClose={() => {
             setSelectedNode(null);
             setSelectedEdge(null);
+            setMobilePropertiesOpen(false);
+          }}
+          isMobile={isMobile || isTablet}
+          open={mobilePropertiesOpen}
+          onOpenChange={(open) => {
+            setMobilePropertiesOpen(open);
+            if (!open) {
+              setSelectedNode(null);
+              setSelectedEdge(null);
+            }
           }}
         />
       </div>

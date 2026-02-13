@@ -11,7 +11,8 @@ import {
   Undo,
   Redo,
   Download,
-  Upload
+  Upload,
+  MoreHorizontal
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { type NodeType, type ToolbarItem } from '../types/diagrams';
@@ -22,6 +23,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from './ui/dropdown-menu';
 
 const nodeTypes: ToolbarItem[] = [
@@ -48,6 +50,7 @@ interface ToolbarProps {
   canRedo: boolean;
   onExport: (format: 'json' | 'png' | 'gif') => void;
   onImport: () => void;
+  isMobile?: boolean;
 }
 
 export const Toolbar = ({
@@ -64,12 +67,119 @@ export const Toolbar = ({
   canRedo,
   onExport,
   onImport,
+  isMobile = false,
 }: ToolbarProps) => {
   const handleDragStart = (event: React.DragEvent, nodeType: NodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
   };
 
+  // Mobile: fixed bottom bar with core tools + overflow menu
+  if (isMobile) {
+    return (
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-center gap-1 px-3 py-2 bg-toolbar-bg border-t border-border shadow-lg backdrop-blur-xl safe-area-bottom">
+        {/* Core tools row */}
+        <button
+          onClick={() => onToolSelect('select')}
+          className={cn(
+            'p-3 rounded-lg transition-all duration-200',
+            selectedTool === 'select'
+              ? 'bg-primary text-primary-foreground'
+              : 'hover:bg-secondary text-foreground'
+          )}
+        >
+          <MousePointer2 className="w-5 h-5" />
+        </button>
+
+        <button
+          onClick={() => onToolSelect('pan')}
+          className={cn(
+            'p-3 rounded-lg transition-all duration-200',
+            selectedTool === 'pan'
+              ? 'bg-primary text-primary-foreground'
+              : 'hover:bg-secondary text-foreground'
+          )}
+        >
+          <Hand className="w-5 h-5" />
+        </button>
+
+        <Separator orientation="vertical" className="h-6 mx-0.5" />
+
+        <button
+          onClick={onUndo}
+          disabled={!canUndo}
+          className={cn(
+            'p-3 rounded-lg transition-all duration-200',
+            canUndo ? 'hover:bg-secondary text-foreground' : 'text-muted-foreground'
+          )}
+        >
+          <Undo className="w-5 h-5" />
+        </button>
+
+        <button
+          onClick={onRedo}
+          disabled={!canRedo}
+          className={cn(
+            'p-3 rounded-lg transition-all duration-200',
+            canRedo ? 'hover:bg-secondary text-foreground' : 'text-muted-foreground'
+          )}
+        >
+          <Redo className="w-5 h-5" />
+        </button>
+
+        <button
+          onClick={onDelete}
+          className="p-3 rounded-lg hover:bg-destructive/20 text-destructive transition-all duration-200"
+        >
+          <Trash2 className="w-5 h-5" />
+        </button>
+
+        <Separator orientation="vertical" className="h-6 mx-0.5" />
+
+        {/* Overflow menu for secondary actions */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="p-3 rounded-lg hover:bg-secondary text-foreground transition-all duration-200">
+              <MoreHorizontal className="w-5 h-5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" side="top" sideOffset={8}>
+            <DropdownMenuItem onSelect={onZoomIn}>
+              <ZoomIn className="w-4 h-4 mr-2" /> Zoom In
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={onZoomOut}>
+              <ZoomOut className="w-4 h-4 mr-2" /> Zoom Out
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={onFitView}>
+              <Maximize className="w-4 h-4 mr-2" /> Fit View
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => onAddNode('text')}>
+              <Type className="w-4 h-4 mr-2" /> Add Text
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => onAddNode('group')}>
+              <Square className="w-4 h-4 mr-2" /> Add Group
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={onImport}>
+              <Upload className="w-4 h-4 mr-2" /> Import
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => onExport('json')}>
+              <Download className="w-4 h-4 mr-2" /> Export JSON
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => onExport('png')}>
+              <Download className="w-4 h-4 mr-2" /> Export PNG
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => onExport('gif')}>
+              <Download className="w-4 h-4 mr-2" /> Export GIF
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    );
+  }
+
+  // Desktop/Tablet: top-center floating toolbar
   return (
     <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1 px-3 py-2 bg-toolbar-bg rounded-xl border border-border shadow-lg backdrop-blur-xl">
       {/* Selection Tools */}

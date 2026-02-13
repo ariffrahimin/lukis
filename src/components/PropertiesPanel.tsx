@@ -6,6 +6,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from './ui/sheet';
 import { X, Layers, GitBranch } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -39,6 +40,9 @@ interface PropertiesPanelProps {
   onNodeUpdate: (nodeId: string, data: Partial<NodeData>) => void;
   onEdgeUpdate: (edgeId: string, data: Partial<Edge>) => void;
   onClose: () => void;
+  isMobile?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export const PropertiesPanel = ({
@@ -47,6 +51,9 @@ export const PropertiesPanel = ({
   onNodeUpdate,
   onEdgeUpdate,
   onClose,
+  isMobile = false,
+  open = false,
+  onOpenChange,
 }: PropertiesPanelProps) => {
   const [label, setLabel] = useState('');
   const [description, setDescription] = useState('');
@@ -153,29 +160,31 @@ export const PropertiesPanel = ({
     }
   };
 
-  if (!selectedNode && !selectedEdge) return null;
+  const hasSelection = selectedNode || selectedEdge;
 
-  return (
-    <div className="absolute right-4 top-4 w-72 bg-card border border-border rounded-xl shadow-lg overflow-hidden z-10">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-secondary/50 border-b border-border">
-        <div className="flex items-center gap-2">
-          {selectedNode ? (
-            <Layers className="w-4 h-4 text-primary" />
-          ) : (
-            <GitBranch className="w-4 h-4 text-primary" />
-          )}
-          <span className="font-medium text-sm">
-            {selectedNode ? 'Node Properties' : 'Edge Properties'}
-          </span>
+  const panelContent = (
+    <>
+      {/* Header - only show in desktop mode (Sheet has its own header) */}
+      {!isMobile && (
+        <div className="flex items-center justify-between px-4 py-3 bg-secondary/50 border-b border-border">
+          <div className="flex items-center gap-2">
+            {selectedNode ? (
+              <Layers className="w-4 h-4 text-primary" />
+            ) : (
+              <GitBranch className="w-4 h-4 text-primary" />
+            )}
+            <span className="font-medium text-sm">
+              {selectedNode ? 'Node Properties' : 'Edge Properties'}
+            </span>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-secondary rounded transition-colors"
+          >
+            <X className="w-4 h-4 text-muted-foreground" />
+          </button>
         </div>
-        <button
-          onClick={onClose}
-          className="p-1 hover:bg-secondary rounded transition-colors"
-        >
-          <X className="w-4 h-4 text-muted-foreground" />
-        </button>
-      </div>
+      )}
 
       {/* Content */}
       <div className="p-4 space-y-4">
@@ -338,11 +347,38 @@ export const PropertiesPanel = ({
                 />
               </button>
             </div>
-
-    
           </>
         )}
       </div>
+    </>
+  );
+
+  // Mobile/Tablet: render inside a Sheet overlay
+  if (isMobile) {
+    return (
+      <Sheet open={open && !!hasSelection} onOpenChange={onOpenChange}>
+        <SheetContent side="right" className="w-[300px] p-0 overflow-y-auto">
+          <SheetHeader className="px-4 py-3 bg-secondary/50 border-b border-border">
+            <SheetTitle className="flex items-center gap-2 text-sm">
+              {selectedNode ? (
+                <><Layers className="w-4 h-4 text-primary" /> Node Properties</>
+              ) : (
+                <><GitBranch className="w-4 h-4 text-primary" /> Edge Properties</>
+              )}
+            </SheetTitle>
+          </SheetHeader>
+          {panelContent}
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  // Desktop: absolute-positioned card
+  if (!hasSelection) return null;
+
+  return (
+    <div className="absolute right-4 top-4 w-72 bg-card border border-border rounded-xl shadow-lg overflow-hidden z-10">
+      {panelContent}
     </div>
   );
 };

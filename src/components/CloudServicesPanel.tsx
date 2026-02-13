@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { type NodeType } from "../types/diagrams";
 import { Separator } from "./ui/separator";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 // Basic Icons (using Lucide React icons)
 import {
@@ -58,10 +59,16 @@ interface CloudProvider {
 
 interface CloudServicesPanelProps {
   onServiceSelect: (type: NodeType) => void;
+  isMobile?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export const CloudServicesPanel = ({
   onServiceSelect,
+  isMobile = false,
+  open = false,
+  onOpenChange,
 }: CloudServicesPanelProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedProviders, setExpandedProviders] = useState<Set<string>>(
@@ -285,33 +292,21 @@ export const CloudServicesPanel = ({
     setExpandedProviders(new Set(cloudProviders.map((p) => p.name)));
   };
 
-  if (isCollapsed) {
-    return (
-      <div className="w-12 bg-background border-r border-border h-full flex flex-col items-center py-4">
-        <button
-          onClick={() => setIsCollapsed(false)}
-          className="p-2 rounded-lg hover:bg-muted transition-colors"
-          title="Show Cloud Services"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="w-64 bg-background border-r border-border h-full flex flex-col">
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-foreground">Node & Shapes</h3>
-          <button
-            onClick={() => setIsCollapsed(true)}
-            className="p-1 rounded hover:bg-muted transition-colors"
-            title="Hide Panel"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-        </div>
+  const panelContent = (
+    <>
+      <div className={isMobile ? "p-4 border-b border-border" : "p-4 border-b border-border"}>
+        {!isMobile && (
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-foreground">Node & Shapes</h3>
+            <button
+              onClick={() => setIsCollapsed(true)}
+              className="p-1 rounded hover:bg-muted transition-colors"
+              title="Hide Panel"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          </div>
+        )}
         <div className="flex items-center space-x-2">
           <button
             onClick={toggleAllProviders}
@@ -344,10 +339,13 @@ export const CloudServicesPanel = ({
                 {provider.services.map((service) => (
                   <div
                     key={service.type}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, service.type)}
-                    onClick={() => onServiceSelect(service.type)}
-                    className="flex flex-col items-center justify-center p-2 rounded-lg border border-border bg-card hover:bg-muted/50 cursor-grab active:cursor-grabbing transition-all duration-200 min-h-[60px]"
+                    draggable={!isMobile}
+                    onDragStart={(e) => !isMobile && handleDragStart(e, service.type)}
+                    onClick={() => {
+                      onServiceSelect(service.type);
+                      if (isMobile) onOpenChange?.(false);
+                    }}
+                    className="flex flex-col items-center justify-center p-2 rounded-lg border border-border bg-card hover:bg-muted/50 cursor-pointer transition-all duration-200 min-h-[60px]"
                   >
                     <div className="w-8 h-8 flex-shrink-0">
                       {typeof service.icon === 'string' ? (
@@ -386,6 +384,43 @@ export const CloudServicesPanel = ({
           </div>
         ))}
       </div>
+    </>
+  );
+
+  // Mobile: render inside a Sheet overlay
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent side="left" className="w-[280px] p-0 flex flex-col">
+          <SheetHeader className="p-4 border-b border-border">
+            <SheetTitle>Node & Shapes</SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {panelContent}
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  // Desktop/Tablet: static sidebar
+  if (isCollapsed) {
+    return (
+      <div className="w-12 bg-background border-r border-border h-full flex flex-col items-center py-4">
+        <button
+          onClick={() => setIsCollapsed(false)}
+          className="p-2 rounded-lg hover:bg-muted transition-colors"
+          title="Show Cloud Services"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-64 bg-background border-r border-border h-full flex flex-col">
+      {panelContent}
     </div>
   );
 };
