@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { type NodeType } from "../types/diagrams";
 import { Separator } from "./ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
-import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown, Search, X } from "lucide-react";
 // Basic Icons (using Lucide React icons)
 import {
   Cloud,
@@ -98,6 +98,7 @@ export const CloudServicesPanel = ({
   onOpenChange,
 }: CloudServicesPanelProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [expandedProviders, setExpandedProviders] = useState<Set<string>>(
     new Set([]),
   );
@@ -423,6 +424,21 @@ export const CloudServicesPanel = ({
       ],
     },
   ];
+  const filteredProviders = useMemo(() => {
+    if (!searchQuery.trim()) return cloudProviders;
+    const query = searchQuery.toLowerCase();
+    return cloudProviders
+      .map((provider) => ({
+        ...provider,
+        services: provider.services.filter(
+          (service) =>
+            service.label.toLowerCase().includes(query) ||
+            provider.name.toLowerCase().includes(query)
+        ),
+      }))
+      .filter((provider) => provider.services.length > 0);
+  }, [searchQuery, cloudProviders]);
+
   const handleDragStart = (event: React.DragEvent, nodeType: NodeType) => {
     event.dataTransfer.setData("application/reactflow", nodeType);
     event.dataTransfer.effectAllowed = "move";
@@ -438,7 +454,7 @@ export const CloudServicesPanel = ({
     setExpandedProviders(newExpanded);
   };
 
-  const allProvidersExpanded = expandedProviders.size === cloudProviders.length;
+  const allProvidersExpanded = expandedProviders.size === filteredProviders.length && filteredProviders.length > 0;
 
   const toggleAllProviders = () => {
     if (allProvidersExpanded) {
@@ -446,7 +462,7 @@ export const CloudServicesPanel = ({
       return;
     }
 
-    setExpandedProviders(new Set(cloudProviders.map((p) => p.name)));
+    setExpandedProviders(new Set(filteredProviders.map((p) => p.name)));
   };
 
   const panelContent = (
@@ -464,7 +480,25 @@ export const CloudServicesPanel = ({
             </button>
           </div>
         )}
-        <div className="flex items-center space-x-2">
+        <div className="relative mt-2">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search nodes..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-8 pr-8 py-1.5 text-sm rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-muted transition-colors"
+            >
+              <X className="w-3.5 h-3.5 text-muted-foreground" />
+            </button>
+          )}
+        </div>
+        <div className="flex items-center space-x-2 mt-2">
           <button
             onClick={toggleAllProviders}
             className="px-2 py-1 rounded hover:bg-muted transition-colors text-sm text-muted-foreground"
@@ -475,7 +509,12 @@ export const CloudServicesPanel = ({
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
-        {cloudProviders.map((provider) => (
+        {filteredProviders.length === 0 && (
+          <p className="text-sm text-muted-foreground text-center py-4">
+            No results found
+          </p>
+        )}
+        {filteredProviders.map((provider) => (
           <div key={provider.name}>
             <button
               onClick={() => toggleProvider(provider.name)}
@@ -491,7 +530,7 @@ export const CloudServicesPanel = ({
               />
             </button>
 
-            {expandedProviders.has(provider.name) && (
+            {(expandedProviders.has(provider.name) || searchQuery.trim() !== "") && (
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {provider.services.map((service) => (
                   <div
