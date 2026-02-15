@@ -73,6 +73,23 @@ import cosmosDbIcon from "./cloud-services/azure/cosmos-db.svg";
 import containerAppsIcon from "./cloud-services/azure/container-apps.svg";
 import keyVaultIcon from "./cloud-services/azure/key-vault.svg";
 
+// NoSQL DB Icons
+import mongodbIcon from "./cloud-services/nosql-db/mongodb.svg";
+import redisIcon from "./cloud-services/nosql-db/redis.svg";
+import cassandraIcon from "./cloud-services/nosql-db/cassandra.svg";
+import couchdbIcon from "./cloud-services/nosql-db/couchdb.svg";
+import firebaseIcon from "./cloud-services/nosql-db/firebase.svg";
+import influxdbIcon from "./cloud-services/nosql-db/influxdb.svg";
+import rocksdbIcon from "./cloud-services/nosql-db/rocksdb.svg";
+
+// SQL DB Icons
+import mysqlIcon from "./cloud-services/sql-db/mysql.svg";
+import postgresqlIcon from "./cloud-services/sql-db/postgressql.svg";
+import sqliteIcon from "./cloud-services/sql-db/sqlite.svg";
+import oracleIcon from "./cloud-services/sql-db/oracle.svg";
+import mssqlIcon from "./cloud-services/sql-db/microsoft-sql-server.svg";
+import sqlalchemyIcon from "./cloud-services/sql-db/sqlalchemy.svg";
+
 interface CloudService {
   type: NodeType;
   label: string;
@@ -420,6 +437,81 @@ export const CloudServicesPanel = ({
           type: "azure-key-vault",
           label: "Key Vault",
           icon: keyVaultIcon,
+        },
+      ],
+    },
+    {
+      name: "NoSQL DB",
+      services: [
+        {
+          type: "nosql-mongodb",
+          label: "MongoDB",
+          icon: mongodbIcon,
+        },
+        {
+          type: "nosql-redis",
+          label: "Redis",
+          icon: redisIcon,
+        },
+        {
+          type: "nosql-cassandra",
+          label: "Cassandra",
+          icon: cassandraIcon,
+        },
+        {
+          type: "nosql-couchdb",
+          label: "CouchDB",
+          icon: couchdbIcon,
+        },
+        {
+          type: "nosql-firebase",
+          label: "Firebase",
+          icon: firebaseIcon,
+        },
+        {
+          type: "nosql-influxdb",
+          label: "InfluxDB",
+          icon: influxdbIcon,
+        },
+        {
+          type: "nosql-rocksdb",
+          label: "RocksDB",
+          icon: rocksdbIcon,
+        },
+      ],
+    },
+    {
+      name: "SQL DB",
+      services: [
+        {
+          type: "sql-mysql",
+          label: "MySQL",
+          icon: mysqlIcon,
+        },
+        {
+          type: "sql-postgresql",
+          label: "PostgreSQL",
+          icon: postgresqlIcon,
+        },
+        {
+          type: "sql-sqlite",
+          label: "SQLite",
+          icon: sqliteIcon,
+        },
+        {
+          type: "sql-oracle",
+          label: "Oracle",
+          icon: oracleIcon,
+        },
+        {
+          type: "sql-mssql",
+          label: "SQL Server",
+          icon: mssqlIcon,
+        },
+        {
+          type: "sql-sqlalchemy",
+          label: "SQLAlchemy",
+          icon: sqlalchemyIcon,
         },
       ],
     },

@@ -67,6 +67,23 @@ import cosmosDbIcon from "../cloud-services/azure/cosmos-db.svg";
 import containerAppsIcon from "../cloud-services/azure/container-apps.svg";
 import keyVaultIcon from "../cloud-services/azure/key-vault.svg";
 
+// NoSQL DB Icons
+import mongodbIcon from "../cloud-services/nosql-db/mongodb.svg";
+import redisIcon from "../cloud-services/nosql-db/redis.svg";
+import cassandraIcon from "../cloud-services/nosql-db/cassandra.svg";
+import couchdbIcon from "../cloud-services/nosql-db/couchdb.svg";
+import firebaseIcon from "../cloud-services/nosql-db/firebase.svg";
+import influxdbIcon from "../cloud-services/nosql-db/influxdb.svg";
+import rocksdbIcon from "../cloud-services/nosql-db/rocksdb.svg";
+
+// SQL DB Icons
+import mysqlIcon from "../cloud-services/sql-db/mysql.svg";
+import postgresqlIcon from "../cloud-services/sql-db/postgressql.svg";
+import sqliteIcon from "../cloud-services/sql-db/sqlite.svg";
+import oracleIcon from "../cloud-services/sql-db/oracle.svg";
+import mssqlIcon from "../cloud-services/sql-db/microsoft-sql-server.svg";
+import sqlalchemyIcon from "../cloud-services/sql-db/sqlalchemy.svg";
+
 // Shape Icons
 import shapeCircleIcon from "../cloud-services/shapes/circle.svg";
 import shapeSquareIcon from "../cloud-services/shapes/square.svg";
@@ -117,6 +134,19 @@ const cloudServiceIcons: Record<string, string> = {
   "azure-cosmos-db": cosmosDbIcon,
   "azure-container-apps": containerAppsIcon,
   "azure-key-vault": keyVaultIcon,
+  "nosql-mongodb": mongodbIcon,
+  "nosql-redis": redisIcon,
+  "nosql-cassandra": cassandraIcon,
+  "nosql-couchdb": couchdbIcon,
+  "nosql-firebase": firebaseIcon,
+  "nosql-influxdb": influxdbIcon,
+  "nosql-rocksdb": rocksdbIcon,
+  "sql-mysql": mysqlIcon,
+  "sql-postgresql": postgresqlIcon,
+  "sql-sqlite": sqliteIcon,
+  "sql-oracle": oracleIcon,
+  "sql-mssql": mssqlIcon,
+  "sql-sqlalchemy": sqlalchemyIcon,
   "shape-circle": shapeCircleIcon,
   "shape-square": shapeSquareIcon,
   "shape-star": shapeStarIcon,
@@ -410,6 +440,71 @@ const nodeTypeStyles: Record<
     bg: "bg-cyan-100/20",
     border: "border-cyan-300/50",
     icon: "text-cyan-600",
+  },
+  "nosql-mongodb": {
+    bg: "bg-green-100/20",
+    border: "border-green-300/50",
+    icon: "text-green-600",
+  },
+  "nosql-redis": {
+    bg: "bg-red-100/20",
+    border: "border-red-300/50",
+    icon: "text-red-600",
+  },
+  "nosql-cassandra": {
+    bg: "bg-blue-100/20",
+    border: "border-blue-300/50",
+    icon: "text-blue-600",
+  },
+  "nosql-couchdb": {
+    bg: "bg-red-100/20",
+    border: "border-red-300/50",
+    icon: "text-red-600",
+  },
+  "nosql-firebase": {
+    bg: "bg-amber-100/20",
+    border: "border-amber-300/50",
+    icon: "text-amber-600",
+  },
+  "nosql-influxdb": {
+    bg: "bg-purple-100/20",
+    border: "border-purple-300/50",
+    icon: "text-purple-600",
+  },
+  "nosql-rocksdb": {
+    bg: "bg-slate-100/20",
+    border: "border-slate-300/50",
+    icon: "text-slate-600",
+  },
+  "sql-mysql": {
+    bg: "bg-blue-100/20",
+    border: "border-blue-300/50",
+    icon: "text-blue-600",
+  },
+  "sql-postgresql": {
+    bg: "bg-sky-100/20",
+    border: "border-sky-300/50",
+    icon: "text-sky-600",
+  },
+  "sql-sqlite": {
+    bg: "bg-blue-100/20",
+    border: "border-blue-300/50",
+    icon: "text-blue-600",
+  },
+  "sql-oracle": {
+    bg: "bg-red-100/20",
+    border: "border-red-300/50",
+    icon: "text-red-600",
+  },
+  "sql-mssql": {
+    bg: "bg-red-100/20",
+    border: "border-red-300/50",
+    icon: "text-red-600",
+  },
+  "sql-sqlalchemy": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
   },
   "shape-circle": {
     bg: "bg-pink-100/20",

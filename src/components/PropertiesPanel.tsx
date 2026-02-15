@@ -37,6 +37,10 @@ const isValidNodeData = (data: unknown): data is NodeData => {
      'azure-aks', 'azure-monitor', 'azure-entra-id', 'azure-api-management',
      'azure-devops', 'azure-service-bus', 'azure-event-grid', 'azure-cosmos-db',
      'azure-container-apps', 'azure-key-vault',
+     'nosql-mongodb', 'nosql-redis', 'nosql-cassandra', 'nosql-couchdb',
+     'nosql-firebase', 'nosql-influxdb', 'nosql-rocksdb',
+     'sql-mysql', 'sql-postgresql', 'sql-sqlite', 'sql-oracle',
+     'sql-mssql', 'sql-sqlalchemy',
      'shape-circle', 'shape-square', 'shape-star', 'shape-hexagon'].includes(obj.nodeType)
   );
 };
@@ -86,7 +90,11 @@ export const PropertiesPanel = ({
     'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database',
     'azure-aks', 'azure-monitor', 'azure-entra-id', 'azure-api-management',
     'azure-devops', 'azure-service-bus', 'azure-event-grid', 'azure-cosmos-db',
-    'azure-container-apps', 'azure-key-vault'
+    'azure-container-apps', 'azure-key-vault',
+    'nosql-mongodb', 'nosql-redis', 'nosql-cassandra', 'nosql-couchdb',
+    'nosql-firebase', 'nosql-influxdb', 'nosql-rocksdb',
+    'sql-mysql', 'sql-postgresql', 'sql-sqlite', 'sql-oracle',
+    'sql-mssql', 'sql-sqlalchemy'
   ].includes(nodeData.nodeType);
 
   useEffect(() => {
