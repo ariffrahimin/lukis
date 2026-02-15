@@ -39,12 +39,33 @@ import ec2Icon from "../cloud-services/aws/ec2.svg";
 import s3Icon from "../cloud-services/aws/s3.svg";
 import lambdaIcon from "../cloud-services/aws/lambda.svg";
 import rdsIcon from "../cloud-services/aws/rds.svg";
+import eksIcon from "../cloud-services/aws/eks.svg";
+import cloudwatchIcon from "../cloud-services/aws/cloudwatch.svg";
+import awsIamIcon from "../cloud-services/aws/iam.svg";
+import awsApiGatewayIcon from "../cloud-services/aws/api-gateway.svg";
+import codebuildIcon from "../cloud-services/aws/codebuild.svg";
+import codepipelineIcon from "../cloud-services/aws/codepipeline.svg";
+import sqsIcon from "../cloud-services/aws/sqs.svg";
+import snsIcon from "../cloud-services/aws/sns.svg";
+import dynamodbIcon from "../cloud-services/aws/dynamodb.svg";
+import cloudfrontIcon from "../cloud-services/aws/cloudfront.svg";
+import fargateIcon from "../cloud-services/aws/fargate.svg";
 
 // Azure Icons
 import vmIcon from "../cloud-services/azure/vm.svg";
 import blobStorageIcon from "../cloud-services/azure/blob-storage.svg";
 import functionsIcon from "../cloud-services/azure/functions.svg";
 import sqlDatabaseIcon from "../cloud-services/azure/sql-database.svg";
+import aksIcon from "../cloud-services/azure/aks.svg";
+import azureMonitorIcon from "../cloud-services/azure/monitor.svg";
+import entraIdIcon from "../cloud-services/azure/entra-id.svg";
+import apiManagementIcon from "../cloud-services/azure/api-management.svg";
+import azureDevopsIcon from "../cloud-services/azure/devops.svg";
+import serviceBusIcon from "../cloud-services/azure/service-bus.svg";
+import eventGridIcon from "../cloud-services/azure/event-grid.svg";
+import cosmosDbIcon from "../cloud-services/azure/cosmos-db.svg";
+import containerAppsIcon from "../cloud-services/azure/container-apps.svg";
+import keyVaultIcon from "../cloud-services/azure/key-vault.svg";
 
 // Shape Icons
 import shapeCircleIcon from "../cloud-services/shapes/circle.svg";
@@ -71,10 +92,31 @@ const cloudServiceIcons: Record<string, string> = {
   "aws-s3": s3Icon,
   "aws-lambda": lambdaIcon,
   "aws-rds": rdsIcon,
+  "aws-eks": eksIcon,
+  "aws-cloudwatch": cloudwatchIcon,
+  "aws-iam": awsIamIcon,
+  "aws-api-gateway": awsApiGatewayIcon,
+  "aws-codebuild": codebuildIcon,
+  "aws-codepipeline": codepipelineIcon,
+  "aws-sqs": sqsIcon,
+  "aws-sns": snsIcon,
+  "aws-dynamodb": dynamodbIcon,
+  "aws-cloudfront": cloudfrontIcon,
+  "aws-fargate": fargateIcon,
   "azure-vm": vmIcon,
   "azure-blob-storage": blobStorageIcon,
   "azure-functions": functionsIcon,
   "azure-sql-database": sqlDatabaseIcon,
+  "azure-aks": aksIcon,
+  "azure-monitor": azureMonitorIcon,
+  "azure-entra-id": entraIdIcon,
+  "azure-api-management": apiManagementIcon,
+  "azure-devops": azureDevopsIcon,
+  "azure-service-bus": serviceBusIcon,
+  "azure-event-grid": eventGridIcon,
+  "azure-cosmos-db": cosmosDbIcon,
+  "azure-container-apps": containerAppsIcon,
+  "azure-key-vault": keyVaultIcon,
   "shape-circle": shapeCircleIcon,
   "shape-square": shapeSquareIcon,
   "shape-star": shapeStarIcon,
@@ -244,6 +286,61 @@ const nodeTypeStyles: Record<
     border: "border-orange-300/50",
     icon: "text-orange-600",
   },
+  "aws-eks": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
+  },
+  "aws-cloudwatch": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
+  },
+  "aws-iam": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
+  },
+  "aws-api-gateway": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
+  },
+  "aws-codebuild": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
+  },
+  "aws-codepipeline": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
+  },
+  "aws-sqs": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
+  },
+  "aws-sns": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
+  },
+  "aws-dynamodb": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
+  },
+  "aws-cloudfront": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
+  },
+  "aws-fargate": {
+    bg: "bg-orange-100/20",
+    border: "border-orange-300/50",
+    icon: "text-orange-600",
+  },
   "azure-vm": {
     bg: "bg-cyan-100/20",
     border: "border-cyan-300/50",
@@ -260,6 +357,56 @@ const nodeTypeStyles: Record<
     icon: "text-cyan-600",
   },
   "azure-sql-database": {
+    bg: "bg-cyan-100/20",
+    border: "border-cyan-300/50",
+    icon: "text-cyan-600",
+  },
+  "azure-aks": {
+    bg: "bg-cyan-100/20",
+    border: "border-cyan-300/50",
+    icon: "text-cyan-600",
+  },
+  "azure-monitor": {
+    bg: "bg-cyan-100/20",
+    border: "border-cyan-300/50",
+    icon: "text-cyan-600",
+  },
+  "azure-entra-id": {
+    bg: "bg-cyan-100/20",
+    border: "border-cyan-300/50",
+    icon: "text-cyan-600",
+  },
+  "azure-api-management": {
+    bg: "bg-cyan-100/20",
+    border: "border-cyan-300/50",
+    icon: "text-cyan-600",
+  },
+  "azure-devops": {
+    bg: "bg-cyan-100/20",
+    border: "border-cyan-300/50",
+    icon: "text-cyan-600",
+  },
+  "azure-service-bus": {
+    bg: "bg-cyan-100/20",
+    border: "border-cyan-300/50",
+    icon: "text-cyan-600",
+  },
+  "azure-event-grid": {
+    bg: "bg-cyan-100/20",
+    border: "border-cyan-300/50",
+    icon: "text-cyan-600",
+  },
+  "azure-cosmos-db": {
+    bg: "bg-cyan-100/20",
+    border: "border-cyan-300/50",
+    icon: "text-cyan-600",
+  },
+  "azure-container-apps": {
+    bg: "bg-cyan-100/20",
+    border: "border-cyan-300/50",
+    icon: "text-cyan-600",
+  },
+  "azure-key-vault": {
     bg: "bg-cyan-100/20",
     border: "border-cyan-300/50",
     icon: "text-cyan-600",

@@ -30,7 +30,13 @@ const isValidNodeData = (data: unknown): data is NodeData => {
      'process-requirements', 'process-design', 'process-development', 'process-testing', 'process-deployment', 'process-monitoring',
      'gcp-cloud-run', 'gcp-cloud-storage', 'gcp-bigquery', 'gcp-pub-sub','gcp-apigee','gcp-billing','gcp-cloud-build','gcp-cloud-monitoring','gcp-compute-engine','gcp-iam','gcp-kubernetes','gcp-security','gcp-cloud-sql',
      'aws-ec2', 'aws-s3', 'aws-lambda', 'aws-rds',
+     'aws-eks', 'aws-cloudwatch', 'aws-iam', 'aws-api-gateway',
+     'aws-codebuild', 'aws-codepipeline', 'aws-sqs', 'aws-sns',
+     'aws-dynamodb', 'aws-cloudfront', 'aws-fargate',
      'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database',
+     'azure-aks', 'azure-monitor', 'azure-entra-id', 'azure-api-management',
+     'azure-devops', 'azure-service-bus', 'azure-event-grid', 'azure-cosmos-db',
+     'azure-container-apps', 'azure-key-vault',
      'shape-circle', 'shape-square', 'shape-star', 'shape-hexagon'].includes(obj.nodeType)
   );
 };
@@ -74,7 +80,13 @@ export const PropertiesPanel = ({
   const isCloudService = nodeData?.nodeType && [
     'gcp-cloud-run', 'gcp-cloud-storage', 'gcp-bigquery', 'gcp-pub-sub','gcp-apigee','gcp-billing','gcp-cloud-build','gcp-cloud-monitoring','gcp-compute-engine','gcp-iam','gcp-kubernetes','gcp-security','gcp-cloud-sql',
     'aws-ec2', 'aws-s3', 'aws-lambda', 'aws-rds',
-    'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database'
+    'aws-eks', 'aws-cloudwatch', 'aws-iam', 'aws-api-gateway',
+    'aws-codebuild', 'aws-codepipeline', 'aws-sqs', 'aws-sns',
+    'aws-dynamodb', 'aws-cloudfront', 'aws-fargate',
+    'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database',
+    'azure-aks', 'azure-monitor', 'azure-entra-id', 'azure-api-management',
+    'azure-devops', 'azure-service-bus', 'azure-event-grid', 'azure-cosmos-db',
+    'azure-container-apps', 'azure-key-vault'
   ].includes(nodeData.nodeType);
 
   useEffect(() => {

@@ -45,12 +45,33 @@ import ec2Icon from "./cloud-services/aws/ec2.svg";
 import s3Icon from "./cloud-services/aws/s3.svg";
 import lambdaIcon from "./cloud-services/aws/lambda.svg";
 import rdsIcon from "./cloud-services/aws/rds.svg";
+import eksIcon from "./cloud-services/aws/eks.svg";
+import cloudwatchIcon from "./cloud-services/aws/cloudwatch.svg";
+import awsIamIcon from "./cloud-services/aws/iam.svg";
+import awsApiGatewayIcon from "./cloud-services/aws/api-gateway.svg";
+import codebuildIcon from "./cloud-services/aws/codebuild.svg";
+import codepipelineIcon from "./cloud-services/aws/codepipeline.svg";
+import sqsIcon from "./cloud-services/aws/sqs.svg";
+import snsIcon from "./cloud-services/aws/sns.svg";
+import dynamodbIcon from "./cloud-services/aws/dynamodb.svg";
+import cloudfrontIcon from "./cloud-services/aws/cloudfront.svg";
+import fargateIcon from "./cloud-services/aws/fargate.svg";
 
 // Azure Icons
 import vmIcon from "./cloud-services/azure/vm.svg";
 import blobStorageIcon from "./cloud-services/azure/blob-storage.svg";
 import functionsIcon from "./cloud-services/azure/functions.svg";
 import sqlDatabaseIcon from "./cloud-services/azure/sql-database.svg";
+import aksIcon from "./cloud-services/azure/aks.svg";
+import azureMonitorIcon from "./cloud-services/azure/monitor.svg";
+import entraIdIcon from "./cloud-services/azure/entra-id.svg";
+import apiManagementIcon from "./cloud-services/azure/api-management.svg";
+import azureDevopsIcon from "./cloud-services/azure/devops.svg";
+import serviceBusIcon from "./cloud-services/azure/service-bus.svg";
+import eventGridIcon from "./cloud-services/azure/event-grid.svg";
+import cosmosDbIcon from "./cloud-services/azure/cosmos-db.svg";
+import containerAppsIcon from "./cloud-services/azure/container-apps.svg";
+import keyVaultIcon from "./cloud-services/azure/key-vault.svg";
 
 interface CloudService {
   type: NodeType;
@@ -269,6 +290,61 @@ export const CloudServicesPanel = ({
           label: "RDS",
           icon: rdsIcon,
         },
+        {
+          type: "aws-eks",
+          label: "EKS",
+          icon: eksIcon,
+        },
+        {
+          type: "aws-cloudwatch",
+          label: "CloudWatch",
+          icon: cloudwatchIcon,
+        },
+        {
+          type: "aws-iam",
+          label: "IAM",
+          icon: awsIamIcon,
+        },
+        {
+          type: "aws-api-gateway",
+          label: "API Gateway",
+          icon: awsApiGatewayIcon,
+        },
+        {
+          type: "aws-codebuild",
+          label: "CodeBuild",
+          icon: codebuildIcon,
+        },
+        {
+          type: "aws-codepipeline",
+          label: "CodePipeline",
+          icon: codepipelineIcon,
+        },
+        {
+          type: "aws-sqs",
+          label: "SQS",
+          icon: sqsIcon,
+        },
+        {
+          type: "aws-sns",
+          label: "SNS",
+          icon: snsIcon,
+        },
+        {
+          type: "aws-dynamodb",
+          label: "DynamoDB",
+          icon: dynamodbIcon,
+        },
+        {
+          type: "aws-cloudfront",
+          label: "CloudFront",
+          icon: cloudfrontIcon,
+        },
+        {
+          type: "aws-fargate",
+          label: "Fargate",
+          icon: fargateIcon,
+        },
       ],
     },
     {
@@ -293,6 +369,56 @@ export const CloudServicesPanel = ({
           type: "azure-sql-database",
           label: "SQL Database",
           icon: sqlDatabaseIcon,
+        },
+        {
+          type: "azure-aks",
+          label: "AKS",
+          icon: aksIcon,
+        },
+        {
+          type: "azure-monitor",
+          label: "Monitor",
+          icon: azureMonitorIcon,
+        },
+        {
+          type: "azure-entra-id",
+          label: "Entra ID",
+          icon: entraIdIcon,
+        },
+        {
+          type: "azure-api-management",
+          label: "API Management",
+          icon: apiManagementIcon,
+        },
+        {
+          type: "azure-devops",
+          label: "DevOps",
+          icon: azureDevopsIcon,
+        },
+        {
+          type: "azure-service-bus",
+          label: "Service Bus",
+          icon: serviceBusIcon,
+        },
+        {
+          type: "azure-event-grid",
+          label: "Event Grid",
+          icon: eventGridIcon,
+        },
+        {
+          type: "azure-cosmos-db",
+          label: "Cosmos DB",
+          icon: cosmosDbIcon,
+        },
+        {
+          type: "azure-container-apps",
+          label: "Container Apps",
+          icon: containerAppsIcon,
+        },
+        {
+          type: "azure-key-vault",
+          label: "Key Vault",
+          icon: keyVaultIcon,
         },
       ],
     },
