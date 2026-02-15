@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { type Node, type Edge, MarkerType as ReactFlowMarkerType } from '@xyflow/react';
-import { type DiagramNodeData, type MarkerType } from '../types/diagrams';
+import { type DiagramNodeData, type NodeType, type MarkerType } from '../types/diagrams';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
@@ -9,39 +9,29 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from './ui/sheet';
 import { X, Layers, GitBranch } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { isCloudService } from './nodes/node-icons';
+import { nodeTypeStyles } from './nodes/node-styles';
 
 // Use the centralized type from types/diagrams
 type NodeData = DiagramNodeData;
+
+// All valid node types derived from the centralized styles map
+const validNodeTypes = new Set<string>(Object.keys(nodeTypeStyles));
 
 // Type guard function to safely cast node data
 const isValidNodeData = (data: unknown): data is NodeData => {
   if (!data || typeof data !== 'object') {
     return false;
   }
-  
+
   const obj = data as Record<string, unknown>;
-  
+
   return (
     'label' in obj &&
     typeof obj.label === 'string' &&
     'nodeType' in obj &&
     typeof obj.nodeType === 'string' &&
-    ['service', 'database', 'server', 'client', 'storage', 'api', 'text', 'group', 
-     'process-requirements', 'process-design', 'process-development', 'process-testing', 'process-deployment', 'process-monitoring',
-     'gcp-cloud-run', 'gcp-cloud-storage', 'gcp-bigquery', 'gcp-pub-sub','gcp-apigee','gcp-billing','gcp-cloud-build','gcp-cloud-monitoring','gcp-compute-engine','gcp-iam','gcp-kubernetes','gcp-security','gcp-cloud-sql',
-     'aws-ec2', 'aws-s3', 'aws-lambda', 'aws-rds',
-     'aws-eks', 'aws-cloudwatch', 'aws-iam', 'aws-api-gateway',
-     'aws-codebuild', 'aws-codepipeline', 'aws-sqs', 'aws-sns',
-     'aws-dynamodb', 'aws-cloudfront', 'aws-fargate',
-     'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database',
-     'azure-aks', 'azure-monitor', 'azure-entra-id', 'azure-api-management',
-     'azure-devops', 'azure-service-bus', 'azure-event-grid', 'azure-cosmos-db',
-     'azure-container-apps', 'azure-key-vault',
-     'nosql-mongodb', 'nosql-redis', 'nosql-cassandra', 'nosql-couchdb',
-     'nosql-firebase', 'nosql-influxdb', 'nosql-rocksdb',
-     'sql-mysql', 'sql-postgresql', 'sql-sqlite', 'sql-oracle',
-     'sql-mssql', 'sql-sqlalchemy',
-     'shape-circle', 'shape-square', 'shape-star', 'shape-hexagon'].includes(obj.nodeType)
+    validNodeTypes.has(obj.nodeType)
   );
 };
 
@@ -76,33 +66,15 @@ export const PropertiesPanel = ({
   const [animated, setAnimated] = useState(false);
 
   // Cloud service specific states
-  const [region, setRegion] = useState('');
-  const [instanceType, setInstanceType] = useState('');
   const [environment, setEnvironment] = useState('');
 
   const nodeData = selectedNode?.data && isValidNodeData(selectedNode.data) ? selectedNode.data : undefined;
-  const isCloudService = nodeData?.nodeType && [
-    'gcp-cloud-run', 'gcp-cloud-storage', 'gcp-bigquery', 'gcp-pub-sub','gcp-apigee','gcp-billing','gcp-cloud-build','gcp-cloud-monitoring','gcp-compute-engine','gcp-iam','gcp-kubernetes','gcp-security','gcp-cloud-sql',
-    'aws-ec2', 'aws-s3', 'aws-lambda', 'aws-rds',
-    'aws-eks', 'aws-cloudwatch', 'aws-iam', 'aws-api-gateway',
-    'aws-codebuild', 'aws-codepipeline', 'aws-sqs', 'aws-sns',
-    'aws-dynamodb', 'aws-cloudfront', 'aws-fargate',
-    'azure-vm', 'azure-blob-storage', 'azure-functions', 'azure-sql-database',
-    'azure-aks', 'azure-monitor', 'azure-entra-id', 'azure-api-management',
-    'azure-devops', 'azure-service-bus', 'azure-event-grid', 'azure-cosmos-db',
-    'azure-container-apps', 'azure-key-vault',
-    'nosql-mongodb', 'nosql-redis', 'nosql-cassandra', 'nosql-couchdb',
-    'nosql-firebase', 'nosql-influxdb', 'nosql-rocksdb',
-    'sql-mysql', 'sql-postgresql', 'sql-sqlite', 'sql-oracle',
-    'sql-mssql', 'sql-sqlalchemy'
-  ].includes(nodeData.nodeType);
+  const isCloudServiceNode = nodeData?.nodeType ? isCloudService(nodeData.nodeType as NodeType) : false;
 
   useEffect(() => {
     if (nodeData) {
       setLabel(nodeData.label || '');
       setDescription(nodeData.description || '');
-      setRegion(nodeData.region || '');
-      setInstanceType(nodeData.instanceType || '');
       setEnvironment(nodeData.environment || '');
     }
   }, [nodeData]);
@@ -127,20 +99,6 @@ export const PropertiesPanel = ({
     setDescription(value);
     if (selectedNode && isValidNodeData(selectedNode.data)) {
       onNodeUpdate(selectedNode.id, { description: value });
-    }
-  };
-
-  const handleRegionChange = (value: string) => {
-    setRegion(value);
-    if (selectedNode && isValidNodeData(selectedNode.data)) {
-      onNodeUpdate(selectedNode.id, { region: value });
-    }
-  };
-
-  const handleInstanceTypeChange = (value: string) => {
-    setInstanceType(value);
-    if (selectedNode && isValidNodeData(selectedNode.data)) {
-      onNodeUpdate(selectedNode.id, { instanceType: value });
     }
   };
 
@@ -223,34 +181,7 @@ export const PropertiesPanel = ({
             </div>
           </div>
 
-          {isCloudService && (
-            <>
-              <div className="space-y-1">
-                <Label htmlFor="region" className="text-xs text-muted-foreground">
-                  Region
-                </Label>
-                <Input
-                  id="region"
-                  value={region}
-                  onChange={(e) => handleRegionChange(e.target.value)}
-                  placeholder="us-west-2, europe-west1, etc."
-                  className="h-8 text-sm"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="instance-type" className="text-xs text-muted-foreground">
-                  Instance Type
-                </Label>
-                <Input
-                  id="instance-type"
-                  value={instanceType}
-                  onChange={(e) => handleInstanceTypeChange(e.target.value)}
-                  placeholder="t3.micro, n1-standard-1, etc."
-                  className="h-8 text-sm"
-                />
-              </div>
-
+          {isCloudServiceNode && (
               <div className="space-y-1">
                 <Label htmlFor="environment" className="text-xs text-muted-foreground">
                   Environment
@@ -267,7 +198,6 @@ export const PropertiesPanel = ({
                   </SelectContent>
                 </Select>
               </div>
-            </>
           )}
         </>
       )}
