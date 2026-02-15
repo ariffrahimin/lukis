@@ -90,6 +90,21 @@ import shapeSquareIcon from "../cloud-services/shapes/square.svg";
 import shapeStarIcon from "../cloud-services/shapes/star.svg";
 import shapeHexagonIcon from "../cloud-services/shapes/hexagon.svg";
 
+// Animated Icons
+import animatedApiIcon from "../cloud-services/animated/api.gif";
+import animatedClickIcon from "../cloud-services/animated/click.gif";
+import animatedCloudIcon from "../cloud-services/animated/cloud.gif";
+import animatedDoubleCheckIcon from "../cloud-services/animated/double-check.gif";
+import animatedLoadingBubbleIcon from "../cloud-services/animated/loading-bubble.gif";
+import animatedLoadingIcon from "../cloud-services/animated/loading.gif";
+import animatedRocketIcon from "../cloud-services/animated/rocket.gif";
+import animatedSettingsIcon from "../cloud-services/animated/settings.gif";
+import animatedTargetIcon from "../cloud-services/animated/target.gif";
+import animatedUploadCloudIcon from "../cloud-services/animated/upload-cloud.gif";
+import animatedUploadIcon from "../cloud-services/animated/upload.gif";
+import animatedVerifiedIcon from "../cloud-services/animated/verified.gif";
+import animatedWorkerIcon from "../cloud-services/animated/worker.gif";
+
 // Cloud service icon mapping
 const cloudServiceIcons: Record<string, string> = {
   "gcp-cloud-run": cloudRunIcon,
@@ -151,6 +166,19 @@ const cloudServiceIcons: Record<string, string> = {
   "shape-square": shapeSquareIcon,
   "shape-star": shapeStarIcon,
   "shape-hexagon": shapeHexagonIcon,
+  "animated-api": animatedApiIcon,
+  "animated-click": animatedClickIcon,
+  "animated-cloud": animatedCloudIcon,
+  "animated-double-check": animatedDoubleCheckIcon,
+  "animated-loading-bubble": animatedLoadingBubbleIcon,
+  "animated-loading": animatedLoadingIcon,
+  "animated-rocket": animatedRocketIcon,
+  "animated-settings": animatedSettingsIcon,
+  "animated-target": animatedTargetIcon,
+  "animated-upload-cloud": animatedUploadCloudIcon,
+  "animated-upload": animatedUploadIcon,
+  "animated-verified": animatedVerifiedIcon,
+  "animated-worker": animatedWorkerIcon,
 };
 // Helper function to check if node type is a cloud service
 const isCloudService = (nodeType: NodeType): boolean => {
@@ -525,6 +553,71 @@ const nodeTypeStyles: Record<
     bg: "bg-teal-100/20",
     border: "border-teal-300/50",
     icon: "text-teal-600",
+  },
+  "animated-api": {
+    bg: "bg-violet-100/20",
+    border: "border-violet-300/50",
+    icon: "text-violet-600",
+  },
+  "animated-click": {
+    bg: "bg-violet-100/20",
+    border: "border-violet-300/50",
+    icon: "text-violet-600",
+  },
+  "animated-cloud": {
+    bg: "bg-violet-100/20",
+    border: "border-violet-300/50",
+    icon: "text-violet-600",
+  },
+  "animated-double-check": {
+    bg: "bg-violet-100/20",
+    border: "border-violet-300/50",
+    icon: "text-violet-600",
+  },
+  "animated-loading-bubble": {
+    bg: "bg-violet-100/20",
+    border: "border-violet-300/50",
+    icon: "text-violet-600",
+  },
+  "animated-loading": {
+    bg: "bg-violet-100/20",
+    border: "border-violet-300/50",
+    icon: "text-violet-600",
+  },
+  "animated-rocket": {
+    bg: "bg-violet-100/20",
+    border: "border-violet-300/50",
+    icon: "text-violet-600",
+  },
+  "animated-settings": {
+    bg: "bg-violet-100/20",
+    border: "border-violet-300/50",
+    icon: "text-violet-600",
+  },
+  "animated-target": {
+    bg: "bg-violet-100/20",
+    border: "border-violet-300/50",
+    icon: "text-violet-600",
+  },
+  "animated-upload-cloud": {
+    bg: "bg-violet-100/20",
+    border: "border-violet-300/50",
+    icon: "text-violet-600",
+  },
+  "animated-upload": {
+    bg: "bg-violet-100/20",
+    border: "border-violet-300/50",
+    icon: "text-violet-600",
+  },
+  "animated-verified": {
+    bg: "bg-violet-100/20",
+    border: "border-violet-300/50",
+    icon: "text-violet-600",
+  },
+  "animated-worker": {
+    bg: "bg-violet-100/20",
+    border: "border-violet-300/50",
+    icon: "text-violet-600",
   },
 };
 

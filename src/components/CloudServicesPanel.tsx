@@ -1,10 +1,20 @@
 import { useState, useMemo } from "react";
 import { type NodeType } from "../types/diagrams";
-import { Separator } from "./ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
-import { ChevronLeft, ChevronRight, ChevronDown, Search, X } from "lucide-react";
-// Basic Icons (using Lucide React icons)
+import { ScrollArea } from "./ui/scroll-area";
+import { Badge } from "./ui/badge";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  Search,
+  X,
   Cloud,
   Database,
   Server,
@@ -17,6 +27,11 @@ import {
   Bug,
   Rocket,
   Activity,
+  Layers,
+  Box,
+  Shapes,
+  GripVertical,
+  Sparkles,
 } from "lucide-react";
 
 // Shape Icons
@@ -90,6 +105,21 @@ import oracleIcon from "./cloud-services/sql-db/oracle.svg";
 import mssqlIcon from "./cloud-services/sql-db/microsoft-sql-server.svg";
 import sqlalchemyIcon from "./cloud-services/sql-db/sqlalchemy.svg";
 
+// Animated Icons
+import animatedApiIcon from "./cloud-services/animated/api.gif";
+import animatedClickIcon from "./cloud-services/animated/click.gif";
+import animatedCloudIcon from "./cloud-services/animated/cloud.gif";
+import animatedDoubleCheckIcon from "./cloud-services/animated/double-check.gif";
+import animatedLoadingBubbleIcon from "./cloud-services/animated/loading-bubble.gif";
+import animatedLoadingIcon from "./cloud-services/animated/loading.gif";
+import animatedRocketIcon from "./cloud-services/animated/rocket.gif";
+import animatedSettingsIcon from "./cloud-services/animated/settings.gif";
+import animatedTargetIcon from "./cloud-services/animated/target.gif";
+import animatedUploadCloudIcon from "./cloud-services/animated/upload-cloud.gif";
+import animatedUploadIcon from "./cloud-services/animated/upload.gif";
+import animatedVerifiedIcon from "./cloud-services/animated/verified.gif";
+import animatedWorkerIcon from "./cloud-services/animated/worker.gif";
+
 interface CloudService {
   type: NodeType;
   label: string;
@@ -99,6 +129,7 @@ interface CloudService {
 interface CloudProvider {
   name: string;
   services: CloudService[];
+  accent?: string;
 }
 
 interface CloudServicesPanelProps {
@@ -108,6 +139,346 @@ interface CloudServicesPanelProps {
   onOpenChange?: (open: boolean) => void;
 }
 
+// --- Data ---
+
+const shapesProvider: CloudProvider = {
+  name: "Shapes",
+  services: [
+    { type: "shape-circle", label: "Circle", icon: shapeCircleIcon },
+    { type: "shape-square", label: "Square", icon: shapeSquareIcon },
+    { type: "shape-star", label: "Star", icon: shapeStarIcon },
+    { type: "shape-hexagon", label: "Hexagon", icon: shapeHexagonIcon },
+  ],
+};
+
+const basicProvider: CloudProvider = {
+  name: "Basic",
+  services: [
+    { type: "service", label: "Service", icon: Cloud },
+    { type: "database", label: "Database", icon: Database },
+    { type: "server", label: "Server", icon: Server },
+    { type: "client", label: "Client", icon: Monitor },
+    { type: "storage", label: "Storage", icon: HardDrive },
+    { type: "api", label: "API Gateway", icon: Globe },
+  ],
+};
+
+const processProvider: CloudProvider = {
+  name: "Software Process",
+  services: [
+    { type: "process-requirements", label: "Requirements", icon: FileText },
+    { type: "process-design", label: "Design", icon: PenTool },
+    { type: "process-development", label: "Development", icon: Code },
+    { type: "process-testing", label: "Testing", icon: Bug },
+    { type: "process-deployment", label: "Deployment", icon: Rocket },
+    { type: "process-monitoring", label: "Monitoring", icon: Activity },
+  ],
+};
+
+const gcpProvider: CloudProvider = {
+  name: "GCP",
+  accent: "bg-blue-500/10 text-blue-600 border-blue-200 dark:border-blue-800 dark:text-blue-400",
+  services: [
+    { type: "gcp-cloud-run", label: "Cloud Run", icon: cloudRunIcon },
+    { type: "gcp-cloud-storage", label: "Cloud Storage", icon: cloudStorageIcon },
+    { type: "gcp-bigquery", label: "BigQuery", icon: bigqueryIcon },
+    { type: "gcp-pub-sub", label: "Pub/Sub", icon: pubSubIcon },
+    { type: "gcp-apigee", label: "Apigee", icon: apigeeIcon },
+    { type: "gcp-billing", label: "Billing", icon: billingIcon },
+    { type: "gcp-cloud-build", label: "Cloud Build", icon: cloudBuildIcon },
+    { type: "gcp-cloud-monitoring", label: "Cloud Monitoring", icon: cloudMonitoringIcon },
+    { type: "gcp-cloud-sql", label: "Cloud SQL", icon: cloudSqlIcon },
+    { type: "gcp-compute-engine", label: "Compute Engine", icon: computeEngineIcon },
+    { type: "gcp-iam", label: "IAM", icon: iamIcon },
+    { type: "gcp-kubernetes", label: "Kubernetes", icon: kubernetesIcon },
+    { type: "gcp-security", label: "Security", icon: securityIcon },
+  ],
+};
+
+const awsProvider: CloudProvider = {
+  name: "AWS",
+  accent: "bg-orange-500/10 text-orange-600 border-orange-200 dark:border-orange-800 dark:text-orange-400",
+  services: [
+    { type: "aws-ec2", label: "EC2", icon: ec2Icon },
+    { type: "aws-s3", label: "S3", icon: s3Icon },
+    { type: "aws-lambda", label: "Lambda", icon: lambdaIcon },
+    { type: "aws-rds", label: "RDS", icon: rdsIcon },
+    { type: "aws-eks", label: "EKS", icon: eksIcon },
+    { type: "aws-cloudwatch", label: "CloudWatch", icon: cloudwatchIcon },
+    { type: "aws-iam", label: "IAM", icon: awsIamIcon },
+    { type: "aws-api-gateway", label: "API Gateway", icon: awsApiGatewayIcon },
+    { type: "aws-codebuild", label: "CodeBuild", icon: codebuildIcon },
+    { type: "aws-codepipeline", label: "CodePipeline", icon: codepipelineIcon },
+    { type: "aws-sqs", label: "SQS", icon: sqsIcon },
+    { type: "aws-sns", label: "SNS", icon: snsIcon },
+    { type: "aws-dynamodb", label: "DynamoDB", icon: dynamodbIcon },
+    { type: "aws-cloudfront", label: "CloudFront", icon: cloudfrontIcon },
+    { type: "aws-fargate", label: "Fargate", icon: fargateIcon },
+  ],
+};
+
+const azureProvider: CloudProvider = {
+  name: "Azure",
+  accent: "bg-sky-500/10 text-sky-600 border-sky-200 dark:border-sky-800 dark:text-sky-400",
+  services: [
+    { type: "azure-vm", label: "VM", icon: vmIcon },
+    { type: "azure-blob-storage", label: "Blob Storage", icon: blobStorageIcon },
+    { type: "azure-functions", label: "Functions", icon: functionsIcon },
+    { type: "azure-sql-database", label: "SQL Database", icon: sqlDatabaseIcon },
+    { type: "azure-aks", label: "AKS", icon: aksIcon },
+    { type: "azure-monitor", label: "Monitor", icon: azureMonitorIcon },
+    { type: "azure-entra-id", label: "Entra ID", icon: entraIdIcon },
+    { type: "azure-api-management", label: "API Management", icon: apiManagementIcon },
+    { type: "azure-devops", label: "DevOps", icon: azureDevopsIcon },
+    { type: "azure-service-bus", label: "Service Bus", icon: serviceBusIcon },
+    { type: "azure-event-grid", label: "Event Grid", icon: eventGridIcon },
+    { type: "azure-cosmos-db", label: "Cosmos DB", icon: cosmosDbIcon },
+    { type: "azure-container-apps", label: "Container Apps", icon: containerAppsIcon },
+    { type: "azure-key-vault", label: "Key Vault", icon: keyVaultIcon },
+  ],
+};
+
+const nosqlProvider: CloudProvider = {
+  name: "NoSQL",
+  services: [
+    { type: "nosql-mongodb", label: "MongoDB", icon: mongodbIcon },
+    { type: "nosql-redis", label: "Redis", icon: redisIcon },
+    { type: "nosql-cassandra", label: "Cassandra", icon: cassandraIcon },
+    { type: "nosql-couchdb", label: "CouchDB", icon: couchdbIcon },
+    { type: "nosql-firebase", label: "Firebase", icon: firebaseIcon },
+    { type: "nosql-influxdb", label: "InfluxDB", icon: influxdbIcon },
+    { type: "nosql-rocksdb", label: "RocksDB", icon: rocksdbIcon },
+  ],
+};
+
+const sqlProvider: CloudProvider = {
+  name: "SQL",
+  services: [
+    { type: "sql-mysql", label: "MySQL", icon: mysqlIcon },
+    { type: "sql-postgresql", label: "PostgreSQL", icon: postgresqlIcon },
+    { type: "sql-sqlite", label: "SQLite", icon: sqliteIcon },
+    { type: "sql-oracle", label: "Oracle", icon: oracleIcon },
+    { type: "sql-mssql", label: "SQL Server", icon: mssqlIcon },
+    { type: "sql-sqlalchemy", label: "SQLAlchemy", icon: sqlalchemyIcon },
+  ],
+};
+
+const animatedProvider: CloudProvider = {
+  name: "Animated",
+  accent: "bg-violet-500/10 text-violet-600 border-violet-200 dark:border-violet-800 dark:text-violet-400",
+  services: [
+    { type: "animated-api", label: "API", icon: animatedApiIcon },
+    { type: "animated-click", label: "Click", icon: animatedClickIcon },
+    { type: "animated-cloud", label: "Cloud", icon: animatedCloudIcon },
+    { type: "animated-double-check", label: "Double Check", icon: animatedDoubleCheckIcon },
+    { type: "animated-loading-bubble", label: "Loading Bubble", icon: animatedLoadingBubbleIcon },
+    { type: "animated-loading", label: "Loading", icon: animatedLoadingIcon },
+    { type: "animated-rocket", label: "Rocket", icon: animatedRocketIcon },
+    { type: "animated-settings", label: "Settings", icon: animatedSettingsIcon },
+    { type: "animated-target", label: "Target", icon: animatedTargetIcon },
+    { type: "animated-upload-cloud", label: "Upload Cloud", icon: animatedUploadCloudIcon },
+    { type: "animated-upload", label: "Upload", icon: animatedUploadIcon },
+    { type: "animated-verified", label: "Verified", icon: animatedVerifiedIcon },
+    { type: "animated-worker", label: "Worker", icon: animatedWorkerIcon },
+  ],
+};
+
+// Tab categories
+const tabCategories = {
+  cloud: [gcpProvider, awsProvider, azureProvider],
+  databases: [nosqlProvider, sqlProvider],
+  tools: [basicProvider, processProvider],
+  shapes: [shapesProvider],
+  animated: [animatedProvider],
+};
+
+const allProviders = [
+  shapesProvider,
+  basicProvider,
+  processProvider,
+  gcpProvider,
+  awsProvider,
+  azureProvider,
+  nosqlProvider,
+  sqlProvider,
+  animatedProvider,
+];
+
+// --- Sub-components ---
+
+function ServiceIcon({
+  icon,
+  label,
+}: {
+  icon: string | React.ComponentType<{ className?: string }>;
+  label: string;
+}) {
+  if (typeof icon === "string") {
+    return (
+      <>
+        <img
+          src={icon}
+          alt={label}
+          className="w-full h-full object-contain"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.style.display = "none";
+            const fallback = target.nextElementSibling as HTMLDivElement;
+            if (fallback) fallback.style.display = "flex";
+          }}
+        />
+        <div
+          className="w-7 h-7 bg-muted rounded-md flex items-center justify-center text-[10px] font-bold tracking-tight"
+          style={{ display: "none" }}
+        >
+          {label.substring(0, 2).toUpperCase()}
+        </div>
+      </>
+    );
+  }
+  const IconComponent = icon;
+  return <IconComponent className="w-full h-full text-muted-foreground" />;
+}
+
+function ServiceCard({
+  service,
+  isMobile,
+  onSelect,
+  onMobileClose,
+}: {
+  service: CloudService;
+  isMobile: boolean;
+  onSelect: (type: NodeType) => void;
+  onMobileClose?: () => void;
+}) {
+  const handleDragStart = (event: React.DragEvent) => {
+    event.dataTransfer.setData("application/reactflow", service.type);
+    event.dataTransfer.effectAllowed = "move";
+  };
+
+  const card = (
+    <div
+      draggable={!isMobile}
+      onDragStart={(e) => !isMobile && handleDragStart(e)}
+      onClick={() => {
+        onSelect(service.type);
+        if (isMobile) onMobileClose?.();
+      }}
+      className={`group relative flex items-center cursor-pointer transition-all duration-200 active:scale-[0.97] ${
+        isMobile
+          ? "flex-row gap-3 p-3 rounded-xl border border-border/50 bg-card hover:bg-accent/50 hover:border-border hover:shadow-sm"
+          : "flex-col justify-center gap-1.5 p-2.5 rounded-xl border border-border/50 bg-card hover:bg-accent/50 hover:border-border hover:shadow-sm min-h-[68px]"
+      }`}
+    >
+      {!isMobile && (
+        <GripVertical className="absolute top-1 right-1 w-3 h-3 text-muted-foreground/0 group-hover:text-muted-foreground/40 transition-colors" />
+      )}
+      <div className={`flex-shrink-0 flex items-center justify-center ${
+        isMobile ? "w-8 h-8" : "w-7 h-7"
+      }`}>
+        <ServiceIcon icon={service.icon} label={service.label} />
+      </div>
+      <span className={`text-muted-foreground group-hover:text-foreground leading-tight font-medium transition-colors ${
+        isMobile
+          ? "text-sm text-left"
+          : "text-[11px] text-center line-clamp-2"
+      }`}>
+        {service.label}
+      </span>
+    </div>
+  );
+
+  if (isMobile) return card;
+
+  return (
+    <TooltipProvider delayDuration={400}>
+      <Tooltip>
+        <TooltipTrigger asChild>{card}</TooltipTrigger>
+        <TooltipContent side="right" className="text-xs">
+          <p>Drag or click to add <strong>{service.label}</strong></p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
+function ProviderSection({
+  provider,
+  isMobile,
+  isExpanded,
+  onToggle,
+  onServiceSelect,
+  onMobileClose,
+  forceExpand,
+}: {
+  provider: CloudProvider;
+  isMobile: boolean;
+  isExpanded: boolean;
+  onToggle: () => void;
+  onServiceSelect: (type: NodeType) => void;
+  onMobileClose?: () => void;
+  forceExpand?: boolean;
+}) {
+  const expanded = forceExpand || isExpanded;
+  const gridCols = isMobile ? "grid-cols-2" : "grid-cols-3";
+  const gridGap = isMobile ? "gap-2.5" : "gap-1.5";
+
+  return (
+    <div className={isMobile ? "mb-2" : "mb-1"}>
+      <button
+        onClick={onToggle}
+        className={`w-full flex items-center justify-between rounded-lg hover:bg-muted/60 transition-colors group ${
+          isMobile ? "px-1 py-2.5" : "px-3 py-2"
+        }`}
+      >
+        <div className="flex items-center gap-2">
+          <h4 className={`font-semibold text-foreground uppercase tracking-wider ${
+            isMobile ? "text-[11px]" : "text-xs"
+          }`}>
+            {provider.name}
+          </h4>
+          {provider.accent && (
+            <Badge
+              variant="outline"
+              className={`text-[10px] px-1.5 py-0 h-4 font-medium ${provider.accent}`}
+            >
+              {provider.services.length}
+            </Badge>
+          )}
+          {!provider.accent && (
+            <span className="text-[10px] text-muted-foreground">
+              {provider.services.length}
+            </span>
+          )}
+        </div>
+        <ChevronDown
+          className={`w-3.5 h-3.5 text-muted-foreground transition-transform duration-200 ${
+            expanded ? "rotate-180" : "rotate-0"
+          }`}
+        />
+      </button>
+
+      <div
+        className={`grid ${gridCols} ${gridGap} px-1 overflow-hidden transition-all duration-200 ${
+          expanded ? "max-h-[2000px] opacity-100 mt-1.5 mb-2" : "max-h-0 opacity-0"
+        }`}
+      >
+        {provider.services.map((service) => (
+          <ServiceCard
+            key={service.type}
+            service={service}
+            isMobile={isMobile}
+            onSelect={onServiceSelect}
+            onMobileClose={onMobileClose}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// --- Main Component ---
+
 export const CloudServicesPanel = ({
   onServiceSelect,
   isMobile = false,
@@ -116,410 +487,18 @@ export const CloudServicesPanel = ({
 }: CloudServicesPanelProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("cloud");
   const [expandedProviders, setExpandedProviders] = useState<Set<string>>(
-    new Set([]),
+    new Set(["AWS", "GCP", "Azure", "Animated"])
   );
-  const cloudProviders: CloudProvider[] = [
-    {
-      name: "Shapes",
-      services: [
-        {
-          type: "shape-circle",
-          label: "Circle",
-          icon: shapeCircleIcon,
-        },
-        {
-          type: "shape-square",
-          label: "Square",
-          icon: shapeSquareIcon,
-        },
-        {
-          type: "shape-star",
-          label: "Star",
-          icon: shapeStarIcon,
-        },
-        {
-          type: "shape-hexagon",
-          label: "Hexagon",
-          icon: shapeHexagonIcon,
-        },
-      ],
-    },
-    {
-      name: "Basic",
-      services: [
-        {
-          type: "service",
-          label: "Service",
-          icon: Cloud,
-        },
-        {
-          type: "database",
-          label: "Database",
-          icon: Database,
-        },
-        {
-          type: "server",
-          label: "Server",
-          icon: Server,
-        },
-        {
-          type: "client",
-          label: "Client",
-          icon: Monitor,
-        },
-        {
-          type: "storage",
-          label: "Storage",
-          icon: HardDrive,
-        },
-        {
-          type: "api",
-          label: "API Gateway",
-          icon: Globe,
-        },
-      ],
-    },
-    {
-      name: "Software Process",
-      services: [
-        {
-          type: "process-requirements",
-          label: "Requirements",
-          icon: FileText,
-        },
-        {
-          type: "process-design",
-          label: "Design",
-          icon: PenTool,
-        },
-        {
-          type: "process-development",
-          label: "Development",
-          icon: Code,
-        },
-        {
-          type: "process-testing",
-          label: "Testing",
-          icon: Bug,
-        },
-        {
-          type: "process-deployment",
-          label: "Deployment",
-          icon: Rocket,
-        },
-        {
-          type: "process-monitoring",
-          label: "Monitoring",
-          icon: Activity,
-        },
-      ],
-    },
-    {
-      name: "GCP",
-      services: [
-        {
-          type: "gcp-cloud-run",
-          label: "Cloud Run",
-          icon: cloudRunIcon,
-        },
-        {
-          type: "gcp-cloud-storage",
-          label: "Cloud Storage",
-          icon: cloudStorageIcon,
-        },
-        {
-          type: "gcp-bigquery",
-          label: "BigQuery",
-          icon: bigqueryIcon,
-        },
-        {
-          type: "gcp-pub-sub",
-          label: "Pub/Sub",
-          icon: pubSubIcon,
-        },
-        {
-          type: "gcp-apigee",
-          label: "Apigee",
-          icon: apigeeIcon,
-        },
-        {
-          type: "gcp-billing",
-          label: "Billing",
-          icon: billingIcon,
-        },
-        {
-          type: "gcp-cloud-build",
-          label: "Cloud Build",
-          icon: cloudBuildIcon,
-        },
-        {
-          type: "gcp-cloud-monitoring",
-          label: "Cloud Monitoring",
-          icon: cloudMonitoringIcon,
-        },
-        {
-          type: "gcp-cloud-sql",
-          label: "Cloud SQL",
-          icon: cloudSqlIcon,
-        },
-        {
-          type: "gcp-compute-engine",
-          label: "Compute Engine",
-          icon: computeEngineIcon,
-        },
-        {
-          type: "gcp-iam",
-          label: "IAM",
-          icon: iamIcon,
-        },
-        {
-          type: "gcp-kubernetes",
-          label: "Kubernetes",
-          icon: kubernetesIcon,
-        },
-        {
-          type: "gcp-security",
-          label: "Security",
-          icon: securityIcon,
-        },
-      ],
-    },
-    {
-      name: "AWS",
-      services: [
-        {
-          type: "aws-ec2",
-          label: "EC2",
-          icon: ec2Icon,
-        },
-        {
-          type: "aws-s3",
-          label: "S3",
-          icon: s3Icon,
-        },
-        {
-          type: "aws-lambda",
-          label: "Lambda",
-          icon: lambdaIcon,
-        },
-        {
-          type: "aws-rds",
-          label: "RDS",
-          icon: rdsIcon,
-        },
-        {
-          type: "aws-eks",
-          label: "EKS",
-          icon: eksIcon,
-        },
-        {
-          type: "aws-cloudwatch",
-          label: "CloudWatch",
-          icon: cloudwatchIcon,
-        },
-        {
-          type: "aws-iam",
-          label: "IAM",
-          icon: awsIamIcon,
-        },
-        {
-          type: "aws-api-gateway",
-          label: "API Gateway",
-          icon: awsApiGatewayIcon,
-        },
-        {
-          type: "aws-codebuild",
-          label: "CodeBuild",
-          icon: codebuildIcon,
-        },
-        {
-          type: "aws-codepipeline",
-          label: "CodePipeline",
-          icon: codepipelineIcon,
-        },
-        {
-          type: "aws-sqs",
-          label: "SQS",
-          icon: sqsIcon,
-        },
-        {
-          type: "aws-sns",
-          label: "SNS",
-          icon: snsIcon,
-        },
-        {
-          type: "aws-dynamodb",
-          label: "DynamoDB",
-          icon: dynamodbIcon,
-        },
-        {
-          type: "aws-cloudfront",
-          label: "CloudFront",
-          icon: cloudfrontIcon,
-        },
-        {
-          type: "aws-fargate",
-          label: "Fargate",
-          icon: fargateIcon,
-        },
-      ],
-    },
-    {
-      name: "Azure",
-      services: [
-        {
-          type: "azure-vm",
-          label: "VM",
-          icon: vmIcon,
-        },
-        {
-          type: "azure-blob-storage",
-          label: "Blob Storage",
-          icon: blobStorageIcon,
-        },
-        {
-          type: "azure-functions",
-          label: "Functions",
-          icon: functionsIcon,
-        },
-        {
-          type: "azure-sql-database",
-          label: "SQL Database",
-          icon: sqlDatabaseIcon,
-        },
-        {
-          type: "azure-aks",
-          label: "AKS",
-          icon: aksIcon,
-        },
-        {
-          type: "azure-monitor",
-          label: "Monitor",
-          icon: azureMonitorIcon,
-        },
-        {
-          type: "azure-entra-id",
-          label: "Entra ID",
-          icon: entraIdIcon,
-        },
-        {
-          type: "azure-api-management",
-          label: "API Management",
-          icon: apiManagementIcon,
-        },
-        {
-          type: "azure-devops",
-          label: "DevOps",
-          icon: azureDevopsIcon,
-        },
-        {
-          type: "azure-service-bus",
-          label: "Service Bus",
-          icon: serviceBusIcon,
-        },
-        {
-          type: "azure-event-grid",
-          label: "Event Grid",
-          icon: eventGridIcon,
-        },
-        {
-          type: "azure-cosmos-db",
-          label: "Cosmos DB",
-          icon: cosmosDbIcon,
-        },
-        {
-          type: "azure-container-apps",
-          label: "Container Apps",
-          icon: containerAppsIcon,
-        },
-        {
-          type: "azure-key-vault",
-          label: "Key Vault",
-          icon: keyVaultIcon,
-        },
-      ],
-    },
-    {
-      name: "NoSQL DB",
-      services: [
-        {
-          type: "nosql-mongodb",
-          label: "MongoDB",
-          icon: mongodbIcon,
-        },
-        {
-          type: "nosql-redis",
-          label: "Redis",
-          icon: redisIcon,
-        },
-        {
-          type: "nosql-cassandra",
-          label: "Cassandra",
-          icon: cassandraIcon,
-        },
-        {
-          type: "nosql-couchdb",
-          label: "CouchDB",
-          icon: couchdbIcon,
-        },
-        {
-          type: "nosql-firebase",
-          label: "Firebase",
-          icon: firebaseIcon,
-        },
-        {
-          type: "nosql-influxdb",
-          label: "InfluxDB",
-          icon: influxdbIcon,
-        },
-        {
-          type: "nosql-rocksdb",
-          label: "RocksDB",
-          icon: rocksdbIcon,
-        },
-      ],
-    },
-    {
-      name: "SQL DB",
-      services: [
-        {
-          type: "sql-mysql",
-          label: "MySQL",
-          icon: mysqlIcon,
-        },
-        {
-          type: "sql-postgresql",
-          label: "PostgreSQL",
-          icon: postgresqlIcon,
-        },
-        {
-          type: "sql-sqlite",
-          label: "SQLite",
-          icon: sqliteIcon,
-        },
-        {
-          type: "sql-oracle",
-          label: "Oracle",
-          icon: oracleIcon,
-        },
-        {
-          type: "sql-mssql",
-          label: "SQL Server",
-          icon: mssqlIcon,
-        },
-        {
-          type: "sql-sqlalchemy",
-          label: "SQLAlchemy",
-          icon: sqlalchemyIcon,
-        },
-      ],
-    },
-  ];
-  const filteredProviders = useMemo(() => {
-    if (!searchQuery.trim()) return cloudProviders;
+
+  const isSearching = searchQuery.trim() !== "";
+
+  // Search across all providers
+  const searchResults = useMemo(() => {
+    if (!isSearching) return [];
     const query = searchQuery.toLowerCase();
-    return cloudProviders
+    return allProviders
       .map((provider) => ({
         ...provider,
         services: provider.services.filter(
@@ -529,12 +508,12 @@ export const CloudServicesPanel = ({
         ),
       }))
       .filter((provider) => provider.services.length > 0);
-  }, [searchQuery, cloudProviders]);
+  }, [searchQuery, isSearching]);
 
-  const handleDragStart = (event: React.DragEvent, nodeType: NodeType) => {
-    event.dataTransfer.setData("application/reactflow", nodeType);
-    event.dataTransfer.effectAllowed = "move";
-  };
+  const totalSearchResults = searchResults.reduce(
+    (sum, p) => sum + p.services.length,
+    0
+  );
 
   const toggleProvider = (providerName: string) => {
     const newExpanded = new Set(expandedProviders);
@@ -546,169 +525,310 @@ export const CloudServicesPanel = ({
     setExpandedProviders(newExpanded);
   };
 
-  const allProvidersExpanded = expandedProviders.size === filteredProviders.length && filteredProviders.length > 0;
+  const currentProviders =
+    tabCategories[activeTab as keyof typeof tabCategories] || [];
 
-  const toggleAllProviders = () => {
-    if (allProvidersExpanded) {
-      setExpandedProviders(new Set());
-      return;
-    }
+  const tabButtons = [
+    { value: "cloud", icon: Cloud, label: "Cloud" },
+    { value: "databases", icon: Database, label: "Databases" },
+    { value: "tools", icon: Box, label: "Tools" },
+    { value: "shapes", icon: Shapes, label: "Shapes" },
+    { value: "animated", icon: Sparkles, label: "Animated" },
+  ] as const;
 
-    setExpandedProviders(new Set(filteredProviders.map((p) => p.name)));
-  };
+  const searchInput = (
+    <div className="relative">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+      <input
+        type="text"
+        placeholder="Search components..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className={`w-full text-sm rounded-lg border border-border bg-muted/40 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:bg-background transition-all ${
+          isMobile ? "pl-10 pr-10 py-2.5" : "pl-8 pr-8 py-2"
+        }`}
+      />
+      {searchQuery && (
+        <button
+          onClick={() => setSearchQuery("")}
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-muted transition-colors"
+        >
+          <X className="w-3.5 h-3.5 text-muted-foreground" />
+        </button>
+      )}
+    </div>
+  );
 
-  const panelContent = (
-    <>
-      <div className={isMobile ? "p-4 border-b border-border" : "p-4 border-b border-border"}>
-        {!isMobile && (
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-foreground">Node & Shapes</h3>
-            <button
-              onClick={() => setIsCollapsed(true)}
-              className="p-1 rounded hover:bg-muted transition-colors"
-              title="Hide Panel"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
+  const searchResultsContent = (
+    <ScrollArea className="flex-1">
+      <div className={isMobile ? "px-4 pb-4" : "px-3 pb-3"}>
+        <div className="flex items-center gap-2 mb-3 px-1">
+          <span className="text-xs text-muted-foreground">
+            {totalSearchResults} result{totalSearchResults !== 1 ? "s" : ""}
+          </span>
+        </div>
+        {searchResults.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <Search className="w-8 h-8 text-muted-foreground/30 mb-3" />
+            <p className="text-sm text-muted-foreground">No components found</p>
+            <p className="text-xs text-muted-foreground/60 mt-1">
+              Try a different search term
+            </p>
           </div>
+        ) : (
+          searchResults.map((provider) => (
+            <ProviderSection
+              key={provider.name}
+              provider={provider}
+              isMobile={isMobile}
+              isExpanded={true}
+              onToggle={() => {}}
+              onServiceSelect={onServiceSelect}
+              onMobileClose={() => onOpenChange?.(false)}
+              forceExpand
+            />
+          ))
         )}
-        <div className="relative mt-2">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search nodes..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-8 py-1.5 text-sm rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-muted transition-colors"
-            >
-              <X className="w-3.5 h-3.5 text-muted-foreground" />
-            </button>
-          )}
-        </div>
-        <div className="flex items-center space-x-2 mt-2">
-          <button
-            onClick={toggleAllProviders}
-            className="px-2 py-1 rounded hover:bg-muted transition-colors text-sm text-muted-foreground"
-          >
-            {allProvidersExpanded ? "Collapse All" : "Expand All"}
-          </button>
-        </div>
       </div>
+    </ScrollArea>
+  );
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-2">
-        {filteredProviders.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-4">
-            No results found
-          </p>
-        )}
-        {filteredProviders.map((provider) => (
-          <div key={provider.name}>
-            <button
-              onClick={() => toggleProvider(provider.name)}
-              className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 transition-colors"
-            >
-              <h4 className="text-sm font-medium text-foreground">
-                {provider.name}
-              </h4>
-              <ChevronDown
-                className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
-                  expandedProviders.has(provider.name) ? "rotate-180" : "rotate-0"
-                }`}
-              />
-            </button>
-
-            {(expandedProviders.has(provider.name) || searchQuery.trim() !== "") && (
-              <div className="grid grid-cols-2 gap-2 mt-2">
-                {provider.services.map((service) => (
-                  <div
-                    key={service.type}
-                    draggable={!isMobile}
-                    onDragStart={(e) => !isMobile && handleDragStart(e, service.type)}
-                    onClick={() => {
-                      onServiceSelect(service.type);
-                      if (isMobile) onOpenChange?.(false);
-                    }}
-                    className="flex flex-col items-center justify-center p-2 rounded-lg border border-border bg-card hover:bg-muted/50 cursor-pointer transition-all duration-200 min-h-[60px]"
-                  >
-                    <div className="w-8 h-8 flex-shrink-0">
-                      {typeof service.icon === 'string' ? (
-                        <>
-                          <img
-                            src={service.icon}
-                            alt={service.label}
-                            className="w-full h-full object-contain"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = "none";
-                              const fallback =
-                                target.nextElementSibling as HTMLDivElement;
-                              if (fallback) fallback.style.display = "flex";
-                            }}
-                          />
-                          <div
-                            className="w-8 h-8 bg-muted rounded flex items-center justify-center text-xs font-medium"
-                            style={{ display: "none" }}
-                          >
-                            {service.label.substring(0, 2).toUpperCase()}
-                          </div>
-                        </>
-                      ) : (
-                        <service.icon className="w-full h-full text-muted-foreground" />
-                      )}
-                    </div>
-                    <div className="text-xs text-foreground text-center mt-1 leading-tight">
-                      {service.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-            <Separator className="mt-3" />
-          </div>
+  const providerList = (
+    <ScrollArea className="flex-1">
+      <div className={isMobile ? "px-3 py-3" : "px-2 py-2"}>
+        {currentProviders.map((provider) => (
+          <ProviderSection
+            key={provider.name}
+            provider={provider}
+            isMobile={isMobile}
+            isExpanded={expandedProviders.has(provider.name)}
+            onToggle={() => toggleProvider(provider.name)}
+            onServiceSelect={onServiceSelect}
+            onMobileClose={() => onOpenChange?.(false)}
+          />
         ))}
       </div>
-    </>
+    </ScrollArea>
   );
 
   // Mobile: render inside a Sheet overlay
   if (isMobile) {
     return (
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="left" className="w-[280px] p-0 flex flex-col">
-          <SheetHeader className="p-4 border-b border-border">
-            <SheetTitle>Node & Shapes</SheetTitle>
+        <SheetContent side="left" className="w-[85vw] max-w-[360px] p-0 flex flex-col">
+          {/* Mobile Header */}
+          <SheetHeader className="flex-shrink-0 px-4 pt-5 pb-3">
+            <SheetTitle className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-primary/10">
+                <Layers className="w-4 h-4 text-primary" />
+              </div>
+              <span className="text-base font-semibold">Components</span>
+            </SheetTitle>
           </SheetHeader>
-          <div className="flex-1 flex flex-col overflow-hidden">
-            {panelContent}
+
+          {/* Mobile Search */}
+          <div className="flex-shrink-0 px-4 pb-3">
+            {searchInput}
           </div>
+
+          {isSearching ? (
+            searchResultsContent
+          ) : (
+            <>
+              {/* Mobile Filter Pills - horizontal scroll */}
+              <div className="flex-shrink-0 px-4 pb-3">
+                <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                  {tabButtons.map((tab) => {
+                    const Icon = tab.icon;
+                    const isActive = activeTab === tab.value;
+                    return (
+                      <button
+                        key={tab.value}
+                        onClick={() => setActiveTab(tab.value)}
+                        className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all border ${
+                          isActive
+                            ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                            : "bg-muted/50 text-muted-foreground border-transparent hover:bg-muted hover:text-foreground"
+                        }`}
+                      >
+                        <Icon className="w-3.5 h-3.5" />
+                        {tab.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Mobile Content */}
+              {providerList}
+            </>
+          )}
         </SheetContent>
       </Sheet>
     );
   }
 
-  // Desktop/Tablet: static sidebar
+  // Desktop: collapsed state with icon strip
   if (isCollapsed) {
     return (
-      <div className="w-12 bg-background border-r border-border h-full flex flex-col items-center py-4">
-        <button
-          onClick={() => setIsCollapsed(false)}
-          className="p-2 rounded-lg hover:bg-muted transition-colors"
-          title="Show Cloud Services"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
+      <div className="w-12 bg-background border-r border-border h-full flex flex-col items-center pt-3 gap-1">
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => setIsCollapsed(false)}
+                className="p-2 rounded-lg hover:bg-muted transition-colors"
+              >
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p className="text-xs">Expand panel</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <div className="w-6 h-px bg-border my-1" />
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => { setIsCollapsed(false); setActiveTab("cloud"); }}
+                className="p-2 rounded-lg hover:bg-muted transition-colors"
+              >
+                <Cloud className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p className="text-xs">Cloud Services</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => { setIsCollapsed(false); setActiveTab("databases"); }}
+                className="p-2 rounded-lg hover:bg-muted transition-colors"
+              >
+                <Database className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p className="text-xs">Databases</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => { setIsCollapsed(false); setActiveTab("tools"); }}
+                className="p-2 rounded-lg hover:bg-muted transition-colors"
+              >
+                <Box className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p className="text-xs">Tools</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => { setIsCollapsed(false); setActiveTab("shapes"); }}
+                className="p-2 rounded-lg hover:bg-muted transition-colors"
+              >
+                <Shapes className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p className="text-xs">Shapes</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => { setIsCollapsed(false); setActiveTab("animated"); }}
+                className="p-2 rounded-lg hover:bg-muted transition-colors"
+              >
+                <Sparkles className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p className="text-xs">Animated</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     );
   }
 
+  // Desktop: expanded panel
   return (
-    <div className="w-64 bg-background border-r border-border h-full flex flex-col">
-      {panelContent}
+    <div className="w-[320px] bg-background border-r border-border h-full flex flex-col">
+      <div className="flex flex-col h-full">
+        {/* Desktop Header */}
+        <div className="flex-shrink-0 px-3 pt-3 pb-2">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Layers className="w-4 h-4 text-primary" />
+              <h3 className="font-semibold text-sm text-foreground">Components</h3>
+            </div>
+            <button
+              onClick={() => setIsCollapsed(true)}
+              className="p-1 rounded-md hover:bg-muted transition-colors"
+              title="Collapse panel"
+            >
+              <ChevronLeft className="w-4 h-4 text-muted-foreground" />
+            </button>
+          </div>
+          {searchInput}
+        </div>
+
+        {isSearching ? (
+          searchResultsContent
+        ) : (
+          <>
+            {/* Desktop Tabs */}
+            <div className="flex-shrink-0 px-3 pb-2">
+              <TooltipProvider delayDuration={200}>
+                <div className="flex items-center gap-1">
+                  {tabButtons.map((tab) => {
+                    const Icon = tab.icon;
+                    const isActive = activeTab === tab.value;
+                    return (
+                      <Tooltip key={tab.value}>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => setActiveTab(tab.value)}
+                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                              isActive
+                                ? "bg-primary/15 text-primary shadow-sm"
+                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                            }`}
+                          >
+                            <Icon className="w-3.5 h-3.5" />
+                            {isActive && (
+                              <span className="leading-none">{tab.label}</span>
+                            )}
+                          </button>
+                        </TooltipTrigger>
+                        {!isActive && (
+                          <TooltipContent side="bottom" className="text-xs">
+                            {tab.label}
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                    );
+                  })}
+                </div>
+              </TooltipProvider>
+            </div>
+
+            {providerList}
+          </>
+        )}
+      </div>
     </div>
   );
 };

@@ -23,6 +23,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { type NodeType, type DiagramNodeData } from '../types/diagrams';
 import { toBlob, toCanvas } from 'html-to-image';
 import { GIFEncoder, quantize, applyPalette } from 'gifenc';
+import { decodeGif, getFrameAtTime, type DecodedGif } from '../utils/gif-frames';
 import BaseNode from './nodes/BaseNode';
 import { Toolbar } from './Toolbar';
 import { PropertiesPanel } from './PropertiesPanel';
@@ -53,6 +54,10 @@ const cloudServiceTypes = new Set<string>([
   'sql-mysql', 'sql-postgresql', 'sql-sqlite', 'sql-oracle',
   'sql-mssql', 'sql-sqlalchemy',
   'shape-circle', 'shape-square', 'shape-star', 'shape-hexagon',
+  'animated-api', 'animated-click', 'animated-cloud', 'animated-double-check',
+  'animated-loading-bubble', 'animated-loading', 'animated-rocket',
+  'animated-settings', 'animated-target', 'animated-upload-cloud',
+  'animated-upload', 'animated-verified', 'animated-worker',
 ]);
 
 const getDefaultNodeStyle = (type: NodeType): { width: number; height: number } | undefined => {
@@ -134,6 +139,19 @@ const defaultNodeLabels: Record<NodeType, string> = {
   'shape-square': 'Square',
   'shape-star': 'Star',
   'shape-hexagon': 'Hexagon',
+  'animated-api': 'API',
+  'animated-click': 'Click',
+  'animated-cloud': 'Cloud',
+  'animated-double-check': 'Double Check',
+  'animated-loading-bubble': 'Loading Bubble',
+  'animated-loading': 'Loading',
+  'animated-rocket': 'Rocket',
+  'animated-settings': 'Settings',
+  'animated-target': 'Target',
+  'animated-upload-cloud': 'Upload Cloud',
+  'animated-upload': 'Upload',
+  'animated-verified': 'Verified',
+  'animated-worker': 'Worker',
 };
 
 const initialNodes: Node[] = [];
@@ -234,6 +252,19 @@ export const DiagramCanvas = () => {
     'shape-square': BaseNode,
     'shape-star': BaseNode,
     'shape-hexagon': BaseNode,
+    'animated-api': BaseNode,
+    'animated-click': BaseNode,
+    'animated-cloud': BaseNode,
+    'animated-double-check': BaseNode,
+    'animated-loading-bubble': BaseNode,
+    'animated-loading': BaseNode,
+    'animated-rocket': BaseNode,
+    'animated-settings': BaseNode,
+    'animated-target': BaseNode,
+    'animated-upload-cloud': BaseNode,
+    'animated-upload': BaseNode,
+    'animated-verified': BaseNode,
+    'animated-worker': BaseNode,
   }), []);
 
   // Save initial state
@@ -638,7 +669,7 @@ export const DiagramCanvas = () => {
         toast.info('Rendering GIF…');
 
         const fps = 10;
-        const durationMs = 1500;
+        const durationMs = 3000;
         const delay = Math.round(1000 / fps);
         const frameCount = Math.max(1, Math.round(durationMs / delay));
 
@@ -659,13 +690,43 @@ export const DiagramCanvas = () => {
           return dst;
         };
 
+        // Pre-decode all animated GIF images in the export area
+        const gifImgs = Array.from(el.querySelectorAll('img'))
+          .filter((img) => img.src && /\.gif(\?|$)/i.test(img.src));
+
+        const decodedGifs = new Map<HTMLImageElement, DecodedGif>();
+        const originalSrcs = new Map<HTMLImageElement, string>();
+
+        for (const img of gifImgs) {
+          try {
+            const decoded = await decodeGif(img.src);
+            if (decoded.frames.length > 1) {
+              decodedGifs.set(img, decoded);
+              originalSrcs.set(img, img.src);
+            }
+          } catch {
+            // Skip images that fail to decode
+          }
+        }
+
         const encoder = GIFEncoder();
         let palette: ReturnType<typeof quantize> | null = null;
 
         for (let i = 0; i < frameCount; i++) {
+          const timeMs = i * delay;
+
+          // Swap animated GIF images to the correct frame
+          for (const [img, gif] of decodedGifs) {
+            const frameIdx = getFrameAtTime(gif, timeMs);
+            img.src = gif.frames[frameIdx].dataUrl;
+          }
+
+          // Small delay to let the browser render the swapped images
+          await new Promise((resolve) => setTimeout(resolve, 20));
+
           const rawCanvas = await withInlinedEdgeStrokeStyles(el, () =>
             toCanvas(el, {
-              cacheBust: true,
+              cacheBust: false,
               pixelRatio: 1,
               backgroundColor,
               filter: exportFilter,
@@ -676,6 +737,8 @@ export const DiagramCanvas = () => {
           const ctx = canvas.getContext('2d');
           if (!ctx) {
             toast.error('GIF export failed');
+            // Restore original sources
+            for (const [img, src] of originalSrcs) img.src = src;
             return;
           }
 
@@ -689,8 +752,10 @@ export const DiagramCanvas = () => {
             delay,
             repeat: 0,
           });
-          await new Promise((resolve) => setTimeout(resolve, delay));
         }
+
+        // Restore original GIF sources
+        for (const [img, src] of originalSrcs) img.src = src;
 
         encoder.finish();
         const bytes = encoder.bytes();
