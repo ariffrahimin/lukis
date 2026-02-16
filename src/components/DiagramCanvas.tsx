@@ -1,5 +1,6 @@
 
 import { useCallback, useRef, useState, useEffect, useMemo } from 'react';
+import { flushSync } from 'react-dom';
 import {
   ReactFlow,
   Background,
@@ -601,14 +602,35 @@ export const DiagramCanvas = () => {
       return;
     }
 
-    if (format === 'png') {
-      const el = getExportElement();
-      if (!el) {
-        toast.error('Export failed');
-        return;
-      }
+    // Deselect all nodes and edges, then fit view
+    flushSync(() => {
+      setNodes((nds) => nds.map((n) => (n.selected ? { ...n, selected: false } : n)));
+      setEdges((eds) => eds.map((e) => (e.selected ? { ...e, selected: false } : e)));
+    });
 
-      void (async () => {
+    // Fit view instantly (no animation)
+    reactFlowInstance?.fitView({ duration: 0 });
+
+    // Wait for deselection and fitView to fully settle before capturing
+    const waitForSettle = () =>
+      new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setTimeout(resolve, 300);
+          });
+        });
+      });
+
+    void (async () => {
+      await waitForSettle();
+
+      if (format === 'png') {
+        const el = getExportElement();
+        if (!el) {
+          toast.error('Export failed');
+          return;
+        }
+
         try {
           const backgroundColor = '#ffffff';
           const blob = await withInlinedEdgeStrokeStyles(el, () =>
@@ -631,17 +653,15 @@ export const DiagramCanvas = () => {
           console.error('PNG export error:', error);
           toast.error('PNG export failed');
         }
-      })();
-      return;
-    }
+        return;
+      }
 
-    const el = getExportElement();
-    if (!el) {
-      toast.error('Export failed');
-      return;
-    }
+      const el = getExportElement();
+      if (!el) {
+        toast.error('Export failed');
+        return;
+      }
 
-    void (async () => {
       try {
         toast.info('Rendering GIF…');
 
@@ -714,7 +734,6 @@ export const DiagramCanvas = () => {
           const ctx = canvas.getContext('2d');
           if (!ctx) {
             toast.error('GIF export failed');
-            // Restore original sources
             for (const [img, src] of originalSrcs) img.src = src;
             return;
           }
@@ -745,7 +764,7 @@ export const DiagramCanvas = () => {
         toast.error('GIF export failed');
       }
     })();
-  }, [downloadBlob, edges, exportFilter, getExportElement, nodes, withInlinedEdgeStrokeStyles]);
+  }, [downloadBlob, edges, exportFilter, getExportElement, nodes, reactFlowInstance, setEdges, setNodes, withInlinedEdgeStrokeStyles]);
 
   const handleImport = useCallback(() => {
     const input = document.createElement('input');
