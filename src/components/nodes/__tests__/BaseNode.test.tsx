@@ -145,16 +145,6 @@ describe("BaseNode", () => {
     expect(svg).toBeTruthy();
   });
 
-  it("group node: has dashed border and min dimensions", () => {
-    const { container } = render(
-      <BaseNode id="5" data={{ label: "Group", nodeType: "group" }} />
-    );
-    const wrapper = container.firstElementChild as HTMLElement;
-    expect(wrapper.className).toContain("border-dashed");
-    expect(wrapper.className).toContain("min-w-[200px]");
-    expect(wrapper.className).toContain("min-h-[120px]");
-  });
-
   it("selected node: shows ring styling", () => {
     const { container } = render(
       <BaseNode

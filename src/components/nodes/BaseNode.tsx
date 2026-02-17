@@ -22,7 +22,6 @@ interface BaseNodeProps {
 const BaseNode = ({ id, data, selected }: BaseNodeProps) => {
   const styles = nodeTypeStyles[data.nodeType];
   const isTextNode = data.nodeType === "text";
-  const isGroupNode = data.nodeType === "group";
   const isCloudServiceNode = isCloudService(data.nodeType);
   const isAnimatedNode = data.nodeType.startsWith("animated-");
   const [isHovered, setIsHovered] = useState(false);
@@ -122,7 +121,6 @@ const BaseNode = ({ id, data, selected }: BaseNodeProps) => {
         styles.bg,
         styles.border,
         selected && "ring-2 ring-primary ring-offset-2 ring-offset-background",
-        isGroupNode && "min-w-[200px] min-h-[120px]",
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -135,7 +133,7 @@ const BaseNode = ({ id, data, selected }: BaseNodeProps) => {
         handleStyle={{ backgroundColor: "#3b82f6", width: 8, height: 8 }}
       />
       <NodeHandles visible={handlesVisible} />
-      <div className={cn("p-3", isGroupNode && "pb-16")}>
+      <div className="p-3">
         <div className="flex items-center gap-2">
           <NodeIcon type={data.nodeType} className={styles.icon} />
           <EditableLabel

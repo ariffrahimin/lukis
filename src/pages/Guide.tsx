@@ -7,7 +7,7 @@ import {
   MousePointer2,
   Hand,
   Type,
-  Square,
+  BoxSelect,
   Undo,
   Redo,
   Trash2,
@@ -175,7 +175,8 @@ export default function Guide() {
           </div>
           <p>
             You can also add <strong className="text-foreground">Text</strong> labels and{" "}
-            <strong className="text-foreground">Group</strong> containers from the toolbar.
+            <strong className="text-foreground">Sub Flow</strong> containers from the toolbar.
+            Select multiple nodes and press <strong className="text-foreground">⌘/Ctrl+G</strong> to group them into a sub flow.
             Double-click any node label to rename it inline.
           </p>
         </SectionCard>
@@ -222,7 +223,7 @@ export default function Guide() {
               { icon: MousePointer2, label: "Select", key: "V", desc: "Click and drag to select nodes" },
               { icon: Hand, label: "Pan", key: "H", desc: "Click and drag to pan the canvas" },
               { icon: Type, label: "Text", key: null, desc: "Add a text label node" },
-              { icon: Square, label: "Group", key: null, desc: "Add a group container" },
+              { icon: BoxSelect, label: "Sub Flow", key: null, desc: "Add a sub flow container" },
               { icon: Undo, label: "Undo", key: "⌘Z", desc: "Undo last action (50 levels)" },
               { icon: Redo, label: "Redo", key: "⌘⇧Z", desc: "Redo undone action" },
               { icon: Trash2, label: "Delete", key: "Del", desc: "Delete selected elements" },
@@ -257,6 +258,8 @@ export default function Guide() {
               { keys: "⌘ / Ctrl + C", action: "Copy selected nodes" },
               { keys: "⌘ / Ctrl + X", action: "Cut selected nodes" },
               { keys: "⌘ / Ctrl + V", action: "Paste nodes (offset +50px)" },
+              { keys: "⌘ / Ctrl + G", action: "Group selected nodes into sub flow" },
+              { keys: "⌘ / Ctrl + ⇧ + G", action: "Ungroup sub flow" },
               { keys: "Delete / Backspace", action: "Delete selected elements" },
               { keys: "+", action: "Zoom in" },
               { keys: "−", action: "Zoom out" },
@@ -368,7 +371,7 @@ export default function Guide() {
               { tip: "Multi-Select", detail: "Hold ⌘/Ctrl and click, or drag a selection box, to select multiple nodes at once." },
               { tip: "Double-Click to Edit", detail: "Double-click any node label to rename it inline. Press Enter to confirm or Escape to cancel." },
               { tip: "Resize Nodes", detail: "Select a node to reveal blue resize handles on its corners and edges." },
-              { tip: "Group Containers", detail: "Add a Group node and place other nodes inside it to visually organize related components." },
+              { tip: "Sub Flows & Grouping", detail: "Select 2+ nodes and press ⌘/Ctrl+G to group them into a sub flow. Drag nodes into a sub flow to add them. Press ⌘/Ctrl+⇧+G to ungroup." },
               { tip: "Right-Click Properties", detail: "Right-click a node or edge on desktop to open the Properties Panel right at your cursor." },
               { tip: "Undo History", detail: "Up to 50 levels of undo/redo. Every change is tracked automatically." },
             ].map((t) => (

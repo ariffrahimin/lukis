@@ -9,7 +9,7 @@ export type NodeType =
   | 'storage'
   | 'api'
   | 'text'
-  | 'group'
+  | 'subflow'
   | 'process-requirements'
   | 'process-design'
   | 'process-development'
