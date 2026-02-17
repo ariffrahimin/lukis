@@ -143,6 +143,7 @@ interface CloudServicesPanelProps {
 
 const shapesProvider: CloudProvider = {
   name: "Shapes",
+  accent: "bg-pink-500/10 text-pink-600 border-pink-200 dark:border-pink-800 dark:text-pink-400",
   services: [
     { type: "shape-circle", label: "Circle", icon: shapeCircleIcon },
     { type: "shape-square", label: "Square", icon: shapeSquareIcon },
@@ -153,6 +154,7 @@ const shapesProvider: CloudProvider = {
 
 const basicProvider: CloudProvider = {
   name: "Basic",
+  accent: "bg-slate-500/10 text-slate-600 border-slate-200 dark:border-slate-700 dark:text-slate-400",
   services: [
     { type: "service", label: "Service", icon: Cloud },
     { type: "database", label: "Database", icon: Database },
@@ -165,6 +167,7 @@ const basicProvider: CloudProvider = {
 
 const processProvider: CloudProvider = {
   name: "Software Process",
+  accent: "bg-indigo-500/10 text-indigo-600 border-indigo-200 dark:border-indigo-800 dark:text-indigo-400",
   services: [
     { type: "process-requirements", label: "Requirements", icon: FileText },
     { type: "process-design", label: "Design", icon: PenTool },
@@ -240,6 +243,7 @@ const azureProvider: CloudProvider = {
 
 const nosqlProvider: CloudProvider = {
   name: "NoSQL",
+  accent: "bg-emerald-500/10 text-emerald-600 border-emerald-200 dark:border-emerald-800 dark:text-emerald-400",
   services: [
     { type: "nosql-mongodb", label: "MongoDB", icon: mongodbIcon },
     { type: "nosql-redis", label: "Redis", icon: redisIcon },
@@ -253,6 +257,7 @@ const nosqlProvider: CloudProvider = {
 
 const sqlProvider: CloudProvider = {
   name: "SQL",
+  accent: "bg-amber-500/10 text-amber-600 border-amber-200 dark:border-amber-800 dark:text-amber-400",
   services: [
     { type: "sql-mysql", label: "MySQL", icon: mysqlIcon },
     { type: "sql-postgresql", label: "PostgreSQL", icon: postgresqlIcon },
