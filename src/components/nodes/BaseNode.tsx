@@ -24,6 +24,7 @@ const BaseNode = ({ id, data, selected }: BaseNodeProps) => {
   const isTextNode = data.nodeType === "text";
   const isGroupNode = data.nodeType === "group";
   const isCloudServiceNode = isCloudService(data.nodeType);
+  const isAnimatedNode = data.nodeType.startsWith("animated-");
   const [isHovered, setIsHovered] = useState(false);
   const handlesVisible = !!(selected || isHovered);
 
@@ -73,11 +74,14 @@ const BaseNode = ({ id, data, selected }: BaseNodeProps) => {
               "ring-2 ring-primary ring-offset-2 ring-offset-background",
           )}
         >
-          <div className="w-full h-full min-w-[48px] min-h-[48px]">
+          <div className={cn(
+            "w-full h-full min-w-[48px] min-h-[48px]",
+            isAnimatedNode && "rounded-lg bg-[hsl(var(--canvas-bg))] p-1"
+          )}>
             <img
               src={cloudServiceIcons[data.nodeType]}
               alt={data.label}
-              className="w-full h-full object-contain"
+              className={cn("w-full h-full object-contain", isAnimatedNode && "rounded-md")}
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.style.display = "none";
