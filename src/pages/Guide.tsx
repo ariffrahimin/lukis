@@ -31,6 +31,12 @@ import {
   Image,
   FileJson,
   Film,
+  Eye,
+  EyeOff,
+  GripVertical,
+  ChevronUp,
+  ChevronDown,
+  PanelRightOpen,
 } from "lucide-react";
 
 function Kbd({ children }: { children: React.ReactNode }) {
@@ -80,6 +86,7 @@ const navItems = [
   { id: "shortcuts", label: "Shortcuts" },
   { id: "properties", label: "Properties" },
   { id: "export-import", label: "Export / Import" },
+  { id: "layers", label: "Layers" },
   { id: "services", label: "Services" },
   { id: "tips", label: "Tips" },
 ];
@@ -133,8 +140,8 @@ export default function Guide() {
 
         {/* 1. Getting Started */}
         <SectionCard id="getting-started" icon={Layers} title="Getting Started">
-          <p>The editor has three main areas:</p>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <p>The editor has four main areas:</p>
+          <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-lg border border-muted/50 p-3 space-y-1">
               <p className="font-medium text-foreground">Components Panel</p>
               <p>Left sidebar — browse and drag cloud services, databases, shapes, and more onto the canvas.</p>
@@ -146,6 +153,10 @@ export default function Guide() {
             <div className="rounded-lg border border-muted/50 p-3 space-y-1">
               <p className="font-medium text-foreground">Properties Panel</p>
               <p>Right side — edit labels, descriptions, edge styles, and markers for selected elements.</p>
+            </div>
+            <div className="rounded-lg border border-muted/50 p-3 space-y-1">
+              <p className="font-medium text-foreground">Layers Panel</p>
+              <p>Right drawer — manage z-order, visibility, and selection of all nodes and edges. Press <strong>L</strong> to toggle.</p>
             </div>
           </div>
         </SectionCard>
@@ -161,7 +172,7 @@ export default function Guide() {
               { icon: Cloud, label: "Cloud", desc: "AWS (15), GCP (13), and Azure (14) services" },
               { icon: Database, label: "Databases", desc: "NoSQL (7) and SQL (6) databases" },
               { icon: Box, label: "Tools", desc: "Basic components (6) and Software Process (6)" },
-              { icon: Shapes, label: "Shapes", desc: "Circle, Square, Star, Hexagon" },
+              { icon: Shapes, label: "Shapes", desc: "11 shapes — Circle, Square, Star, Hexagon, Diamond, Triangle, and more" },
               { icon: Sparkles, label: "Animated", desc: "13 animated icons like API, Rocket, Cloud" },
             ].map((cat) => (
               <div key={cat.label} className="flex items-start gap-3 rounded-lg border border-muted/50 p-3">
@@ -260,6 +271,7 @@ export default function Guide() {
               { keys: "⌘ / Ctrl + V", action: "Paste nodes (offset +50px)" },
               { keys: "⌘ / Ctrl + G", action: "Group selected nodes into sub flow" },
               { keys: "⌘ / Ctrl + ⇧ + G", action: "Ungroup sub flow" },
+              { keys: "L", action: "Toggle Layers panel" },
               { keys: "Delete / Backspace", action: "Delete selected elements" },
               { keys: "+", action: "Zoom in" },
               { keys: "−", action: "Zoom out" },
@@ -334,10 +346,52 @@ export default function Guide() {
           </p>
         </SectionCard>
 
-        {/* 8. Cloud Services */}
+        {/* 8. Layers Panel */}
+        <SectionCard id="layers" icon={PanelRightOpen} title="Layers Panel">
+          <p>
+            The Layers Panel is a right-side drawer that lets you manage the <strong className="text-foreground">z-order</strong>,{" "}
+            <strong className="text-foreground">visibility</strong>, and <strong className="text-foreground">selection</strong> of
+            all nodes and edges in your diagram. Toggle it with the{" "}
+            <Layers className="inline h-4 w-4 align-text-bottom text-primary" /> button in the top-right
+            or press <Kbd>L</Kbd>.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-2">
+              <p className="font-medium text-foreground">Z-Order</p>
+              <ul className="list-disc list-inside space-y-1">
+                <li>Items at the <strong className="text-foreground">top</strong> of the list are in <strong className="text-foreground">front</strong></li>
+                <li>Items at the <strong className="text-foreground">bottom</strong> are <strong className="text-foreground">behind</strong></li>
+                <li>
+                  Use <ChevronUp className="inline h-3.5 w-3.5 align-text-bottom" />{" "}
+                  <ChevronDown className="inline h-3.5 w-3.5 align-text-bottom" /> arrows to reorder
+                </li>
+                <li>
+                  Drag the <GripVertical className="inline h-3.5 w-3.5 align-text-bottom" /> handle to reorder via drag-and-drop
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-2">
+              <p className="font-medium text-foreground">Visibility & Selection</p>
+              <ul className="list-disc list-inside space-y-1">
+                <li>
+                  Click <Eye className="inline h-3.5 w-3.5 align-text-bottom" /> /{" "}
+                  <EyeOff className="inline h-3.5 w-3.5 align-text-bottom" /> to show/hide a node or edge
+                </li>
+                <li>Hiding a node also hides its connected edges</li>
+                <li>Click any item to select it and pan the canvas to it</li>
+                <li>Selected nodes get a brief pulse highlight</li>
+              </ul>
+            </div>
+          </div>
+          <p>
+            On mobile and tablet, the Layers Panel opens as a slide-over sheet from the right.
+          </p>
+        </SectionCard>
+
+        {/* 9. Cloud Services */}
         <SectionCard id="services" icon={Server} title="Cloud Services & Components">
           <p>
-            The Components Panel organizes <strong className="text-foreground">90+ node types</strong> across
+            The Components Panel organizes <strong className="text-foreground">95+ node types</strong> across
             providers. Expand any provider accordion to browse its services.
           </p>
           <div className="grid gap-2 sm:grid-cols-3">
@@ -349,7 +403,7 @@ export default function Guide() {
               { label: "SQL", count: 6, color: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
               { label: "Basic", count: 6, color: "bg-slate-500/10 text-slate-400 border-slate-500/20" },
               { label: "Process", count: 6, color: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20" },
-              { label: "Shapes", count: 4, color: "bg-pink-500/10 text-pink-400 border-pink-500/20" },
+              { label: "Shapes", count: 11, color: "bg-pink-500/10 text-pink-400 border-pink-500/20" },
               { label: "Animated", count: 13, color: "bg-violet-500/10 text-violet-400 border-violet-500/20" },
             ].map((p) => (
               <div key={p.label} className="flex items-center justify-between rounded-lg border border-muted/50 p-2.5">
@@ -373,6 +427,7 @@ export default function Guide() {
               { tip: "Resize Nodes", detail: "Select a node to reveal blue resize handles on its corners and edges." },
               { tip: "Sub Flows & Grouping", detail: "Select 2+ nodes and press ⌘/Ctrl+G to group them into a sub flow. Drag nodes into a sub flow to add them. Press ⌘/Ctrl+⇧+G to ungroup." },
               { tip: "Right-Click Properties", detail: "Right-click a node or edge on desktop to open the Properties Panel right at your cursor." },
+              { tip: "Layers Panel", detail: "Press L to toggle the Layers drawer. Items at the top are in front. Drag to reorder, click the eye to hide, click a row to pan to it." },
               { tip: "Undo History", detail: "Up to 50 levels of undo/redo. Every change is tracked automatically." },
             ].map((t) => (
               <div key={t.tip} className="rounded-lg border border-muted/50 p-3 space-y-1">
