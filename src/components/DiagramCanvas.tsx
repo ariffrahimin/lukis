@@ -26,6 +26,7 @@ import { toBlob, toCanvas } from 'html-to-image';
 import { GIFEncoder, quantize, applyPalette } from 'gifenc';
 import { decodeGif, getFrameAtTime, type DecodedGif } from '../utils/gif-frames';
 import BaseNode from './nodes/BaseNode';
+import SubFlowNode from './nodes/SubFlowNode';
 import { Toolbar } from './Toolbar';
 import { PropertiesPanel } from './PropertiesPanel';
 import { CloudServicesPanel } from './CloudServicesPanel';
@@ -40,8 +41,25 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 type NodeData = DiagramNodeData;
 
 const getDefaultNodeStyle = (type: NodeType): { width: number; height: number } | undefined => {
+  if (type === 'subflow') return { width: 400, height: 300 };
   if (isCloudService(type)) return { width: 80, height: 90 };
   return undefined;
+};
+
+/** Ensure parent sub flow nodes appear before their children in the array */
+const sortNodesForSubFlow = (nodes: Node[]): Node[] => {
+  const sorted: Node[] = [];
+  const childNodes: Node[] = [];
+
+  for (const node of nodes) {
+    if (node.parentId) {
+      childNodes.push(node);
+    } else {
+      sorted.push(node);
+    }
+  }
+
+  return [...sorted, ...childNodes];
 };
 
 const defaultNodeLabels: Record<NodeType, string> = {
@@ -52,7 +70,7 @@ const defaultNodeLabels: Record<NodeType, string> = {
   storage: 'Storage',
   api: 'API Gateway',
   text: 'Label',
-  group: 'Group',
+  subflow: 'Sub Flow',
   'process-requirements': 'Requirements',
   'process-design': 'Design',
   'process-development': 'Development',
@@ -165,7 +183,7 @@ export const DiagramCanvas = () => {
     storage: BaseNode,
     api: BaseNode,
     text: BaseNode,
-    group: BaseNode,
+    subflow: SubFlowNode,
     'process-requirements': BaseNode,
     'process-design': BaseNode,
     'process-development': BaseNode,
@@ -374,21 +392,29 @@ export const DiagramCanvas = () => {
   }, []);
 
   const handleDelete = useCallback(() => {
-    const nodeIdsToDelete = selectedNodes.map((n: Node) => n.id);
+    const directNodeIds = new Set(selectedNodes.map((n: Node) => n.id));
     const edgeIdsToDelete = selectedEdges.map((e: Edge) => e.id);
-    
-    if (nodeIdsToDelete.length > 0 || edgeIdsToDelete.length > 0) {
+
+    if (directNodeIds.size > 0 || edgeIdsToDelete.length > 0) {
       // Perform atomic updates to prevent race conditions
       setNodes((nds) => {
-        const remainingNodes = nds.filter((n) => !nodeIdsToDelete.includes(n.id));
-        
+        // Also delete children of any sub flow nodes being deleted
+        const allNodeIdsToDelete = new Set(directNodeIds);
+        for (const n of nds) {
+          if (n.parentId && allNodeIdsToDelete.has(n.parentId)) {
+            allNodeIdsToDelete.add(n.id);
+          }
+        }
+
+        const remainingNodes = nds.filter((n) => !allNodeIdsToDelete.has(n.id));
+
         // Update edges in the same callback to ensure consistency
-        setEdges((eds) => eds.filter((e) => 
-          !nodeIdsToDelete.includes(e.source) && 
-          !nodeIdsToDelete.includes(e.target) &&
+        setEdges((eds) => eds.filter((e) =>
+          !allNodeIdsToDelete.has(e.source) &&
+          !allNodeIdsToDelete.has(e.target) &&
           !edgeIdsToDelete.includes(e.id)
         ));
-        
+
         return remainingNodes;
       });
       
@@ -398,7 +424,7 @@ export const DiagramCanvas = () => {
       setSelectedNode(null);
       setSelectedEdge(null);
       
-      const totalDeleted = nodeIdsToDelete.length + edgeIdsToDelete.length;
+      const totalDeleted = directNodeIds.size + edgeIdsToDelete.length;
       toast.success(`${totalDeleted} item${totalDeleted !== 1 ? 's' : ''} deleted`);
     }
   }, [selectedNodes, selectedEdges, setNodes, setEdges]);
@@ -406,15 +432,25 @@ export const DiagramCanvas = () => {
   const handleCopy = useCallback(() => {
     if (selectedNodes.length === 0) return;
     const selectedNodeIds = new Set(selectedNodes.map((n) => n.id));
+
+    // Also include children of selected sub flow nodes
+    const allNodes = [...selectedNodes];
+    for (const n of nodes) {
+      if (n.parentId && selectedNodeIds.has(n.parentId) && !selectedNodeIds.has(n.id)) {
+        allNodes.push(n);
+        selectedNodeIds.add(n.id);
+      }
+    }
+
     const connectedEdges = edges.filter(
       (e) => selectedNodeIds.has(e.source) && selectedNodeIds.has(e.target)
     );
     setClipboard({
-      nodes: structuredClone(selectedNodes),
+      nodes: structuredClone(allNodes),
       edges: structuredClone(connectedEdges),
     });
-    toast.success(`Copied ${selectedNodes.length} node${selectedNodes.length !== 1 ? 's' : ''}`);
-  }, [selectedNodes, edges]);
+    toast.success(`Copied ${allNodes.length} node${allNodes.length !== 1 ? 's' : ''}`);
+  }, [selectedNodes, nodes, edges]);
 
   const handleCut = useCallback(() => {
     if (selectedNodes.length === 0) return;
@@ -438,8 +474,15 @@ export const DiagramCanvas = () => {
     const newNodes = clipboard.nodes.map((n) => ({
       ...n,
       id: idMap.get(n.id)!,
-      position: { x: n.position.x + 50, y: n.position.y + 50 },
-      selected: true,
+      // Remap parentId for sub flow children
+      ...(n.parentId && idMap.has(n.parentId)
+        ? { parentId: idMap.get(n.parentId)! }
+        : {}),
+      // Only offset position for non-child nodes (children are relative to parent)
+      position: n.parentId
+        ? n.position
+        : { x: n.position.x + 50, y: n.position.y + 50 },
+      selected: !n.parentId, // only select top-level pasted nodes
     }));
 
     const newEdges = clipboard.edges.map((e) => ({
@@ -449,10 +492,110 @@ export const DiagramCanvas = () => {
       target: idMap.get(e.target)!,
     }));
 
-    setNodes((nds) => nds.map((n) => ({ ...n, selected: false })).concat(newNodes));
+    setNodes((nds) =>
+      sortNodesForSubFlow(
+        nds.map((n) => ({ ...n, selected: false })).concat(newNodes)
+      )
+    );
     setEdges((eds) => eds.concat(newEdges));
     toast.success(`Pasted ${newNodes.length} node${newNodes.length !== 1 ? 's' : ''}`);
   }, [clipboard, setNodes, setEdges]);
+
+  const groupSelectedNodes = useCallback(() => {
+    // Only group non-subflow nodes that aren't already parented
+    const nodesToGroup = selectedNodes.filter(
+      (n) => n.type !== 'subflow' && !n.parentId
+    );
+    if (nodesToGroup.length < 2) return;
+
+    // Calculate bounding box with padding
+    const padding = 40;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const node of nodesToGroup) {
+      const w = (node.style?.width as number) || (node.measured?.width as number) || 150;
+      const h = (node.style?.height as number) || (node.measured?.height as number) || 50;
+      minX = Math.min(minX, node.position.x);
+      minY = Math.min(minY, node.position.y);
+      maxX = Math.max(maxX, node.position.x + w);
+      maxY = Math.max(maxY, node.position.y + h);
+    }
+
+    const subFlowId = uuidv4();
+    const subFlowX = minX - padding;
+    const subFlowY = minY - padding - 30; // extra space for label
+    const subFlowW = maxX - minX + padding * 2;
+    const subFlowH = maxY - minY + padding * 2 + 30;
+
+    const subFlowNode: Node = {
+      id: subFlowId,
+      type: 'subflow',
+      position: { x: subFlowX, y: subFlowY },
+      data: { label: 'Sub Flow', nodeType: 'subflow' as NodeType },
+      style: { width: subFlowW, height: subFlowH },
+    };
+
+    const childIds = new Set(nodesToGroup.map((n) => n.id));
+
+    setNodes((nds) => {
+      const updated = nds.map((n) => {
+        if (childIds.has(n.id)) {
+          return {
+            ...n,
+            parentId: subFlowId,
+            extent: 'parent' as const,
+            position: {
+              x: n.position.x - subFlowX,
+              y: n.position.y - subFlowY,
+            },
+          };
+        }
+        return n;
+      });
+      return sortNodesForSubFlow([subFlowNode, ...updated]);
+    });
+
+    toast.success(`Grouped ${nodesToGroup.length} nodes`);
+  }, [selectedNodes, setNodes]);
+
+  const ungroupSelectedNodes = useCallback(() => {
+    // Find selected sub flow nodes
+    const subFlowNodes = selectedNodes.filter((n) => n.type === 'subflow');
+    if (subFlowNodes.length === 0) return;
+
+    const subFlowIds = new Set(subFlowNodes.map((n) => n.id));
+
+    setNodes((nds) => {
+      // Build a map of subflow positions
+      const subFlowPositions = new Map<string, { x: number; y: number }>();
+      for (const n of nds) {
+        if (subFlowIds.has(n.id)) {
+          subFlowPositions.set(n.id, n.position);
+        }
+      }
+
+      const updated = nds
+        .filter((n) => !subFlowIds.has(n.id)) // remove sub flow nodes
+        .map((n) => {
+          if (n.parentId && subFlowIds.has(n.parentId)) {
+            const parentPos = subFlowPositions.get(n.parentId)!;
+            return {
+              ...n,
+              parentId: undefined,
+              extent: undefined,
+              position: {
+                x: n.position.x + parentPos.x,
+                y: n.position.y + parentPos.y,
+              },
+            };
+          }
+          return n;
+        });
+
+      return sortNodesForSubFlow(updated);
+    });
+
+    toast.success(`Ungrouped ${subFlowNodes.length} sub flow(s)`);
+  }, [selectedNodes, setNodes]);
 
   const handleUndo = useCallback(() => {
     const state = undo();
@@ -476,6 +619,47 @@ export const DiagramCanvas = () => {
     setNodes((nds) =>
       nds.map((n) => (n.id === nodeId ? { ...n, data: { ...n.data, ...data } } : n))
     );
+  }, [setNodes]);
+
+  const onNodeDragStop = useCallback((_event: React.MouseEvent, draggedNode: Node) => {
+    // Don't re-parent sub flow nodes or nodes that are already children
+    if (draggedNode.type === 'subflow' || draggedNode.parentId) return;
+
+    setNodes((nds) => {
+      // Find sub flow nodes that the dragged node overlaps with
+      const subFlowNodes = nds.filter((n) => n.type === 'subflow' && n.id !== draggedNode.id);
+
+      for (const sf of subFlowNodes) {
+        const sfW = (sf.style?.width as number) || 400;
+        const sfH = (sf.style?.height as number) || 300;
+
+        if (
+          draggedNode.position.x >= sf.position.x &&
+          draggedNode.position.y >= sf.position.y &&
+          draggedNode.position.x <= sf.position.x + sfW &&
+          draggedNode.position.y <= sf.position.y + sfH
+        ) {
+          // Re-parent: convert position to relative
+          const updated = nds.map((n) => {
+            if (n.id === draggedNode.id) {
+              return {
+                ...n,
+                parentId: sf.id,
+                extent: 'parent' as const,
+                position: {
+                  x: n.position.x - sf.position.x,
+                  y: n.position.y - sf.position.y,
+                },
+              };
+            }
+            return n;
+          });
+          toast.success('Node added to sub flow');
+          return sortNodesForSubFlow(updated);
+        }
+      }
+      return nds;
+    });
   }, [setNodes]);
 
   const onReconnect = useCallback((oldEdge: Edge, newConnection: Connection) => {
@@ -891,7 +1075,7 @@ export const DiagramCanvas = () => {
               target: String(edge.target)
             }));
             
-            setNodes(sanitizedNodes);
+            setNodes(sortNodesForSubFlow(sanitizedNodes));
             setEdges(sanitizedEdges);
             saveState(sanitizedNodes, sanitizedEdges);
             toast.success(`Diagram imported: ${sanitizedNodes.length} nodes, ${sanitizedEdges.length} edges`);
@@ -948,6 +1132,14 @@ export const DiagramCanvas = () => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'v') {
         handlePaste();
       }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'g') {
+        e.preventDefault();
+        if (e.shiftKey) {
+          ungroupSelectedNodes();
+        } else {
+          groupSelectedNodes();
+        }
+      }
       // Only trigger single-key shortcuts when no modifier keys are pressed
       if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey) {
         if (e.key === 'v') setSelectedTool('select');
@@ -958,7 +1150,7 @@ export const DiagramCanvas = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleDelete, handleUndo, handleRedo, handleCopy, handleCut, handlePaste, reactFlowInstance, setSelectedTool]);
+  }, [handleDelete, handleUndo, handleRedo, handleCopy, handleCut, handlePaste, groupSelectedNodes, ungroupSelectedNodes, reactFlowInstance, setSelectedTool]);
 
   // Auto-open properties sheet on mobile/tablet when a node or edge is selected
   useEffect(() => {
@@ -998,6 +1190,7 @@ export const DiagramCanvas = () => {
           onDragOver={onDragOver}
           onNodeClick={onNodeClick}
           onEdgeClick={onEdgeClick}
+          onNodeDragStop={onNodeDragStop}
           onPaneClick={onPaneClick}
           onNodeContextMenu={onNodeContextMenu}
           onEdgeContextMenu={onEdgeContextMenu}
@@ -1070,6 +1263,8 @@ export const DiagramCanvas = () => {
           canRedo={canRedo}
           onExport={handleExport}
           onImport={handleImport}
+          onGroupSelection={groupSelectedNodes}
+          canGroup={selectedNodes.filter((n) => n.type !== 'subflow' && !n.parentId).length >= 2}
           isMobile={isMobile}
         />
 

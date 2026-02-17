@@ -3,7 +3,7 @@ import { nodeTypeStyles } from "../node-styles";
 import type { NodeType } from "../../../types/diagrams";
 
 const allNodeTypes: NodeType[] = [
-  "service", "database", "server", "client", "storage", "api", "text", "group",
+  "service", "database", "server", "client", "storage", "api", "text", "subflow",
   "process-requirements", "process-design", "process-development",
   "process-testing", "process-deployment", "process-monitoring",
   "gcp-cloud-run", "gcp-cloud-storage", "gcp-bigquery", "gcp-pub-sub",
@@ -50,9 +50,9 @@ describe("nodeTypeStyles", () => {
     expect(textStyle.border).toContain("transparent");
   });
 
-  it("group type includes border-dashed", () => {
-    const groupStyle = nodeTypeStyles["group"];
-    expect(groupStyle.border).toContain("border-dashed");
+  it("subflow type includes border-dashed", () => {
+    const subflowStyle = nodeTypeStyles["subflow"];
+    expect(subflowStyle.border).toContain("border-dashed");
   });
 
   it("all aws-* types share identical style objects", () => {

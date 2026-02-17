@@ -1,7 +1,8 @@
 
 import {
   Type,
-  Square,
+  BoxSelect,
+  Group,
   MousePointer2,
   Hand,
   Trash2,
@@ -28,12 +29,12 @@ import {
 
 const nodeTypes: ToolbarItem[] = [
   { type: 'text', label: 'Text', icon: 'type', description: 'Text label annotation' },
-  { type: 'group', label: 'Group', icon: 'square', description: 'Group container' },
+  { type: 'subflow', label: 'Sub Flow', icon: 'boxselect', description: 'Sub flow container' },
 ];
 
 const IconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   'type': Type,
-  'square': Square,
+  'boxselect': BoxSelect,
 };
 
 interface ToolbarProps {
@@ -50,6 +51,8 @@ interface ToolbarProps {
   canRedo: boolean;
   onExport: (format: 'json' | 'png' | 'gif') => void;
   onImport: () => void;
+  onGroupSelection?: () => void;
+  canGroup?: boolean;
   isMobile?: boolean;
 }
 
@@ -67,6 +70,8 @@ export const Toolbar = ({
   canRedo,
   onExport,
   onImport,
+  onGroupSelection,
+  canGroup = false,
   isMobile = false,
 }: ToolbarProps) => {
   const handleDragStart = (event: React.DragEvent, nodeType: NodeType) => {
@@ -157,9 +162,14 @@ export const Toolbar = ({
             <DropdownMenuItem onSelect={() => onAddNode('text')}>
               <Type className="w-4 h-4 mr-2" /> Add Text
             </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => onAddNode('group')}>
-              <Square className="w-4 h-4 mr-2" /> Add Group
+            <DropdownMenuItem onSelect={() => onAddNode('subflow')}>
+              <BoxSelect className="w-4 h-4 mr-2" /> Add Sub Flow
             </DropdownMenuItem>
+            {canGroup && (
+              <DropdownMenuItem onSelect={onGroupSelection}>
+                <Group className="w-4 h-4 mr-2" /> Group Selection
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={onImport}>
               <Upload className="w-4 h-4 mr-2" /> Import
@@ -251,6 +261,20 @@ export const Toolbar = ({
             </Tooltip>
           );
         })}
+
+        {canGroup && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={onGroupSelection}
+                className="p-2 rounded-lg hover:bg-secondary text-foreground transition-all duration-200"
+              >
+                <Group className="w-4 h-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>Group Selection (⌘G)</TooltipContent>
+          </Tooltip>
+        )}
       </div>
 
       <Separator orientation="vertical" className="h-6 mx-1" />

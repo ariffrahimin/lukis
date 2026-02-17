@@ -95,7 +95,7 @@ describe("isCloudService", () => {
   });
 
   const nonCloudTypes: NodeType[] = [
-    "service", "database", "server", "client", "storage", "api", "text", "group",
+    "service", "database", "server", "client", "storage", "api", "text", "subflow",
     "process-requirements", "process-design", "process-development",
     "process-testing", "process-deployment", "process-monitoring",
   ];

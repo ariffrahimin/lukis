@@ -6,7 +6,7 @@ import {
   HardDrive,
   Globe,
   Type,
-  Square,
+  BoxSelect,
   FileText,
   PenTool,
   Code,
@@ -40,8 +40,8 @@ export const NodeIcon = ({ type, className }: NodeIconProps) => {
       return <Globe {...iconProps} />;
     case "text":
       return <Type {...iconProps} />;
-    case "group":
-      return <Square {...iconProps} />;
+    case "subflow":
+      return <BoxSelect {...iconProps} />;
     case "process-requirements":
       return <FileText {...iconProps} />;
     case "process-design":

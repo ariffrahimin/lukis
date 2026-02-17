@@ -19,7 +19,7 @@ export const nodeTypeStyles: Record<NodeType, NodeStyle> = {
   storage: { bg: "bg-[hsl(346_77%_50%/0.15)]", border: "border-[hsl(346_77%_50%/0.5)]", icon: "text-[hsl(346_77%_50%)]" },
   api: { bg: "bg-[hsl(199_89%_48%/0.15)]", border: "border-[hsl(199_89%_48%/0.5)]", icon: "text-[hsl(199_89%_48%)]" },
   text: { bg: "bg-transparent", border: "border-transparent", icon: "text-foreground" },
-  group: { bg: "bg-secondary/30", border: "border-border border-dashed", icon: "text-muted-foreground" },
+  subflow: { bg: "bg-secondary/20", border: "border-border border-dashed", icon: "text-muted-foreground" },
   "process-requirements": { bg: "bg-indigo-100/20", border: "border-indigo-300/50", icon: "text-indigo-600" },
   "process-design": { bg: "bg-violet-100/20", border: "border-violet-300/50", icon: "text-violet-600" },
   "process-development": { bg: "bg-sky-100/20", border: "border-sky-300/50", icon: "text-sky-600" },

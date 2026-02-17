@@ -12,7 +12,7 @@ describe("NodeIcon", () => {
     { type: "storage", expectedTag: "svg" },
     { type: "api", expectedTag: "svg" },
     { type: "text", expectedTag: "svg" },
-    { type: "group", expectedTag: "svg" },
+    { type: "subflow", expectedTag: "svg" },
     { type: "process-requirements", expectedTag: "svg" },
     { type: "process-design", expectedTag: "svg" },
     { type: "process-development", expectedTag: "svg" },
