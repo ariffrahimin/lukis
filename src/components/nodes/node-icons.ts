@@ -65,12 +65,6 @@ import oracleIcon from "../cloud-services/sql-db/oracle.svg";
 import mssqlIcon from "../cloud-services/sql-db/microsoft-sql-server.svg";
 import sqlalchemyIcon from "../cloud-services/sql-db/sqlalchemy.svg";
 
-// Shape Icons
-import shapeCircleIcon from "../cloud-services/shapes/circle.svg";
-import shapeSquareIcon from "../cloud-services/shapes/square.svg";
-import shapeStarIcon from "../cloud-services/shapes/star.svg";
-import shapeHexagonIcon from "../cloud-services/shapes/hexagon.svg";
-
 // Animated Icons
 import animatedApiIcon from "../cloud-services/animated/api.gif";
 import animatedClickIcon from "../cloud-services/animated/click.gif";
@@ -142,10 +136,6 @@ export const cloudServiceIcons: Record<string, string> = {
   "sql-oracle": oracleIcon,
   "sql-mssql": mssqlIcon,
   "sql-sqlalchemy": sqlalchemyIcon,
-  "shape-circle": shapeCircleIcon,
-  "shape-square": shapeSquareIcon,
-  "shape-star": shapeStarIcon,
-  "shape-hexagon": shapeHexagonIcon,
   "animated-api": animatedApiIcon,
   "animated-click": animatedClickIcon,
   "animated-cloud": animatedCloudIcon,

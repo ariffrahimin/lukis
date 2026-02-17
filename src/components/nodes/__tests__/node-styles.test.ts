@@ -20,6 +20,8 @@ const allNodeTypes: NodeType[] = [
   "nosql-firebase", "nosql-influxdb", "nosql-rocksdb",
   "sql-mysql", "sql-postgresql", "sql-sqlite", "sql-oracle", "sql-mssql", "sql-sqlalchemy",
   "shape-circle", "shape-square", "shape-star", "shape-hexagon",
+  "shape-round-rectangle", "shape-diamond", "shape-arrow-rectangle", "shape-cylinder",
+  "shape-parallelogram", "shape-plus", "shape-triangle",
   "animated-api", "animated-click", "animated-cloud", "animated-double-check",
   "animated-loading-bubble", "animated-loading", "animated-rocket", "animated-settings",
   "animated-target", "animated-upload-cloud", "animated-upload", "animated-verified",

@@ -61,11 +61,6 @@ vi.mock("../../cloud-services/sql-db/oracle.svg", () => ({ default: "sql-oracle.
 vi.mock("../../cloud-services/sql-db/microsoft-sql-server.svg", () => ({ default: "sql-mssql.svg" }));
 vi.mock("../../cloud-services/sql-db/sqlalchemy.svg", () => ({ default: "sql-sqlalchemy.svg" }));
 
-vi.mock("../../cloud-services/shapes/circle.svg", () => ({ default: "shape-circle.svg" }));
-vi.mock("../../cloud-services/shapes/square.svg", () => ({ default: "shape-square.svg" }));
-vi.mock("../../cloud-services/shapes/star.svg", () => ({ default: "shape-star.svg" }));
-vi.mock("../../cloud-services/shapes/hexagon.svg", () => ({ default: "shape-hexagon.svg" }));
-
 vi.mock("../../cloud-services/animated/api.gif", () => ({ default: "animated-api.gif" }));
 vi.mock("../../cloud-services/animated/click.gif", () => ({ default: "animated-click.gif" }));
 vi.mock("../../cloud-services/animated/cloud.gif", () => ({ default: "animated-cloud.gif" }));
@@ -87,7 +82,7 @@ describe("isCloudService", () => {
   const cloudTypes: NodeType[] = [
     "gcp-cloud-run", "aws-ec2", "azure-vm",
     "nosql-mongodb", "sql-mysql",
-    "shape-circle", "animated-api",
+    "animated-api",
   ];
 
   it.each(cloudTypes)("returns true for %s", (type) => {
@@ -98,6 +93,9 @@ describe("isCloudService", () => {
     "service", "database", "server", "client", "storage", "api", "text", "subflow",
     "process-requirements", "process-design", "process-development",
     "process-testing", "process-deployment", "process-monitoring",
+    "shape-circle", "shape-square", "shape-star", "shape-hexagon",
+    "shape-round-rectangle", "shape-diamond", "shape-arrow-rectangle", "shape-cylinder",
+    "shape-parallelogram", "shape-plus", "shape-triangle",
   ];
 
   it.each(nonCloudTypes)("returns false for %s", (type) => {

@@ -39,6 +39,13 @@ import shapeCircleIcon from "./cloud-services/shapes/circle.svg";
 import shapeSquareIcon from "./cloud-services/shapes/square.svg";
 import shapeStarIcon from "./cloud-services/shapes/star.svg";
 import shapeHexagonIcon from "./cloud-services/shapes/hexagon.svg";
+import shapeRoundRectangleIcon from "./cloud-services/shapes/round-rectangle.svg";
+import shapeDiamondIcon from "./cloud-services/shapes/diamond.svg";
+import shapeArrowRectangleIcon from "./cloud-services/shapes/arrow-rectangle.svg";
+import shapeCylinderIcon from "./cloud-services/shapes/cylinder.svg";
+import shapeParallelogramIcon from "./cloud-services/shapes/parallelogram.svg";
+import shapePlusIcon from "./cloud-services/shapes/plus.svg";
+import shapeTriangleIcon from "./cloud-services/shapes/triangle.svg";
 
 // GCP Icons
 import cloudRunIcon from "./cloud-services/gcp/cloud-run.svg";
@@ -149,6 +156,13 @@ const shapesProvider: CloudProvider = {
     { type: "shape-square", label: "Square", icon: shapeSquareIcon },
     { type: "shape-star", label: "Star", icon: shapeStarIcon },
     { type: "shape-hexagon", label: "Hexagon", icon: shapeHexagonIcon },
+    { type: "shape-round-rectangle", label: "Round Rect", icon: shapeRoundRectangleIcon },
+    { type: "shape-diamond", label: "Diamond", icon: shapeDiamondIcon },
+    { type: "shape-arrow-rectangle", label: "Arrow Rect", icon: shapeArrowRectangleIcon },
+    { type: "shape-cylinder", label: "Cylinder", icon: shapeCylinderIcon },
+    { type: "shape-parallelogram", label: "Parallelogram", icon: shapeParallelogramIcon },
+    { type: "shape-plus", label: "Plus", icon: shapePlusIcon },
+    { type: "shape-triangle", label: "Triangle", icon: shapeTriangleIcon },
   ],
 };
 

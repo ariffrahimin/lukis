@@ -75,6 +75,13 @@ export type NodeType =
   | 'shape-square'
   | 'shape-star'
   | 'shape-hexagon'
+  | 'shape-round-rectangle'
+  | 'shape-diamond'
+  | 'shape-arrow-rectangle'
+  | 'shape-cylinder'
+  | 'shape-parallelogram'
+  | 'shape-plus'
+  | 'shape-triangle'
   | 'animated-api'
   | 'animated-click'
   | 'animated-cloud'
@@ -98,6 +105,9 @@ export interface DiagramNodeData {
   region?: string;
   instanceType?: string;
   environment?: 'development' | 'staging' | 'production' | 'testing';
+  // Shape node customization
+  shapeColor?: string;
+  shapeOpacity?: number;
   [key: string]: unknown;
 }
 

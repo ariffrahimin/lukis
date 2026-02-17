@@ -41,7 +41,6 @@ vi.mock("../nodes/node-icons", () => {
     "nosql-mongodb", "nosql-redis", "nosql-cassandra", "nosql-couchdb",
     "nosql-firebase", "nosql-influxdb", "nosql-rocksdb",
     "sql-mysql", "sql-postgresql", "sql-sqlite", "sql-oracle", "sql-mssql", "sql-sqlalchemy",
-    "shape-circle", "shape-square", "shape-star", "shape-hexagon",
     "animated-api", "animated-click", "animated-cloud", "animated-double-check",
     "animated-loading-bubble", "animated-loading", "animated-rocket", "animated-settings",
     "animated-target", "animated-upload-cloud", "animated-upload", "animated-verified",
