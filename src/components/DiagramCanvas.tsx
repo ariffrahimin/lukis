@@ -33,7 +33,8 @@ import { isCloudService } from './nodes/node-icons';
 import { useUndoRedo } from '..//hooks/useUndoRedo';
 import { useIsMobile, useIsTablet } from '../hooks/use-mobile';
 import { toast } from 'sonner';
-import { LayoutGrid } from 'lucide-react';
+import { LayoutGrid, HelpCircle } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 // Use the centralized type from types/diagrams
 type NodeData = DiagramNodeData;
@@ -1071,6 +1072,20 @@ export const DiagramCanvas = () => {
           onImport={handleImport}
           isMobile={isMobile}
         />
+
+        {/* Guide button */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <a
+              href="/guide"
+              className="absolute top-4 right-4 z-10 p-2 rounded-xl bg-toolbar-bg border border-border shadow-lg backdrop-blur-xl text-muted-foreground hover:text-primary transition-colors duration-200"
+              aria-label="How to use"
+            >
+              <HelpCircle className="w-4 h-4" />
+            </a>
+          </TooltipTrigger>
+          <TooltipContent side="left">How to Use</TooltipContent>
+        </Tooltip>
 
         <PropertiesPanel
           selectedNode={selectedNode}

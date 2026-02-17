@@ -74,6 +74,11 @@ vi.mock("../PropertiesPanel", () => ({
 vi.mock("../CloudServicesPanel", () => ({
   CloudServicesPanel: () => <div data-testid="cloud-services-panel" />,
 }));
+vi.mock("../ui/tooltip", () => ({
+  Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  TooltipTrigger: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  TooltipContent: ({ children }: { children: React.ReactNode }) => <span>{children}</span>,
+}));
 vi.mock("../../hooks/use-mobile", () => ({
   useIsMobile: () => false,
   useIsTablet: () => false,
