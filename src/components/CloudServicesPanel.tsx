@@ -369,25 +369,22 @@ function ServiceCard({
         onSelect(service.type);
         if (isMobile) onMobileClose?.();
       }}
-      className={`group relative flex items-center cursor-pointer transition-all duration-200 active:scale-[0.97] ${
-        isMobile
-          ? "flex-row gap-3 p-3 rounded-xl border border-border/50 bg-card hover:bg-accent/50 hover:border-border hover:shadow-sm"
-          : "flex-col justify-center gap-1.5 p-2.5 rounded-xl border border-border/50 bg-card hover:bg-accent/50 hover:border-border hover:shadow-sm min-h-[68px]"
-      }`}
+      className={`group relative flex items-center cursor-pointer transition-all duration-200 active:scale-[0.97] ${isMobile
+        ? "flex-row gap-3 p-3 rounded-xl border border-border/50 bg-card hover:bg-accent/50 hover:border-border hover:shadow-sm"
+        : "flex-col justify-center gap-1.5 p-2.5 rounded-xl border border-border/50 bg-card hover:bg-accent/50 hover:border-border hover:shadow-sm min-h-[68px]"
+        }`}
     >
       {!isMobile && (
         <GripVertical className="absolute top-1 right-1 w-3 h-3 text-muted-foreground/0 group-hover:text-muted-foreground/40 transition-colors" />
       )}
-      <div className={`flex-shrink-0 flex items-center justify-center ${
-        isMobile ? "w-8 h-8" : "w-7 h-7"
-      }`}>
+      <div className={`flex-shrink-0 flex items-center justify-center ${isMobile ? "w-8 h-8" : "w-7 h-7"
+        }`}>
         <ServiceIcon icon={service.icon} label={service.label} />
       </div>
-      <span className={`text-muted-foreground group-hover:text-foreground leading-tight font-medium transition-colors ${
-        isMobile
-          ? "text-sm text-left"
-          : "text-[11px] text-center line-clamp-2"
-      }`}>
+      <span className={`text-muted-foreground group-hover:text-foreground leading-tight font-medium transition-colors ${isMobile
+        ? "text-sm text-left"
+        : "text-[11px] text-center line-clamp-2"
+        }`}>
         {service.label}
       </span>
     </div>
@@ -432,14 +429,12 @@ function ProviderSection({
     <div className={isMobile ? "mb-2" : "mb-1"}>
       <button
         onClick={onToggle}
-        className={`w-full flex items-center justify-between rounded-lg hover:bg-muted/60 transition-colors group ${
-          isMobile ? "px-1 py-2.5" : "px-3 py-2"
-        }`}
+        className={`w-full flex items-center justify-between rounded-lg hover:bg-muted/60 transition-colors group ${isMobile ? "px-1 py-2.5" : "px-3 py-2"
+          }`}
       >
         <div className="flex items-center gap-2">
-          <h4 className={`font-semibold text-foreground uppercase tracking-wider ${
-            isMobile ? "text-[11px]" : "text-xs"
-          }`}>
+          <h4 className={`font-semibold text-foreground uppercase tracking-wider ${isMobile ? "text-[11px]" : "text-xs"
+            }`}>
             {provider.name}
           </h4>
           {provider.accent && (
@@ -457,16 +452,14 @@ function ProviderSection({
           )}
         </div>
         <ChevronDown
-          className={`w-3.5 h-3.5 text-muted-foreground transition-transform duration-200 ${
-            expanded ? "rotate-180" : "rotate-0"
-          }`}
+          className={`w-3.5 h-3.5 text-muted-foreground transition-transform duration-200 ${expanded ? "rotate-180" : "rotate-0"
+            }`}
         />
       </button>
 
       <div
-        className={`grid ${gridCols} ${gridGap} px-1 overflow-hidden transition-all duration-200 ${
-          expanded ? "max-h-[2000px] opacity-100 mt-1.5 mb-2" : "max-h-0 opacity-0"
-        }`}
+        className={`grid ${gridCols} ${gridGap} px-1 overflow-hidden transition-all duration-200 ${expanded ? "max-h-[2000px] opacity-100 mt-1.5 mb-2" : "max-h-0 opacity-0"
+          }`}
       >
         {provider.services.map((service) => (
           <ServiceCard
@@ -494,7 +487,7 @@ export const CloudServicesPanel = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("cloud");
   const [expandedProviders, setExpandedProviders] = useState<Set<string>>(
-    new Set(["AWS", "GCP", "Azure", "Animated"])
+    new Set(["AWS", "GCP", "Azure", "Animated", "SQL", "NoSQL", "Basic", "Shapes", "Software Process"])
   );
 
   const isSearching = searchQuery.trim() !== "";
@@ -549,9 +542,8 @@ export const CloudServicesPanel = ({
         placeholder="Search components..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className={`w-full text-sm rounded-lg border border-border bg-muted/40 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:bg-background transition-all ${
-          isMobile ? "pl-10 pr-10 py-2.5" : "pl-8 pr-8 py-2"
-        }`}
+        className={`w-full text-sm rounded-lg border border-border bg-muted/40 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:bg-background transition-all ${isMobile ? "pl-10 pr-10 py-2.5" : "pl-8 pr-8 py-2"
+          }`}
       />
       {searchQuery && (
         <button
@@ -587,7 +579,7 @@ export const CloudServicesPanel = ({
               provider={provider}
               isMobile={isMobile}
               isExpanded={true}
-              onToggle={() => {}}
+              onToggle={() => { }}
               onServiceSelect={onServiceSelect}
               onMobileClose={() => onOpenChange?.(false)}
               forceExpand
@@ -650,11 +642,10 @@ export const CloudServicesPanel = ({
                       <button
                         key={tab.value}
                         onClick={() => setActiveTab(tab.value)}
-                        className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all border ${
-                          isActive
-                            ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                            : "bg-muted/50 text-muted-foreground border-transparent hover:bg-muted hover:text-foreground"
-                        }`}
+                        className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all border ${isActive
+                          ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                          : "bg-muted/50 text-muted-foreground border-transparent hover:bg-muted hover:text-foreground"
+                          }`}
                       >
                         <Icon className="w-3.5 h-3.5" />
                         {tab.label}
@@ -806,11 +797,10 @@ export const CloudServicesPanel = ({
                         <TooltipTrigger asChild>
                           <button
                             onClick={() => setActiveTab(tab.value)}
-                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                              isActive
-                                ? "bg-primary/15 text-primary shadow-sm"
-                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                            }`}
+                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${isActive
+                              ? "bg-primary/15 text-primary shadow-sm"
+                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                              }`}
                           >
                             <Icon className="w-3.5 h-3.5" />
                             {isActive && (
