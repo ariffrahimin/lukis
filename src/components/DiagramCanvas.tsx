@@ -35,8 +35,11 @@ import { isCloudService } from './nodes/node-icons';
 import { useUndoRedo } from '..//hooks/useUndoRedo';
 import { useIsMobile, useIsTablet } from '../hooks/use-mobile';
 import { toast } from 'sonner';
-import { LayoutGrid, HelpCircle } from 'lucide-react';
+import { LayoutGrid, HelpCircle, Layers } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { LayersPanel } from './LayersPanel';
+import { sortNodesForSubFlow } from '../utils/sort-nodes';
+import { cn } from '../lib/utils';
 
 // Use the centralized type from types/diagrams
 type NodeData = DiagramNodeData;
@@ -46,22 +49,6 @@ const getDefaultNodeStyle = (type: NodeType): { width: number; height: number } 
   if (type.startsWith('shape-')) return { width: 120, height: 120 };
   if (isCloudService(type)) return { width: 80, height: 90 };
   return undefined;
-};
-
-/** Ensure parent sub flow nodes appear before their children in the array */
-const sortNodesForSubFlow = (nodes: Node[]): Node[] => {
-  const sorted: Node[] = [];
-  const childNodes: Node[] = [];
-
-  for (const node of nodes) {
-    if (node.parentId) {
-      childNodes.push(node);
-    } else {
-      sorted.push(node);
-    }
-  }
-
-  return [...sorted, ...childNodes];
 };
 
 const defaultNodeLabels: Record<NodeType, string> = {
@@ -180,6 +167,10 @@ export const DiagramCanvas = () => {
   const isTablet = useIsTablet();
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [mobilePropertiesOpen, setMobilePropertiesOpen] = useState(false);
+
+  const [layersPanelOpen, setLayersPanelOpen] = useState(false);
+  const [highlightedNodeId, setHighlightedNodeId] = useState<string | null>(null);
+  const highlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [clipboard, setClipboard] = useState<{ nodes: Node[]; edges: Edge[] } | null>(null);
   const { saveState, undo, redo, canUndo, canRedo } = useUndoRedo();
@@ -1161,6 +1152,7 @@ export const DiagramCanvas = () => {
         if (e.key === 'v') setSelectedTool('select');
         if (e.key === 'h') setSelectedTool('pan');
         if (e.key === 'f' && reactFlowInstance) reactFlowInstance.fitView();
+        if (e.key === 'l') setLayersPanelOpen((prev) => !prev);
       }
     };
 
@@ -1174,6 +1166,45 @@ export const DiagramCanvas = () => {
       setMobilePropertiesOpen(true);
     }
   }, [isMobile, isTablet, selectedNode, selectedEdge]);
+
+  const handleLayerSelectNode = useCallback((nodeId: string) => {
+    const node = nodes.find((n) => n.id === nodeId);
+    if (!node) return;
+    setSelectedNode(node);
+    setSelectedEdge(null);
+    setSelectedNodes([node]);
+    setSelectedEdges([]);
+    // Select the node on the canvas
+    setNodes((nds) => nds.map((n) => ({ ...n, selected: n.id === nodeId })));
+    setEdges((eds) => eds.map((e) => ({ ...e, selected: false })));
+    // Fit view to the node
+    reactFlowInstance?.fitView({ nodes: [{ id: nodeId }], duration: 800, padding: 0.5 });
+    // Highlight pulse
+    if (highlightTimeoutRef.current) clearTimeout(highlightTimeoutRef.current);
+    setHighlightedNodeId(nodeId);
+    highlightTimeoutRef.current = setTimeout(() => setHighlightedNodeId(null), 1500);
+  }, [nodes, setNodes, setEdges, reactFlowInstance]);
+
+  const handleLayerSelectEdge = useCallback((edgeId: string) => {
+    const edge = edges.find((e) => e.id === edgeId);
+    if (!edge) return;
+    setSelectedEdge(edge);
+    setSelectedNode(null);
+    setSelectedNodes([]);
+    setSelectedEdges([edge]);
+    setNodes((nds) => nds.map((n) => ({ ...n, selected: false })));
+    setEdges((eds) => eds.map((e) => ({ ...e, selected: e.id === edgeId })));
+  }, [edges, setNodes, setEdges]);
+
+  // Inject highlight class on the highlighted node
+  const nodesWithHighlight = useMemo(() => {
+    if (!highlightedNodeId) return nodes;
+    return nodes.map((n) =>
+      n.id === highlightedNodeId
+        ? { ...n, className: cn(n.className, 'node-highlight-pulse') }
+        : n
+    );
+  }, [nodes, highlightedNodeId]);
 
   return (
     <div className="flex w-full h-screen bg-[hsl(var(--canvas-bg))]">
@@ -1195,7 +1226,7 @@ export const DiagramCanvas = () => {
 
       <div ref={reactFlowWrapper} className="flex-1 relative">
         <ReactFlow
-          nodes={nodes}
+          nodes={nodesWithHighlight}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
@@ -1298,6 +1329,23 @@ export const DiagramCanvas = () => {
           <TooltipContent side="left">How to Use</TooltipContent>
         </Tooltip>
 
+        {/* Layers toggle button */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => setLayersPanelOpen((prev) => !prev)}
+              className={cn(
+                'absolute top-4 right-14 z-10 p-2 rounded-xl bg-toolbar-bg border border-border shadow-lg backdrop-blur-xl text-muted-foreground hover:text-primary transition-colors duration-200',
+                layersPanelOpen && 'text-primary'
+              )}
+              aria-label="Toggle layers panel"
+            >
+              <Layers className="w-4 h-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Layers (L)</TooltipContent>
+        </Tooltip>
+
         <PropertiesPanel
           selectedNode={selectedNode}
           selectedEdge={selectedEdge}
@@ -1322,6 +1370,34 @@ export const DiagramCanvas = () => {
           }}
         />
       </div>
+
+      {/* Right-side layers drawer */}
+      {!isMobile && (
+        <LayersPanel
+          nodes={nodes}
+          edges={edges}
+          setNodes={setNodes}
+          setEdges={setEdges}
+          onSelectNode={handleLayerSelectNode}
+          onSelectEdge={handleLayerSelectEdge}
+          isMobile={false}
+          open={layersPanelOpen}
+          onOpenChange={setLayersPanelOpen}
+        />
+      )}
+      {(isMobile || isTablet) && (
+        <LayersPanel
+          nodes={nodes}
+          edges={edges}
+          setNodes={setNodes}
+          setEdges={setEdges}
+          onSelectNode={handleLayerSelectNode}
+          onSelectEdge={handleLayerSelectEdge}
+          isMobile={true}
+          open={layersPanelOpen}
+          onOpenChange={setLayersPanelOpen}
+        />
+      )}
     </div>
   );
 };

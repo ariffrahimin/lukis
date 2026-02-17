@@ -195,6 +195,10 @@
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
+.node-highlight-pulse {
+  animation: pulse-glow 0.75s ease-in-out 2;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
