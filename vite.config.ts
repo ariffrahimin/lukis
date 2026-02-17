@@ -11,6 +11,16 @@ export default defineConfig({
     rollupOptions: {
       output: {
         assetFileNames: "assets/[name]-[hash][extname]",
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("@xyflow")) return "xyflow";
+            if (id.includes("react-dom")) return "vendor";
+            if (id.includes("react")) return "vendor";
+            if (id.includes("lucide-react")) return "ui";
+            if (id.includes("@radix-ui")) return "ui";
+            if (id.includes("html-to-image") || id.includes("gifenc")) return "export";
+          }
+        },
       },
     },
   },
