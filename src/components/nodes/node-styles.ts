@@ -2,50 +2,41 @@ import { type NodeType } from "../../types/diagrams";
 
 type NodeStyle = { bg: string; border: string; icon: string };
 
-const style = (color: string): NodeStyle => ({
-  bg: `bg-${color}-100/20`,
-  border: `border-${color}-300/50`,
-  icon: `text-${color}-600`,
-});
+// Tailwind JIT requires full class names to be statically present in source.
+// Do NOT use dynamic class construction like `bg-${color}-100/20`.
 
-const hslStyle = (hsl: string): NodeStyle => ({
-  bg: `bg-[hsl(${hsl}/0.15)]`,
-  border: `border-[hsl(${hsl}/0.5)]`,
-  icon: `text-[hsl(${hsl})]`,
-});
-
-const awsStyle = style("orange");
-const azureStyle = style("cyan");
-const animatedStyle = style("violet");
-const gcpBlueStyle = style("blue");
-const gcpRedStyle = style("red");
+const awsStyle: NodeStyle = { bg: "bg-orange-100/20", border: "border-orange-300/50", icon: "text-orange-600" };
+const azureStyle: NodeStyle = { bg: "bg-cyan-100/20", border: "border-cyan-300/50", icon: "text-cyan-600" };
+const animatedStyle: NodeStyle = { bg: "bg-violet-100/20", border: "border-violet-300/50", icon: "text-violet-600" };
+const gcpBlueStyle: NodeStyle = { bg: "bg-blue-100/20", border: "border-blue-300/50", icon: "text-blue-600" };
+const gcpRedStyle: NodeStyle = { bg: "bg-red-100/20", border: "border-red-300/50", icon: "text-red-600" };
 
 export const nodeTypeStyles: Record<NodeType, NodeStyle> = {
-  service: hslStyle("187_72%_50%"),
-  database: hslStyle("262_83%_58%"),
-  server: hslStyle("142_71%_45%"),
-  client: hslStyle("38_92%_50%"),
-  storage: hslStyle("346_77%_50%"),
-  api: hslStyle("199_89%_48%"),
+  service: { bg: "bg-[hsl(187_72%_50%/0.15)]", border: "border-[hsl(187_72%_50%/0.5)]", icon: "text-[hsl(187_72%_50%)]" },
+  database: { bg: "bg-[hsl(262_83%_58%/0.15)]", border: "border-[hsl(262_83%_58%/0.5)]", icon: "text-[hsl(262_83%_58%)]" },
+  server: { bg: "bg-[hsl(142_71%_45%/0.15)]", border: "border-[hsl(142_71%_45%/0.5)]", icon: "text-[hsl(142_71%_45%)]" },
+  client: { bg: "bg-[hsl(38_92%_50%/0.15)]", border: "border-[hsl(38_92%_50%/0.5)]", icon: "text-[hsl(38_92%_50%)]" },
+  storage: { bg: "bg-[hsl(346_77%_50%/0.15)]", border: "border-[hsl(346_77%_50%/0.5)]", icon: "text-[hsl(346_77%_50%)]" },
+  api: { bg: "bg-[hsl(199_89%_48%/0.15)]", border: "border-[hsl(199_89%_48%/0.5)]", icon: "text-[hsl(199_89%_48%)]" },
   text: { bg: "bg-transparent", border: "border-transparent", icon: "text-foreground" },
   group: { bg: "bg-secondary/30", border: "border-border border-dashed", icon: "text-muted-foreground" },
-  "process-requirements": style("indigo"),
-  "process-design": style("violet"),
-  "process-development": style("sky"),
-  "process-testing": style("amber"),
-  "process-deployment": style("emerald"),
-  "process-monitoring": style("rose"),
+  "process-requirements": { bg: "bg-indigo-100/20", border: "border-indigo-300/50", icon: "text-indigo-600" },
+  "process-design": { bg: "bg-violet-100/20", border: "border-violet-300/50", icon: "text-violet-600" },
+  "process-development": { bg: "bg-sky-100/20", border: "border-sky-300/50", icon: "text-sky-600" },
+  "process-testing": { bg: "bg-amber-100/20", border: "border-amber-300/50", icon: "text-amber-600" },
+  "process-deployment": { bg: "bg-emerald-100/20", border: "border-emerald-300/50", icon: "text-emerald-600" },
+  "process-monitoring": { bg: "bg-rose-100/20", border: "border-rose-300/50", icon: "text-rose-600" },
   "gcp-cloud-run": gcpBlueStyle,
   "gcp-cloud-storage": gcpRedStyle,
   "gcp-bigquery": gcpBlueStyle,
-  "gcp-pub-sub": style("yellow"),
+  "gcp-pub-sub": { bg: "bg-yellow-100/20", border: "border-yellow-300/50", icon: "text-yellow-600" },
   "gcp-apigee": gcpBlueStyle,
-  "gcp-billing": style("green"),
+  "gcp-billing": { bg: "bg-green-100/20", border: "border-green-300/50", icon: "text-green-600" },
   "gcp-cloud-build": gcpBlueStyle,
   "gcp-cloud-monitoring": gcpRedStyle,
-  "gcp-cloud-sql": style("orange"),
+  "gcp-cloud-sql": { bg: "bg-orange-100/20", border: "border-orange-300/50", icon: "text-orange-600" },
   "gcp-compute-engine": gcpBlueStyle,
-  "gcp-iam": style("purple"),
+  "gcp-iam": { bg: "bg-purple-100/20", border: "border-purple-300/50", icon: "text-purple-600" },
   "gcp-kubernetes": gcpBlueStyle,
   "gcp-security": gcpRedStyle,
   "aws-ec2": awsStyle,
@@ -77,23 +68,23 @@ export const nodeTypeStyles: Record<NodeType, NodeStyle> = {
   "azure-cosmos-db": azureStyle,
   "azure-container-apps": azureStyle,
   "azure-key-vault": azureStyle,
-  "nosql-mongodb": style("green"),
-  "nosql-redis": style("red"),
-  "nosql-cassandra": style("blue"),
-  "nosql-couchdb": style("red"),
-  "nosql-firebase": style("amber"),
-  "nosql-influxdb": style("purple"),
-  "nosql-rocksdb": style("slate"),
-  "sql-mysql": style("blue"),
-  "sql-postgresql": style("sky"),
-  "sql-sqlite": style("blue"),
-  "sql-oracle": style("red"),
-  "sql-mssql": style("red"),
-  "sql-sqlalchemy": style("orange"),
-  "shape-circle": style("pink"),
-  "shape-square": style("blue"),
-  "shape-star": style("yellow"),
-  "shape-hexagon": style("teal"),
+  "nosql-mongodb": { bg: "bg-green-100/20", border: "border-green-300/50", icon: "text-green-600" },
+  "nosql-redis": { bg: "bg-red-100/20", border: "border-red-300/50", icon: "text-red-600" },
+  "nosql-cassandra": { bg: "bg-blue-100/20", border: "border-blue-300/50", icon: "text-blue-600" },
+  "nosql-couchdb": { bg: "bg-red-100/20", border: "border-red-300/50", icon: "text-red-600" },
+  "nosql-firebase": { bg: "bg-amber-100/20", border: "border-amber-300/50", icon: "text-amber-600" },
+  "nosql-influxdb": { bg: "bg-purple-100/20", border: "border-purple-300/50", icon: "text-purple-600" },
+  "nosql-rocksdb": { bg: "bg-slate-100/20", border: "border-slate-300/50", icon: "text-slate-600" },
+  "sql-mysql": { bg: "bg-blue-100/20", border: "border-blue-300/50", icon: "text-blue-600" },
+  "sql-postgresql": { bg: "bg-sky-100/20", border: "border-sky-300/50", icon: "text-sky-600" },
+  "sql-sqlite": { bg: "bg-blue-100/20", border: "border-blue-300/50", icon: "text-blue-600" },
+  "sql-oracle": { bg: "bg-red-100/20", border: "border-red-300/50", icon: "text-red-600" },
+  "sql-mssql": { bg: "bg-red-100/20", border: "border-red-300/50", icon: "text-red-600" },
+  "sql-sqlalchemy": { bg: "bg-orange-100/20", border: "border-orange-300/50", icon: "text-orange-600" },
+  "shape-circle": { bg: "bg-pink-100/20", border: "border-pink-300/50", icon: "text-pink-600" },
+  "shape-square": { bg: "bg-blue-100/20", border: "border-blue-300/50", icon: "text-blue-600" },
+  "shape-star": { bg: "bg-yellow-100/20", border: "border-yellow-300/50", icon: "text-yellow-600" },
+  "shape-hexagon": { bg: "bg-teal-100/20", border: "border-teal-300/50", icon: "text-teal-600" },
   "animated-api": animatedStyle,
   "animated-click": animatedStyle,
   "animated-cloud": animatedStyle,
