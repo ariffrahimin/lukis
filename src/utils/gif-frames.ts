@@ -14,6 +14,14 @@ export interface DecodedGif {
  * Decode an animated GIF from a URL into individual frame data URLs.
  */
 export async function decodeGif(url: string): Promise<DecodedGif> {
+  // Only allow same-origin, data:, and blob: URLs to prevent SSRF
+  if (!url.startsWith('data:') && !url.startsWith('blob:')) {
+    const parsed = new URL(url, window.location.origin);
+    if (parsed.origin !== window.location.origin) {
+      throw new Error('Cannot decode GIF from cross-origin URL');
+    }
+  }
+
   const response = await fetch(url);
   const buffer = await response.arrayBuffer();
   const gif = parseGIF(buffer);
