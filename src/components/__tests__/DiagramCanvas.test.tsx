@@ -4,11 +4,10 @@ import { render, act, fireEvent } from "@testing-library/react";
 import type { Node, Edge, Connection } from "@xyflow/react";
 
 // vi.hoisted runs before mock hoisting, so these are available in vi.mock factories
-const { mockToast, getUuidCounter, incrementUuidCounter, resetUuidCounter } = vi.hoisted(() => {
+const { mockToast, incrementUuidCounter, resetUuidCounter } = vi.hoisted(() => {
   let counter = 0;
   return {
     mockToast: { success: vi.fn(), info: vi.fn(), error: vi.fn() },
-    getUuidCounter: () => counter,
     incrementUuidCounter: () => ++counter,
     resetUuidCounter: () => { counter = 0; },
   };
