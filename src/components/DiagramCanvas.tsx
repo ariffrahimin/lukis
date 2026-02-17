@@ -26,6 +26,7 @@ import { toBlob, toCanvas } from 'html-to-image';
 import { GIFEncoder, quantize, applyPalette } from 'gifenc';
 import { decodeGif, getFrameAtTime, type DecodedGif } from '../utils/gif-frames';
 import BaseNode from './nodes/BaseNode';
+import ShapeNode from './nodes/ShapeNode';
 import SubFlowNode from './nodes/SubFlowNode';
 import { Toolbar } from './Toolbar';
 import { PropertiesPanel } from './PropertiesPanel';
@@ -42,6 +43,7 @@ type NodeData = DiagramNodeData;
 
 const getDefaultNodeStyle = (type: NodeType): { width: number; height: number } | undefined => {
   if (type === 'subflow') return { width: 400, height: 300 };
+  if (type.startsWith('shape-')) return { width: 120, height: 120 };
   if (isCloudService(type)) return { width: 80, height: 90 };
   return undefined;
 };
@@ -136,6 +138,13 @@ const defaultNodeLabels: Record<NodeType, string> = {
   'shape-square': 'Square',
   'shape-star': 'Star',
   'shape-hexagon': 'Hexagon',
+  'shape-round-rectangle': 'Round Rectangle',
+  'shape-diamond': 'Diamond',
+  'shape-arrow-rectangle': 'Arrow Rectangle',
+  'shape-cylinder': 'Cylinder',
+  'shape-parallelogram': 'Parallelogram',
+  'shape-plus': 'Plus',
+  'shape-triangle': 'Triangle',
   'animated-api': 'API',
   'animated-click': 'Click',
   'animated-cloud': 'Cloud',
@@ -245,10 +254,17 @@ export const DiagramCanvas = () => {
     'sql-oracle': BaseNode,
     'sql-mssql': BaseNode,
     'sql-sqlalchemy': BaseNode,
-    'shape-circle': BaseNode,
-    'shape-square': BaseNode,
-    'shape-star': BaseNode,
-    'shape-hexagon': BaseNode,
+    'shape-circle': ShapeNode,
+    'shape-square': ShapeNode,
+    'shape-star': ShapeNode,
+    'shape-hexagon': ShapeNode,
+    'shape-round-rectangle': ShapeNode,
+    'shape-diamond': ShapeNode,
+    'shape-arrow-rectangle': ShapeNode,
+    'shape-cylinder': ShapeNode,
+    'shape-parallelogram': ShapeNode,
+    'shape-plus': ShapeNode,
+    'shape-triangle': ShapeNode,
     'animated-api': BaseNode,
     'animated-click': BaseNode,
     'animated-cloud': BaseNode,
