@@ -105,6 +105,9 @@ export interface DiagramNodeData {
   region?: string;
   instanceType?: string;
   environment?: 'development' | 'staging' | 'production' | 'testing';
+  // Shape node customization
+  shapeColor?: string;
+  shapeOpacity?: number;
   [key: string]: unknown;
 }
 

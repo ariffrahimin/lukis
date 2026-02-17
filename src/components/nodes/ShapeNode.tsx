@@ -10,23 +10,32 @@ interface ShapeNodeProps {
     label: string;
     description?: string;
     nodeType: NodeType;
+    shapeColor?: string;
+    shapeOpacity?: number;
     [key: string]: unknown;
   };
   selected?: boolean;
 }
 
-const SHAPE_COLORS: Record<string, { fill: string; stroke: string }> = {
-  "shape-circle": { fill: "rgba(236, 72, 153, 0.15)", stroke: "rgba(236, 72, 153, 0.7)" },
-  "shape-square": { fill: "rgba(59, 130, 246, 0.15)", stroke: "rgba(59, 130, 246, 0.7)" },
-  "shape-star": { fill: "rgba(234, 179, 8, 0.15)", stroke: "rgba(234, 179, 8, 0.7)" },
-  "shape-hexagon": { fill: "rgba(20, 184, 166, 0.15)", stroke: "rgba(20, 184, 166, 0.7)" },
-  "shape-round-rectangle": { fill: "rgba(139, 92, 246, 0.15)", stroke: "rgba(139, 92, 246, 0.7)" },
-  "shape-diamond": { fill: "rgba(249, 115, 22, 0.15)", stroke: "rgba(249, 115, 22, 0.7)" },
-  "shape-arrow-rectangle": { fill: "rgba(6, 182, 212, 0.15)", stroke: "rgba(6, 182, 212, 0.7)" },
-  "shape-cylinder": { fill: "rgba(16, 185, 129, 0.15)", stroke: "rgba(16, 185, 129, 0.7)" },
-  "shape-parallelogram": { fill: "rgba(168, 85, 247, 0.15)", stroke: "rgba(168, 85, 247, 0.7)" },
-  "shape-plus": { fill: "rgba(239, 68, 68, 0.15)", stroke: "rgba(239, 68, 68, 0.7)" },
-  "shape-triangle": { fill: "rgba(245, 158, 11, 0.15)", stroke: "rgba(245, 158, 11, 0.7)" },
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
+    : null;
+}
+
+const SHAPE_DEFAULT_RGB: Record<string, { r: number; g: number; b: number }> = {
+  "shape-circle": { r: 236, g: 72, b: 153 },
+  "shape-square": { r: 59, g: 130, b: 246 },
+  "shape-star": { r: 234, g: 179, b: 8 },
+  "shape-hexagon": { r: 20, g: 184, b: 166 },
+  "shape-round-rectangle": { r: 139, g: 92, b: 246 },
+  "shape-diamond": { r: 249, g: 115, b: 22 },
+  "shape-arrow-rectangle": { r: 6, g: 182, b: 212 },
+  "shape-cylinder": { r: 16, g: 185, b: 129 },
+  "shape-parallelogram": { r: 168, g: 85, b: 247 },
+  "shape-plus": { r: 239, g: 68, b: 68 },
+  "shape-triangle": { r: 245, g: 158, b: 11 },
 };
 
 function renderShape(
@@ -128,7 +137,18 @@ function renderShape(
 const ShapeNode = ({ id, data, selected }: ShapeNodeProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const handlesVisible = !!(selected || isHovered);
-  const colors = SHAPE_COLORS[data.nodeType] ?? SHAPE_COLORS["shape-square"];
+
+  const opacity = data.shapeOpacity ?? 0.15;
+  let rgb: { r: number; g: number; b: number };
+  if (data.shapeColor) {
+    rgb = hexToRgb(data.shapeColor) ?? SHAPE_DEFAULT_RGB[data.nodeType] ?? SHAPE_DEFAULT_RGB["shape-square"];
+  } else {
+    rgb = SHAPE_DEFAULT_RGB[data.nodeType] ?? SHAPE_DEFAULT_RGB["shape-square"];
+  }
+  const colors = {
+    fill: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})`,
+    stroke: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.7)`,
+  };
 
   return (
     <div

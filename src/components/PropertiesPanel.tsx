@@ -68,14 +68,21 @@ export const PropertiesPanel = ({
   // Cloud service specific states
   const [environment, setEnvironment] = useState('');
 
+  // Shape node specific states
+  const [shapeColor, setShapeColor] = useState('');
+  const [shapeOpacity, setShapeOpacity] = useState(0.15);
+
   const nodeData = selectedNode?.data && isValidNodeData(selectedNode.data) ? selectedNode.data : undefined;
   const isCloudServiceNode = nodeData?.nodeType ? isCloudService(nodeData.nodeType as NodeType) : false;
+  const isShapeNode = nodeData?.nodeType?.startsWith('shape-') ?? false;
 
   useEffect(() => {
     if (nodeData) {
       setLabel(nodeData.label || '');
       setDescription(nodeData.description || '');
       setEnvironment(nodeData.environment || '');
+      setShapeColor((nodeData.shapeColor as string) || '');
+      setShapeOpacity(typeof nodeData.shapeOpacity === 'number' ? nodeData.shapeOpacity : 0.15);
     }
   }, [nodeData]);
 
@@ -99,6 +106,20 @@ export const PropertiesPanel = ({
     setDescription(value);
     if (selectedNode && isValidNodeData(selectedNode.data)) {
       onNodeUpdate(selectedNode.id, { description: value });
+    }
+  };
+
+  const handleShapeColorChange = (value: string) => {
+    setShapeColor(value);
+    if (selectedNode && isValidNodeData(selectedNode.data)) {
+      onNodeUpdate(selectedNode.id, { shapeColor: value });
+    }
+  };
+
+  const handleShapeOpacityChange = (value: number) => {
+    setShapeOpacity(value);
+    if (selectedNode && isValidNodeData(selectedNode.data)) {
+      onNodeUpdate(selectedNode.id, { shapeOpacity: value });
     }
   };
 
@@ -180,6 +201,53 @@ export const PropertiesPanel = ({
               {nodeData.nodeType.replace(/-/g, ' ')}
             </div>
           </div>
+
+          {isShapeNode && (
+            <>
+              <div className="space-y-1">
+                <Label className="text-xs text-muted-foreground">Color</Label>
+                <div className="relative">
+                  <button
+                    onClick={() => {
+                      const input = document.getElementById('shape-color-input') as HTMLInputElement;
+                      input?.click();
+                    }}
+                    className="flex items-center gap-2 w-full h-8 px-2 rounded border border-border bg-secondary/50 text-sm hover:bg-secondary transition-colors"
+                  >
+                    <div
+                      className="w-5 h-5 rounded border border-border shrink-0"
+                      style={{ backgroundColor: shapeColor || '#3b82f6' }}
+                    />
+                    <span className="text-xs text-muted-foreground uppercase">
+                      {shapeColor || 'Default'}
+                    </span>
+                  </button>
+                  <input
+                    id="shape-color-input"
+                    type="color"
+                    value={shapeColor || '#3b82f6'}
+                    onChange={(e) => handleShapeColorChange(e.target.value)}
+                    className="sr-only"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <Label className="text-xs text-muted-foreground">
+                  Opacity — {Math.round(shapeOpacity * 100)}%
+                </Label>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={shapeOpacity}
+                  onChange={(e) => handleShapeOpacityChange(parseFloat(e.target.value))}
+                  className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-primary bg-secondary"
+                />
+              </div>
+            </>
+          )}
 
           {isCloudServiceNode && (
               <div className="space-y-1">
