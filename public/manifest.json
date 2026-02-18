@@ -1,0 +1,16 @@
+{
+  "name": "Basically",
+  "short_name": "Basically",
+  "description": "A free visual diagram editor for cloud architecture, software processes, and system design.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
