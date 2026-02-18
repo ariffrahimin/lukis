@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
@@ -92,6 +93,9 @@ const navItems = [
 ];
 
 export default function Guide() {
+  useEffect(() => {
+    document.title = "Guide - Basically";
+  }, []);
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Sticky header */}
