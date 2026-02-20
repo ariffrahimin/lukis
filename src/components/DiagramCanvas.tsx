@@ -1224,7 +1224,7 @@ export const DiagramCanvas = () => {
         />
       )}
 
-      <div ref={reactFlowWrapper} className="flex-1 relative">
+      <div ref={reactFlowWrapper} className={cn('flex-1 relative', selectedTool === 'select' && 'cursor-select')}>
         <ReactFlow
           nodes={nodesWithHighlight}
           edges={edges}
