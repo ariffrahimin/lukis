@@ -174,7 +174,7 @@ export default function Guide() {
           </p>
           <div className="grid gap-2 sm:grid-cols-2">
             {[
-              { icon: Cloud, label: "Cloud", desc: "AWS (15), GCP (13), Azure (14), and OCI (15) services" },
+              { icon: Cloud, label: "Cloud", desc: "Amazon Web Services (15), Google Cloud (13), Microsoft Azure (14), and Oracle Cloud (15)" },
               { icon: Database, label: "Databases", desc: "NoSQL (7) and SQL (6) databases" },
               { icon: Box, label: "Tools", desc: "Basic components (6) and Software Process (6)" },
               { icon: Shapes, label: "Shapes", desc: "11 shapes — Circle, Square, Star, Hexagon, Diamond, Triangle, and more" },
@@ -403,10 +403,10 @@ export default function Guide() {
           </p>
           <div className="grid gap-2 sm:grid-cols-3">
             {[
-              { label: "AWS", count: 15, color: "bg-orange-500/10 text-orange-400 border-orange-500/20" },
-              { label: "GCP", count: 13, color: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
-              { label: "Azure", count: 14, color: "bg-sky-500/10 text-sky-400 border-sky-500/20" },
-              { label: "OCI", count: 15, color: "bg-red-500/10 text-red-400 border-red-500/20" },
+              { label: "Amazon Web Services", count: 15, color: "bg-orange-500/10 text-orange-400 border-orange-500/20" },
+              { label: "Google Cloud", count: 13, color: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
+              { label: "Microsoft Azure", count: 14, color: "bg-sky-500/10 text-sky-400 border-sky-500/20" },
+              { label: "Oracle Cloud", count: 15, color: "bg-red-500/10 text-red-400 border-red-500/20" },
               { label: "NoSQL", count: 7, color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
               { label: "SQL", count: 6, color: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
               { label: "Basic", count: 6, color: "bg-slate-500/10 text-slate-400 border-slate-500/20" },

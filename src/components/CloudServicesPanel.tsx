@@ -210,7 +210,7 @@ const processProvider: CloudProvider = {
 };
 
 const gcpProvider: CloudProvider = {
-  name: "GCP",
+  name: "Google Cloud",
   accent: "bg-blue-500/10 text-blue-600 border-blue-200 dark:border-blue-800 dark:text-blue-400",
   services: [
     { type: "gcp-cloud-run", label: "Cloud Run", icon: cloudRunIcon },
@@ -230,7 +230,7 @@ const gcpProvider: CloudProvider = {
 };
 
 const awsProvider: CloudProvider = {
-  name: "AWS",
+  name: "Amazon Web Services",
   accent: "bg-orange-500/10 text-orange-600 border-orange-200 dark:border-orange-800 dark:text-orange-400",
   services: [
     { type: "aws-ec2", label: "EC2", icon: ec2Icon },
@@ -252,7 +252,7 @@ const awsProvider: CloudProvider = {
 };
 
 const azureProvider: CloudProvider = {
-  name: "Azure",
+  name: "Microsoft Azure",
   accent: "bg-sky-500/10 text-sky-600 border-sky-200 dark:border-sky-800 dark:text-sky-400",
   services: [
     { type: "azure-vm", label: "VM", icon: vmIcon },
@@ -273,7 +273,7 @@ const azureProvider: CloudProvider = {
 };
 
 const ociProvider: CloudProvider = {
-  name: "OCI",
+  name: "Oracle Cloud",
   accent: "bg-red-500/10 text-red-600 border-red-200 dark:border-red-800 dark:text-red-400",
   services: [
     { type: "oci-virtual-machine", label: "Virtual Machine", icon: ociVirtualMachineIcon },
@@ -541,7 +541,7 @@ export const CloudServicesPanel = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("cloud");
   const [expandedProviders, setExpandedProviders] = useState<Set<string>>(
-    new Set(["AWS", "GCP", "Azure", "OCI", "Animated", "SQL", "NoSQL", "Basic", "Shapes", "Software Process"])
+    new Set(["Amazon Web Services", "Google Cloud", "Microsoft Azure", "Oracle Cloud", "Animated", "SQL", "NoSQL", "Basic", "Shapes", "Software Process"])
   );
 
   const isSearching = searchQuery.trim() !== "";
