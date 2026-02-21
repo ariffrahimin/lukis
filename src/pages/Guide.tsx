@@ -38,6 +38,7 @@ import {
   ChevronUp,
   ChevronDown,
   PanelRightOpen,
+  StickyNote,
 } from "lucide-react";
 
 function Kbd({ children }: { children: React.ReactNode }) {
@@ -173,7 +174,7 @@ export default function Guide() {
           </p>
           <div className="grid gap-2 sm:grid-cols-2">
             {[
-              { icon: Cloud, label: "Cloud", desc: "AWS (15), GCP (13), and Azure (14) services" },
+              { icon: Cloud, label: "Cloud", desc: "AWS (15), GCP (13), Azure (14), and OCI (15) services" },
               { icon: Database, label: "Databases", desc: "NoSQL (7) and SQL (6) databases" },
               { icon: Box, label: "Tools", desc: "Basic components (6) and Software Process (6)" },
               { icon: Shapes, label: "Shapes", desc: "11 shapes — Circle, Square, Star, Hexagon, Diamond, Triangle, and more" },
@@ -189,7 +190,8 @@ export default function Guide() {
             ))}
           </div>
           <p>
-            You can also add <strong className="text-foreground">Text</strong> labels and{" "}
+            You can also add <strong className="text-foreground">Text</strong> labels,{" "}
+            <strong className="text-foreground">Sticky Notes</strong>, and{" "}
             <strong className="text-foreground">Sub Flow</strong> containers from the toolbar.
             Select multiple nodes and press <strong className="text-foreground">⌘/Ctrl+G</strong> to group them into a sub flow.
             Double-click any node label to rename it inline.
@@ -239,6 +241,7 @@ export default function Guide() {
               { icon: Hand, label: "Pan", key: "H", desc: "Click and drag to pan the canvas" },
               { icon: Type, label: "Text", key: null, desc: "Add a text label node" },
               { icon: BoxSelect, label: "Sub Flow", key: null, desc: "Add a sub flow container" },
+              { icon: StickyNote, label: "Sticky Note", key: null, desc: "Add a sticky note annotation" },
               { icon: Undo, label: "Undo", key: "⌘Z", desc: "Undo last action (50 levels)" },
               { icon: Redo, label: "Redo", key: "⌘⇧Z", desc: "Redo undone action" },
               { icon: Trash2, label: "Delete", key: "Del", desc: "Delete selected elements" },
@@ -395,7 +398,7 @@ export default function Guide() {
         {/* 9. Cloud Services */}
         <SectionCard id="services" icon={Server} title="Cloud Services & Components">
           <p>
-            The Components Panel organizes <strong className="text-foreground">95+ node types</strong> across
+            The Components Panel organizes <strong className="text-foreground">100+ node types</strong> across
             providers. Expand any provider accordion to browse its services.
           </p>
           <div className="grid gap-2 sm:grid-cols-3">
@@ -403,6 +406,7 @@ export default function Guide() {
               { label: "AWS", count: 15, color: "bg-orange-500/10 text-orange-400 border-orange-500/20" },
               { label: "GCP", count: 13, color: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
               { label: "Azure", count: 14, color: "bg-sky-500/10 text-sky-400 border-sky-500/20" },
+              { label: "OCI", count: 15, color: "bg-red-500/10 text-red-400 border-red-500/20" },
               { label: "NoSQL", count: 7, color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
               { label: "SQL", count: 6, color: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
               { label: "Basic", count: 6, color: "bg-slate-500/10 text-slate-400 border-slate-500/20" },
@@ -430,6 +434,7 @@ export default function Guide() {
               { tip: "Double-Click to Edit", detail: "Double-click any node label to rename it inline. Press Enter to confirm or Escape to cancel." },
               { tip: "Resize Nodes", detail: "Select a node to reveal blue resize handles on its corners and edges." },
               { tip: "Sub Flows & Grouping", detail: "Select 2+ nodes and press ⌘/Ctrl+G to group them into a sub flow. Drag nodes into a sub flow to add them. Press ⌘/Ctrl+⇧+G to ungroup." },
+              { tip: "Sticky Notes", detail: "Add sticky notes from the toolbar for quick annotations. Double-click to edit the text inline." },
               { tip: "Right-Click Properties", detail: "Right-click a node or edge on desktop to open the Properties Panel right at your cursor." },
               { tip: "Layers Panel", detail: "Press L to toggle the Layers drawer. Items at the top are in front. Drag to reorder, click the eye to hide, click a row to pan to it." },
               { tip: "Undo History", detail: "Up to 50 levels of undo/redo. Every change is tracked automatically." },
