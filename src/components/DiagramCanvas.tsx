@@ -28,6 +28,7 @@ import { decodeGif, getFrameAtTime, type DecodedGif } from '../utils/gif-frames'
 import BaseNode from './nodes/BaseNode';
 import ShapeNode from './nodes/ShapeNode';
 import SubFlowNode from './nodes/SubFlowNode';
+import StickyNode from './nodes/StickyNode';
 import { Toolbar } from './Toolbar';
 import { PropertiesPanel } from './PropertiesPanel';
 import { CloudServicesPanel } from './CloudServicesPanel';
@@ -46,6 +47,7 @@ type NodeData = DiagramNodeData;
 
 const getDefaultNodeStyle = (type: NodeType): { width: number; height: number } | undefined => {
   if (type === 'subflow') return { width: 400, height: 300 };
+  if (type === 'sticky') return { width: 200, height: 200 };
   if (type.startsWith('shape-')) return { width: 120, height: 120 };
   if (isCloudService(type)) return { width: 80, height: 90 };
   return undefined;
@@ -60,6 +62,7 @@ const defaultNodeLabels: Record<NodeType, string> = {
   api: 'API Gateway',
   text: 'Label',
   subflow: 'Sub Flow',
+  sticky: 'Sticky Note',
   'process-requirements': 'Requirements',
   'process-design': 'Design',
   'process-development': 'Development',
@@ -199,6 +202,7 @@ export const DiagramCanvas = () => {
     api: BaseNode,
     text: BaseNode,
     subflow: SubFlowNode,
+    sticky: StickyNode,
     'process-requirements': BaseNode,
     'process-design': BaseNode,
     'process-development': BaseNode,

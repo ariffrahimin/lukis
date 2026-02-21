@@ -10,6 +10,7 @@ export type NodeType =
   | 'api'
   | 'text'
   | 'subflow'
+  | 'sticky'
   | 'process-requirements'
   | 'process-design'
   | 'process-development'
@@ -123,6 +124,8 @@ export interface DiagramNodeData {
   // Shape node customization
   shapeColor?: string;
   shapeOpacity?: number;
+  // Sticky note properties
+  stickyColor?: string;
   [key: string]: unknown;
 }
 

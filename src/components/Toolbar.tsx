@@ -13,7 +13,8 @@ import {
   Redo,
   Download,
   Upload,
-  MoreHorizontal
+  MoreHorizontal,
+  StickyNote
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { type NodeType, type ToolbarItem } from '../types/diagrams';
@@ -30,11 +31,13 @@ import {
 const nodeTypes: ToolbarItem[] = [
   { type: 'text', label: 'Text', icon: 'type', description: 'Text label annotation' },
   { type: 'subflow', label: 'Sub Flow', icon: 'boxselect', description: 'Sub flow container' },
+  { type: 'sticky', label: 'Sticky Note', icon: 'sticky', description: 'Sticky note annotation' },
 ];
 
 const IconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   'type': Type,
   'boxselect': BoxSelect,
+  'sticky': StickyNote,
 };
 
 interface ToolbarProps {
@@ -164,6 +167,9 @@ export const Toolbar = ({
             </DropdownMenuItem>
             <DropdownMenuItem onSelect={() => onAddNode('subflow')}>
               <BoxSelect className="w-4 h-4 mr-2" /> Add Sub Flow
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => onAddNode('sticky')}>
+              <StickyNote className="w-4 h-4 mr-2" /> Add Sticky Note
             </DropdownMenuItem>
             {canGroup && (
               <DropdownMenuItem onSelect={onGroupSelection}>
