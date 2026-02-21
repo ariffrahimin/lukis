@@ -46,6 +46,22 @@ vi.mock("../../cloud-services/azure/cosmos-db.svg", () => ({ default: "azure-cos
 vi.mock("../../cloud-services/azure/container-apps.svg", () => ({ default: "azure-container-apps.svg" }));
 vi.mock("../../cloud-services/azure/key-vault.svg", () => ({ default: "azure-key-vault.svg" }));
 
+vi.mock("../../cloud-services/oci/virtual-machine.svg", () => ({ default: "oci-virtual-machine.svg" }));
+vi.mock("../../cloud-services/oci/object-storage.svg", () => ({ default: "oci-object-storage.svg" }));
+vi.mock("../../cloud-services/oci/vcn.svg", () => ({ default: "oci-vcn.svg" }));
+vi.mock("../../cloud-services/oci/autonomous-database.svg", () => ({ default: "oci-autonomous-database.svg" }));
+vi.mock("../../cloud-services/oci/load-balancer.svg", () => ({ default: "oci-load-balancer.svg" }));
+vi.mock("../../cloud-services/oci/oke.svg", () => ({ default: "oci-oke.svg" }));
+vi.mock("../../cloud-services/oci/iam.svg", () => ({ default: "oci-iam.svg" }));
+vi.mock("../../cloud-services/oci/functions.svg", () => ({ default: "oci-functions.svg" }));
+vi.mock("../../cloud-services/oci/api-gateway.svg", () => ({ default: "oci-api-gateway.svg" }));
+vi.mock("../../cloud-services/oci/block-storage.svg", () => ({ default: "oci-block-storage.svg" }));
+vi.mock("../../cloud-services/oci/dns.svg", () => ({ default: "oci-dns.svg" }));
+vi.mock("../../cloud-services/oci/waf.svg", () => ({ default: "oci-waf.svg" }));
+vi.mock("../../cloud-services/oci/monitoring.svg", () => ({ default: "oci-monitoring.svg" }));
+vi.mock("../../cloud-services/oci/container-registry.svg", () => ({ default: "oci-container-registry.svg" }));
+vi.mock("../../cloud-services/oci/exadata.svg", () => ({ default: "oci-exadata.svg" }));
+
 vi.mock("../../cloud-services/nosql-db/mongodb.svg", () => ({ default: "nosql-mongodb.svg" }));
 vi.mock("../../cloud-services/nosql-db/redis.svg", () => ({ default: "nosql-redis.svg" }));
 vi.mock("../../cloud-services/nosql-db/cassandra.svg", () => ({ default: "nosql-cassandra.svg" }));
@@ -80,7 +96,7 @@ import type { NodeType } from "../../../types/diagrams";
 
 describe("isCloudService", () => {
   const cloudTypes: NodeType[] = [
-    "gcp-cloud-run", "aws-ec2", "azure-vm",
+    "gcp-cloud-run", "aws-ec2", "azure-vm", "oci-virtual-machine",
     "nosql-mongodb", "sql-mysql",
     "animated-api",
   ];

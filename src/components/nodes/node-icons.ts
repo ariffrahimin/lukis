@@ -48,6 +48,23 @@ import cosmosDbIcon from "../cloud-services/azure/cosmos-db.svg";
 import containerAppsIcon from "../cloud-services/azure/container-apps.svg";
 import keyVaultIcon from "../cloud-services/azure/key-vault.svg";
 
+// OCI Icons
+import ociVirtualMachineIcon from "../cloud-services/oci/virtual-machine.svg";
+import ociObjectStorageIcon from "../cloud-services/oci/object-storage.svg";
+import ociVcnIcon from "../cloud-services/oci/vcn.svg";
+import ociAutonomousDatabaseIcon from "../cloud-services/oci/autonomous-database.svg";
+import ociLoadBalancerIcon from "../cloud-services/oci/load-balancer.svg";
+import ociOkeIcon from "../cloud-services/oci/oke.svg";
+import ociIamIcon from "../cloud-services/oci/iam.svg";
+import ociFunctionsIcon from "../cloud-services/oci/functions.svg";
+import ociApiGatewayIcon from "../cloud-services/oci/api-gateway.svg";
+import ociBlockStorageIcon from "../cloud-services/oci/block-storage.svg";
+import ociDnsIcon from "../cloud-services/oci/dns.svg";
+import ociWafIcon from "../cloud-services/oci/waf.svg";
+import ociMonitoringIcon from "../cloud-services/oci/monitoring.svg";
+import ociContainerRegistryIcon from "../cloud-services/oci/container-registry.svg";
+import ociExadataIcon from "../cloud-services/oci/exadata.svg";
+
 // NoSQL DB Icons
 import mongodbIcon from "../cloud-services/nosql-db/mongodb.svg";
 import redisIcon from "../cloud-services/nosql-db/redis.svg";
@@ -123,6 +140,21 @@ export const cloudServiceIcons: Record<string, string> = {
   "azure-cosmos-db": cosmosDbIcon,
   "azure-container-apps": containerAppsIcon,
   "azure-key-vault": keyVaultIcon,
+  "oci-virtual-machine": ociVirtualMachineIcon,
+  "oci-object-storage": ociObjectStorageIcon,
+  "oci-vcn": ociVcnIcon,
+  "oci-autonomous-database": ociAutonomousDatabaseIcon,
+  "oci-load-balancer": ociLoadBalancerIcon,
+  "oci-oke": ociOkeIcon,
+  "oci-iam": ociIamIcon,
+  "oci-functions": ociFunctionsIcon,
+  "oci-api-gateway": ociApiGatewayIcon,
+  "oci-block-storage": ociBlockStorageIcon,
+  "oci-dns": ociDnsIcon,
+  "oci-waf": ociWafIcon,
+  "oci-monitoring": ociMonitoringIcon,
+  "oci-container-registry": ociContainerRegistryIcon,
+  "oci-exadata": ociExadataIcon,
   "nosql-mongodb": mongodbIcon,
   "nosql-redis": redisIcon,
   "nosql-cassandra": cassandraIcon,

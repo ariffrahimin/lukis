@@ -95,6 +95,23 @@ import cosmosDbIcon from "./cloud-services/azure/cosmos-db.svg";
 import containerAppsIcon from "./cloud-services/azure/container-apps.svg";
 import keyVaultIcon from "./cloud-services/azure/key-vault.svg";
 
+// OCI Icons
+import ociVirtualMachineIcon from "./cloud-services/oci/virtual-machine.svg";
+import ociObjectStorageIcon from "./cloud-services/oci/object-storage.svg";
+import ociVcnIcon from "./cloud-services/oci/vcn.svg";
+import ociAutonomousDatabaseIcon from "./cloud-services/oci/autonomous-database.svg";
+import ociLoadBalancerIcon from "./cloud-services/oci/load-balancer.svg";
+import ociOkeIcon from "./cloud-services/oci/oke.svg";
+import ociIamIcon from "./cloud-services/oci/iam.svg";
+import ociFunctionsIcon from "./cloud-services/oci/functions.svg";
+import ociApiGatewayIcon from "./cloud-services/oci/api-gateway.svg";
+import ociBlockStorageIcon from "./cloud-services/oci/block-storage.svg";
+import ociDnsIcon from "./cloud-services/oci/dns.svg";
+import ociWafIcon from "./cloud-services/oci/waf.svg";
+import ociMonitoringIcon from "./cloud-services/oci/monitoring.svg";
+import ociContainerRegistryIcon from "./cloud-services/oci/container-registry.svg";
+import ociExadataIcon from "./cloud-services/oci/exadata.svg";
+
 // NoSQL DB Icons
 import mongodbIcon from "./cloud-services/nosql-db/mongodb.svg";
 import redisIcon from "./cloud-services/nosql-db/redis.svg";
@@ -255,6 +272,28 @@ const azureProvider: CloudProvider = {
   ],
 };
 
+const ociProvider: CloudProvider = {
+  name: "OCI",
+  accent: "bg-red-500/10 text-red-600 border-red-200 dark:border-red-800 dark:text-red-400",
+  services: [
+    { type: "oci-virtual-machine", label: "Virtual Machine", icon: ociVirtualMachineIcon },
+    { type: "oci-object-storage", label: "Object Storage", icon: ociObjectStorageIcon },
+    { type: "oci-vcn", label: "VCN", icon: ociVcnIcon },
+    { type: "oci-autonomous-database", label: "Autonomous DB", icon: ociAutonomousDatabaseIcon },
+    { type: "oci-load-balancer", label: "Load Balancer", icon: ociLoadBalancerIcon },
+    { type: "oci-oke", label: "OKE", icon: ociOkeIcon },
+    { type: "oci-iam", label: "IAM", icon: ociIamIcon },
+    { type: "oci-functions", label: "Functions", icon: ociFunctionsIcon },
+    { type: "oci-api-gateway", label: "API Gateway", icon: ociApiGatewayIcon },
+    { type: "oci-block-storage", label: "Block Storage", icon: ociBlockStorageIcon },
+    { type: "oci-dns", label: "DNS", icon: ociDnsIcon },
+    { type: "oci-waf", label: "WAF", icon: ociWafIcon },
+    { type: "oci-monitoring", label: "Monitoring", icon: ociMonitoringIcon },
+    { type: "oci-container-registry", label: "Container Registry", icon: ociContainerRegistryIcon },
+    { type: "oci-exadata", label: "Exadata", icon: ociExadataIcon },
+  ],
+};
+
 const nosqlProvider: CloudProvider = {
   name: "NoSQL",
   accent: "bg-emerald-500/10 text-emerald-600 border-emerald-200 dark:border-emerald-800 dark:text-emerald-400",
@@ -304,7 +343,7 @@ const animatedProvider: CloudProvider = {
 
 // Tab categories
 const tabCategories = {
-  cloud: [gcpProvider, awsProvider, azureProvider],
+  cloud: [gcpProvider, awsProvider, azureProvider, ociProvider],
   databases: [nosqlProvider, sqlProvider],
   tools: [basicProvider, processProvider],
   shapes: [shapesProvider],
@@ -318,6 +357,7 @@ const allProviders = [
   gcpProvider,
   awsProvider,
   azureProvider,
+  ociProvider,
   nosqlProvider,
   sqlProvider,
   animatedProvider,
@@ -501,7 +541,7 @@ export const CloudServicesPanel = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("cloud");
   const [expandedProviders, setExpandedProviders] = useState<Set<string>>(
-    new Set(["AWS", "GCP", "Azure", "Animated", "SQL", "NoSQL", "Basic", "Shapes", "Software Process"])
+    new Set(["AWS", "GCP", "Azure", "OCI", "Animated", "SQL", "NoSQL", "Basic", "Shapes", "Software Process"])
   );
 
   const isSearching = searchQuery.trim() !== "";

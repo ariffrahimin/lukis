@@ -38,6 +38,10 @@ vi.mock("../nodes/node-icons", () => {
     "azure-aks", "azure-monitor", "azure-entra-id", "azure-api-management",
     "azure-devops", "azure-service-bus", "azure-event-grid", "azure-cosmos-db",
     "azure-container-apps", "azure-key-vault",
+    "oci-virtual-machine", "oci-object-storage", "oci-vcn", "oci-autonomous-database",
+    "oci-load-balancer", "oci-oke", "oci-iam", "oci-functions", "oci-api-gateway",
+    "oci-block-storage", "oci-dns", "oci-waf", "oci-monitoring", "oci-container-registry",
+    "oci-exadata",
     "nosql-mongodb", "nosql-redis", "nosql-cassandra", "nosql-couchdb",
     "nosql-firebase", "nosql-influxdb", "nosql-rocksdb",
     "sql-mysql", "sql-postgresql", "sql-sqlite", "sql-oracle", "sql-mssql", "sql-sqlalchemy",
@@ -129,6 +133,37 @@ vi.mock("@xyflow/react", () => {
 });
 
 import { DiagramCanvas } from "../DiagramCanvas";
+import type { NodeType } from "../../types/diagrams";
+
+const allNodeTypes: NodeType[] = [
+  "service", "database", "server", "client", "storage", "api", "text", "subflow",
+  "process-requirements", "process-design", "process-development",
+  "process-testing", "process-deployment", "process-monitoring",
+  "gcp-cloud-run", "gcp-cloud-storage", "gcp-bigquery", "gcp-pub-sub",
+  "gcp-apigee", "gcp-billing", "gcp-cloud-build", "gcp-cloud-monitoring",
+  "gcp-cloud-sql", "gcp-compute-engine", "gcp-iam", "gcp-kubernetes", "gcp-security",
+  "aws-ec2", "aws-s3", "aws-lambda", "aws-rds", "aws-eks", "aws-cloudwatch",
+  "aws-iam", "aws-api-gateway", "aws-codebuild", "aws-codepipeline",
+  "aws-sqs", "aws-sns", "aws-dynamodb", "aws-cloudfront", "aws-fargate",
+  "azure-vm", "azure-blob-storage", "azure-functions", "azure-sql-database",
+  "azure-aks", "azure-monitor", "azure-entra-id", "azure-api-management",
+  "azure-devops", "azure-service-bus", "azure-event-grid", "azure-cosmos-db",
+  "azure-container-apps", "azure-key-vault",
+  "oci-virtual-machine", "oci-object-storage", "oci-vcn", "oci-autonomous-database",
+  "oci-load-balancer", "oci-oke", "oci-iam", "oci-functions", "oci-api-gateway",
+  "oci-block-storage", "oci-dns", "oci-waf", "oci-monitoring", "oci-container-registry",
+  "oci-exadata",
+  "nosql-mongodb", "nosql-redis", "nosql-cassandra", "nosql-couchdb",
+  "nosql-firebase", "nosql-influxdb", "nosql-rocksdb",
+  "sql-mysql", "sql-postgresql", "sql-sqlite", "sql-oracle", "sql-mssql", "sql-sqlalchemy",
+  "shape-circle", "shape-square", "shape-star", "shape-hexagon",
+  "shape-round-rectangle", "shape-diamond", "shape-arrow-rectangle", "shape-cylinder",
+  "shape-parallelogram", "shape-plus", "shape-triangle",
+  "animated-api", "animated-click", "animated-cloud", "animated-double-check",
+  "animated-loading-bubble", "animated-loading", "animated-rocket", "animated-settings",
+  "animated-target", "animated-upload-cloud", "animated-upload", "animated-verified",
+  "animated-worker",
+];
 
 describe("DiagramCanvas", () => {
   beforeEach(() => {
@@ -349,6 +384,15 @@ describe("DiagramCanvas", () => {
     });
 
     expect((reactFlowProps.nodes as Node[]).length).toBe(0);
+  });
+
+  it("registers every NodeType in the nodeTypes map passed to ReactFlow", () => {
+    render(<DiagramCanvas />);
+    const nodeTypes = reactFlowProps.nodeTypes as Record<string, unknown>;
+    expect(nodeTypes).toBeDefined();
+    for (const type of allNodeTypes) {
+      expect(nodeTypes[type], `nodeTypes map is missing "${type}" — nodes of this type will use ReactFlow's default renderer`).toBeDefined();
+    }
   });
 
   it("Ctrl+Z triggers undo", () => {
