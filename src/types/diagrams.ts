@@ -10,6 +10,7 @@ export type NodeType =
   | 'api'
   | 'text'
   | 'subflow'
+  | 'sticky'
   | 'process-requirements'
   | 'process-design'
   | 'process-development'
@@ -58,6 +59,21 @@ export type NodeType =
   | 'azure-cosmos-db'
   | 'azure-container-apps'
   | 'azure-key-vault'
+  | 'oci-virtual-machine'
+  | 'oci-object-storage'
+  | 'oci-vcn'
+  | 'oci-autonomous-database'
+  | 'oci-load-balancer'
+  | 'oci-oke'
+  | 'oci-iam'
+  | 'oci-functions'
+  | 'oci-api-gateway'
+  | 'oci-block-storage'
+  | 'oci-dns'
+  | 'oci-waf'
+  | 'oci-monitoring'
+  | 'oci-container-registry'
+  | 'oci-exadata'
   | 'nosql-mongodb'
   | 'nosql-redis'
   | 'nosql-cassandra'
@@ -108,6 +124,8 @@ export interface DiagramNodeData {
   // Shape node customization
   shapeColor?: string;
   shapeOpacity?: number;
+  // Sticky note properties
+  stickyColor?: string;
   [key: string]: unknown;
 }
 

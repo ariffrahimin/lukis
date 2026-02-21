@@ -10,6 +10,7 @@ const azureStyle: NodeStyle = { bg: "bg-cyan-100/20", border: "border-cyan-300/5
 const animatedStyle: NodeStyle = { bg: "bg-violet-100/20", border: "border-violet-300/50", icon: "text-violet-600" };
 const gcpBlueStyle: NodeStyle = { bg: "bg-blue-100/20", border: "border-blue-300/50", icon: "text-blue-600" };
 const gcpRedStyle: NodeStyle = { bg: "bg-red-100/20", border: "border-red-300/50", icon: "text-red-600" };
+const ociStyle: NodeStyle = { bg: "bg-red-100/20", border: "border-red-300/50", icon: "text-red-600" };
 
 export const nodeTypeStyles: Record<NodeType, NodeStyle> = {
   service: { bg: "bg-[hsl(187_72%_50%/0.15)]", border: "border-[hsl(187_72%_50%/0.5)]", icon: "text-[hsl(187_72%_50%)]" },
@@ -20,6 +21,7 @@ export const nodeTypeStyles: Record<NodeType, NodeStyle> = {
   api: { bg: "bg-[hsl(199_89%_48%/0.15)]", border: "border-[hsl(199_89%_48%/0.5)]", icon: "text-[hsl(199_89%_48%)]" },
   text: { bg: "bg-transparent", border: "border-transparent", icon: "text-foreground" },
   subflow: { bg: "bg-secondary/20", border: "border-border border-dashed", icon: "text-muted-foreground" },
+  sticky: { bg: "bg-yellow-100/20", border: "border-yellow-300/50", icon: "text-yellow-600" },
   "process-requirements": { bg: "bg-indigo-100/20", border: "border-indigo-300/50", icon: "text-indigo-600" },
   "process-design": { bg: "bg-violet-100/20", border: "border-violet-300/50", icon: "text-violet-600" },
   "process-development": { bg: "bg-sky-100/20", border: "border-sky-300/50", icon: "text-sky-600" },
@@ -68,6 +70,21 @@ export const nodeTypeStyles: Record<NodeType, NodeStyle> = {
   "azure-cosmos-db": azureStyle,
   "azure-container-apps": azureStyle,
   "azure-key-vault": azureStyle,
+  "oci-virtual-machine": ociStyle,
+  "oci-object-storage": ociStyle,
+  "oci-vcn": ociStyle,
+  "oci-autonomous-database": ociStyle,
+  "oci-load-balancer": ociStyle,
+  "oci-oke": ociStyle,
+  "oci-iam": ociStyle,
+  "oci-functions": ociStyle,
+  "oci-api-gateway": ociStyle,
+  "oci-block-storage": ociStyle,
+  "oci-dns": ociStyle,
+  "oci-waf": ociStyle,
+  "oci-monitoring": ociStyle,
+  "oci-container-registry": ociStyle,
+  "oci-exadata": ociStyle,
   "nosql-mongodb": { bg: "bg-green-100/20", border: "border-green-300/50", icon: "text-green-600" },
   "nosql-redis": { bg: "bg-red-100/20", border: "border-red-300/50", icon: "text-red-600" },
   "nosql-cassandra": { bg: "bg-blue-100/20", border: "border-blue-300/50", icon: "text-blue-600" },

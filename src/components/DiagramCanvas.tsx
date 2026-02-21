@@ -28,6 +28,7 @@ import { decodeGif, getFrameAtTime, type DecodedGif } from '../utils/gif-frames'
 import BaseNode from './nodes/BaseNode';
 import ShapeNode from './nodes/ShapeNode';
 import SubFlowNode from './nodes/SubFlowNode';
+import StickyNode from './nodes/StickyNode';
 import { Toolbar } from './Toolbar';
 import { PropertiesPanel } from './PropertiesPanel';
 import { CloudServicesPanel } from './CloudServicesPanel';
@@ -46,6 +47,7 @@ type NodeData = DiagramNodeData;
 
 const getDefaultNodeStyle = (type: NodeType): { width: number; height: number } | undefined => {
   if (type === 'subflow') return { width: 400, height: 300 };
+  if (type === 'sticky') return { width: 200, height: 200 };
   if (type.startsWith('shape-')) return { width: 120, height: 120 };
   if (isCloudService(type)) return { width: 80, height: 90 };
   return undefined;
@@ -60,6 +62,7 @@ const defaultNodeLabels: Record<NodeType, string> = {
   api: 'API Gateway',
   text: 'Label',
   subflow: 'Sub Flow',
+  sticky: 'Sticky Note',
   'process-requirements': 'Requirements',
   'process-design': 'Design',
   'process-development': 'Development',
@@ -108,6 +111,21 @@ const defaultNodeLabels: Record<NodeType, string> = {
   'azure-cosmos-db': 'Cosmos DB',
   'azure-container-apps': 'Container Apps',
   'azure-key-vault': 'Key Vault',
+  'oci-virtual-machine': 'Virtual Machine',
+  'oci-object-storage': 'Object Storage',
+  'oci-vcn': 'VCN',
+  'oci-autonomous-database': 'Autonomous DB',
+  'oci-load-balancer': 'Load Balancer',
+  'oci-oke': 'OKE',
+  'oci-iam': 'IAM',
+  'oci-functions': 'Functions',
+  'oci-api-gateway': 'API Gateway',
+  'oci-block-storage': 'Block Storage',
+  'oci-dns': 'DNS',
+  'oci-waf': 'WAF',
+  'oci-monitoring': 'Monitoring',
+  'oci-container-registry': 'Container Registry',
+  'oci-exadata': 'Exadata',
   'nosql-mongodb': 'MongoDB',
   'nosql-redis': 'Redis',
   'nosql-cassandra': 'Cassandra',
@@ -184,6 +202,7 @@ export const DiagramCanvas = () => {
     api: BaseNode,
     text: BaseNode,
     subflow: SubFlowNode,
+    sticky: StickyNode,
     'process-requirements': BaseNode,
     'process-design': BaseNode,
     'process-development': BaseNode,
@@ -232,6 +251,21 @@ export const DiagramCanvas = () => {
     'azure-cosmos-db': BaseNode,
     'azure-container-apps': BaseNode,
     'azure-key-vault': BaseNode,
+    'oci-virtual-machine': BaseNode,
+    'oci-object-storage': BaseNode,
+    'oci-vcn': BaseNode,
+    'oci-autonomous-database': BaseNode,
+    'oci-load-balancer': BaseNode,
+    'oci-oke': BaseNode,
+    'oci-iam': BaseNode,
+    'oci-functions': BaseNode,
+    'oci-api-gateway': BaseNode,
+    'oci-block-storage': BaseNode,
+    'oci-dns': BaseNode,
+    'oci-waf': BaseNode,
+    'oci-monitoring': BaseNode,
+    'oci-container-registry': BaseNode,
+    'oci-exadata': BaseNode,
     'nosql-mongodb': BaseNode,
     'nosql-redis': BaseNode,
     'nosql-cassandra': BaseNode,

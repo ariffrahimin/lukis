@@ -16,6 +16,10 @@ const allNodeTypes: NodeType[] = [
   "azure-aks", "azure-monitor", "azure-entra-id", "azure-api-management",
   "azure-devops", "azure-service-bus", "azure-event-grid", "azure-cosmos-db",
   "azure-container-apps", "azure-key-vault",
+  "oci-virtual-machine", "oci-object-storage", "oci-vcn", "oci-autonomous-database",
+  "oci-load-balancer", "oci-oke", "oci-iam", "oci-functions", "oci-api-gateway",
+  "oci-block-storage", "oci-dns", "oci-waf", "oci-monitoring", "oci-container-registry",
+  "oci-exadata",
   "nosql-mongodb", "nosql-redis", "nosql-cassandra", "nosql-couchdb",
   "nosql-firebase", "nosql-influxdb", "nosql-rocksdb",
   "sql-mysql", "sql-postgresql", "sql-sqlite", "sql-oracle", "sql-mssql", "sql-sqlalchemy",
@@ -69,6 +73,14 @@ describe("nodeTypeStyles", () => {
     const azureTypes = allNodeTypes.filter((t) => t.startsWith("azure-"));
     const first = nodeTypeStyles[azureTypes[0]];
     for (const type of azureTypes.slice(1)) {
+      expect(nodeTypeStyles[type]).toBe(first);
+    }
+  });
+
+  it("all oci-* types share identical style objects", () => {
+    const ociTypes = allNodeTypes.filter((t) => t.startsWith("oci-"));
+    const first = nodeTypeStyles[ociTypes[0]];
+    for (const type of ociTypes.slice(1)) {
       expect(nodeTypeStyles[type]).toBe(first);
     }
   });
