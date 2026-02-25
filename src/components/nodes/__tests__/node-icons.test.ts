@@ -77,6 +77,29 @@ vi.mock("../../cloud-services/sql-db/oracle.svg", () => ({ default: "sql-oracle.
 vi.mock("../../cloud-services/sql-db/microsoft-sql-server.svg", () => ({ default: "sql-mssql.svg" }));
 vi.mock("../../cloud-services/sql-db/sqlalchemy.svg", () => ({ default: "sql-sqlalchemy.svg" }));
 
+vi.mock("../../cloud-services/programming-language/APL.svg", () => ({ default: "proglang-apl.svg" }));
+vi.mock("../../cloud-services/programming-language/Ballerina.svg", () => ({ default: "proglang-ballerina.svg" }));
+vi.mock("../../cloud-services/programming-language/CLang.svg", () => ({ default: "proglang-c.svg" }));
+vi.mock("../../cloud-services/programming-language/Clojure.svg", () => ({ default: "proglang-clojure.svg" }));
+vi.mock("../../cloud-services/programming-language/ClojureScript.svg", () => ({ default: "proglang-clojurescript.svg" }));
+vi.mock("../../cloud-services/programming-language/CPlusPlus.svg", () => ({ default: "proglang-cpp.svg" }));
+vi.mock("../../cloud-services/programming-language/CSharp.svg", () => ({ default: "proglang-csharp.svg" }));
+vi.mock("../../cloud-services/programming-language/ErLang.svg", () => ({ default: "proglang-erlang.svg" }));
+vi.mock("../../cloud-services/programming-language/FSharp.svg", () => ({ default: "proglang-fsharp.svg" }));
+vi.mock("../../cloud-services/programming-language/GoLang.svg", () => ({ default: "proglang-go.svg" }));
+vi.mock("../../cloud-services/programming-language/Haskell.svg", () => ({ default: "proglang-haskell.svg" }));
+vi.mock("../../cloud-services/programming-language/Jule.svg", () => ({ default: "proglang-jule.svg" }));
+vi.mock("../../cloud-services/programming-language/Nim.svg", () => ({ default: "proglang-nim.svg" }));
+vi.mock("../../cloud-services/programming-language/ObjectiveC.svg", () => ({ default: "proglang-objectivec.svg" }));
+vi.mock("../../cloud-services/programming-language/Perl.svg", () => ({ default: "proglang-perl.svg" }));
+vi.mock("../../cloud-services/programming-language/PureScript.svg", () => ({ default: "proglang-purescript.svg" }));
+vi.mock("../../cloud-services/programming-language/Python.svg", () => ({ default: "proglang-python.svg" }));
+vi.mock("../../cloud-services/programming-language/Ruby.svg", () => ({ default: "proglang-ruby.svg" }));
+vi.mock("../../cloud-services/programming-language/Swift.svg", () => ({ default: "proglang-swift.svg" }));
+vi.mock("../../cloud-services/programming-language/Vala.svg", () => ({ default: "proglang-vala.svg" }));
+vi.mock("../../cloud-services/programming-language/Vyper.svg", () => ({ default: "proglang-vyper.svg" }));
+vi.mock("../../cloud-services/programming-language/Zig.svg", () => ({ default: "proglang-zig.svg" }));
+
 vi.mock("../../cloud-services/animated/api.gif", () => ({ default: "animated-api.gif" }));
 vi.mock("../../cloud-services/animated/click.gif", () => ({ default: "animated-click.gif" }));
 vi.mock("../../cloud-services/animated/cloud.gif", () => ({ default: "animated-cloud.gif" }));
@@ -98,6 +121,7 @@ describe("isCloudService", () => {
   const cloudTypes: NodeType[] = [
     "gcp-cloud-run", "aws-ec2", "azure-vm", "oci-virtual-machine",
     "nosql-mongodb", "sql-mysql",
+    "proglang-python",
     "animated-api",
   ];
 

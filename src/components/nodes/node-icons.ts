@@ -82,6 +82,30 @@ import oracleIcon from "../cloud-services/sql-db/oracle.svg";
 import mssqlIcon from "../cloud-services/sql-db/microsoft-sql-server.svg";
 import sqlalchemyIcon from "../cloud-services/sql-db/sqlalchemy.svg";
 
+// Programming Language Icons
+import proglangAplIcon from "../cloud-services/programming-language/APL.svg";
+import proglangBallerinaIcon from "../cloud-services/programming-language/Ballerina.svg";
+import proglangCIcon from "../cloud-services/programming-language/CLang.svg";
+import proglangClojureIcon from "../cloud-services/programming-language/Clojure.svg";
+import proglangClojureScriptIcon from "../cloud-services/programming-language/ClojureScript.svg";
+import proglangCppIcon from "../cloud-services/programming-language/CPlusPlus.svg";
+import proglangCsharpIcon from "../cloud-services/programming-language/CSharp.svg";
+import proglangErlangIcon from "../cloud-services/programming-language/ErLang.svg";
+import proglangFsharpIcon from "../cloud-services/programming-language/FSharp.svg";
+import proglangGoIcon from "../cloud-services/programming-language/GoLang.svg";
+import proglangHaskellIcon from "../cloud-services/programming-language/Haskell.svg";
+import proglangJuleIcon from "../cloud-services/programming-language/Jule.svg";
+import proglangNimIcon from "../cloud-services/programming-language/Nim.svg";
+import proglangObjectiveCIcon from "../cloud-services/programming-language/ObjectiveC.svg";
+import proglangPerlIcon from "../cloud-services/programming-language/Perl.svg";
+import proglangPureScriptIcon from "../cloud-services/programming-language/PureScript.svg";
+import proglangPythonIcon from "../cloud-services/programming-language/Python.svg";
+import proglangRubyIcon from "../cloud-services/programming-language/Ruby.svg";
+import proglangSwiftIcon from "../cloud-services/programming-language/Swift.svg";
+import proglangValaIcon from "../cloud-services/programming-language/Vala.svg";
+import proglangVyperIcon from "../cloud-services/programming-language/Vyper.svg";
+import proglangZigIcon from "../cloud-services/programming-language/Zig.svg";
+
 // Animated Icons
 import animatedApiIcon from "../cloud-services/animated/api.gif";
 import animatedClickIcon from "../cloud-services/animated/click.gif";
@@ -168,6 +192,28 @@ export const cloudServiceIcons: Record<string, string> = {
   "sql-oracle": oracleIcon,
   "sql-mssql": mssqlIcon,
   "sql-sqlalchemy": sqlalchemyIcon,
+  "proglang-apl": proglangAplIcon,
+  "proglang-ballerina": proglangBallerinaIcon,
+  "proglang-c": proglangCIcon,
+  "proglang-clojure": proglangClojureIcon,
+  "proglang-clojurescript": proglangClojureScriptIcon,
+  "proglang-cpp": proglangCppIcon,
+  "proglang-csharp": proglangCsharpIcon,
+  "proglang-erlang": proglangErlangIcon,
+  "proglang-fsharp": proglangFsharpIcon,
+  "proglang-go": proglangGoIcon,
+  "proglang-haskell": proglangHaskellIcon,
+  "proglang-jule": proglangJuleIcon,
+  "proglang-nim": proglangNimIcon,
+  "proglang-objectivec": proglangObjectiveCIcon,
+  "proglang-perl": proglangPerlIcon,
+  "proglang-purescript": proglangPureScriptIcon,
+  "proglang-python": proglangPythonIcon,
+  "proglang-ruby": proglangRubyIcon,
+  "proglang-swift": proglangSwiftIcon,
+  "proglang-vala": proglangValaIcon,
+  "proglang-vyper": proglangVyperIcon,
+  "proglang-zig": proglangZigIcon,
   "animated-api": animatedApiIcon,
   "animated-click": animatedClickIcon,
   "animated-cloud": animatedCloudIcon,

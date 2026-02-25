@@ -18,7 +18,6 @@ import {
   Upload,
   Download,
   Cloud,
-  Database,
   Server,
   Box,
   Shapes,
@@ -175,7 +174,7 @@ export default function Guide() {
           <div className="grid gap-2 sm:grid-cols-2">
             {[
               { icon: Cloud, label: "Cloud", desc: "Amazon Web Services (15), Google Cloud (13), Microsoft Azure (14), and Oracle Cloud (15)" },
-              { icon: Database, label: "Databases", desc: "NoSQL (7) and SQL (6) databases" },
+              { icon: Layers, label: "Technologies", desc: "NoSQL (7), SQL (6), and Programming Languages (22)" },
               { icon: Box, label: "Tools", desc: "Basic components (6) and Software Process (6)" },
               { icon: Shapes, label: "Shapes", desc: "11 shapes — Circle, Square, Star, Hexagon, Diamond, Triangle, and more" },
               { icon: Sparkles, label: "Animated", desc: "13 animated icons like API, Rocket, Cloud" },
@@ -398,7 +397,7 @@ export default function Guide() {
         {/* 9. Cloud Services */}
         <SectionCard id="services" icon={Server} title="Cloud Services & Components">
           <p>
-            The Components Panel organizes <strong className="text-foreground">100+ node types</strong> across
+            The Components Panel organizes <strong className="text-foreground">130+ node types</strong> across
             providers. Expand any provider accordion to browse its services.
           </p>
           <div className="grid gap-2 sm:grid-cols-3">
@@ -409,6 +408,7 @@ export default function Guide() {
               { label: "Oracle Cloud", count: 15, color: "bg-red-500/10 text-red-400 border-red-500/20" },
               { label: "NoSQL", count: 7, color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
               { label: "SQL", count: 6, color: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
+              { label: "Programming Languages", count: 22, color: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20" },
               { label: "Basic", count: 6, color: "bg-slate-500/10 text-slate-400 border-slate-500/20" },
               { label: "Process", count: 6, color: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20" },
               { label: "Shapes", count: 11, color: "bg-pink-500/10 text-pink-400 border-pink-500/20" },

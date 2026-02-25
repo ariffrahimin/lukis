@@ -129,6 +129,30 @@ import oracleIcon from "./cloud-services/sql-db/oracle.svg";
 import mssqlIcon from "./cloud-services/sql-db/microsoft-sql-server.svg";
 import sqlalchemyIcon from "./cloud-services/sql-db/sqlalchemy.svg";
 
+// Programming Language Icons
+import proglangAplIcon from "./cloud-services/programming-language/APL.svg";
+import proglangBallerinaIcon from "./cloud-services/programming-language/Ballerina.svg";
+import proglangCIcon from "./cloud-services/programming-language/CLang.svg";
+import proglangClojureIcon from "./cloud-services/programming-language/Clojure.svg";
+import proglangClojureScriptIcon from "./cloud-services/programming-language/ClojureScript.svg";
+import proglangCppIcon from "./cloud-services/programming-language/CPlusPlus.svg";
+import proglangCsharpIcon from "./cloud-services/programming-language/CSharp.svg";
+import proglangErlangIcon from "./cloud-services/programming-language/ErLang.svg";
+import proglangFsharpIcon from "./cloud-services/programming-language/FSharp.svg";
+import proglangGoIcon from "./cloud-services/programming-language/GoLang.svg";
+import proglangHaskellIcon from "./cloud-services/programming-language/Haskell.svg";
+import proglangJuleIcon from "./cloud-services/programming-language/Jule.svg";
+import proglangNimIcon from "./cloud-services/programming-language/Nim.svg";
+import proglangObjectiveCIcon from "./cloud-services/programming-language/ObjectiveC.svg";
+import proglangPerlIcon from "./cloud-services/programming-language/Perl.svg";
+import proglangPureScriptIcon from "./cloud-services/programming-language/PureScript.svg";
+import proglangPythonIcon from "./cloud-services/programming-language/Python.svg";
+import proglangRubyIcon from "./cloud-services/programming-language/Ruby.svg";
+import proglangSwiftIcon from "./cloud-services/programming-language/Swift.svg";
+import proglangValaIcon from "./cloud-services/programming-language/Vala.svg";
+import proglangVyperIcon from "./cloud-services/programming-language/Vyper.svg";
+import proglangZigIcon from "./cloud-services/programming-language/Zig.svg";
+
 // Animated Icons
 import animatedApiIcon from "./cloud-services/animated/api.gif";
 import animatedClickIcon from "./cloud-services/animated/click.gif";
@@ -321,6 +345,35 @@ const sqlProvider: CloudProvider = {
   ],
 };
 
+const proglangProvider: CloudProvider = {
+  name: "Programming Languages",
+  accent: "bg-indigo-500/10 text-indigo-600 border-indigo-200 dark:border-indigo-800 dark:text-indigo-400",
+  services: [
+    { type: "proglang-apl", label: "APL", icon: proglangAplIcon },
+    { type: "proglang-ballerina", label: "Ballerina", icon: proglangBallerinaIcon },
+    { type: "proglang-c", label: "C", icon: proglangCIcon },
+    { type: "proglang-clojure", label: "Clojure", icon: proglangClojureIcon },
+    { type: "proglang-clojurescript", label: "ClojureScript", icon: proglangClojureScriptIcon },
+    { type: "proglang-cpp", label: "C++", icon: proglangCppIcon },
+    { type: "proglang-csharp", label: "C#", icon: proglangCsharpIcon },
+    { type: "proglang-erlang", label: "Erlang", icon: proglangErlangIcon },
+    { type: "proglang-fsharp", label: "F#", icon: proglangFsharpIcon },
+    { type: "proglang-go", label: "Go", icon: proglangGoIcon },
+    { type: "proglang-haskell", label: "Haskell", icon: proglangHaskellIcon },
+    { type: "proglang-jule", label: "Jule", icon: proglangJuleIcon },
+    { type: "proglang-nim", label: "Nim", icon: proglangNimIcon },
+    { type: "proglang-objectivec", label: "Objective-C", icon: proglangObjectiveCIcon },
+    { type: "proglang-perl", label: "Perl", icon: proglangPerlIcon },
+    { type: "proglang-purescript", label: "PureScript", icon: proglangPureScriptIcon },
+    { type: "proglang-python", label: "Python", icon: proglangPythonIcon },
+    { type: "proglang-ruby", label: "Ruby", icon: proglangRubyIcon },
+    { type: "proglang-swift", label: "Swift", icon: proglangSwiftIcon },
+    { type: "proglang-vala", label: "Vala", icon: proglangValaIcon },
+    { type: "proglang-vyper", label: "Vyper", icon: proglangVyperIcon },
+    { type: "proglang-zig", label: "Zig", icon: proglangZigIcon },
+  ],
+};
+
 const animatedProvider: CloudProvider = {
   name: "Animated",
   accent: "bg-violet-500/10 text-violet-600 border-violet-200 dark:border-violet-800 dark:text-violet-400",
@@ -344,7 +397,7 @@ const animatedProvider: CloudProvider = {
 // Tab categories
 const tabCategories = {
   cloud: [gcpProvider, awsProvider, azureProvider, ociProvider],
-  databases: [nosqlProvider, sqlProvider],
+  technologies: [nosqlProvider, sqlProvider, proglangProvider],
   tools: [basicProvider, processProvider],
   shapes: [shapesProvider],
   animated: [animatedProvider],
@@ -360,6 +413,7 @@ const allProviders = [
   ociProvider,
   nosqlProvider,
   sqlProvider,
+  proglangProvider,
   animatedProvider,
 ];
 
@@ -582,7 +636,7 @@ export const CloudServicesPanel = ({
 
   const tabButtons = [
     { value: "cloud", icon: Cloud, label: "Cloud" },
-    { value: "databases", icon: Database, label: "Databases" },
+    { value: "technologies", icon: Layers, label: "Technologies" },
     { value: "tools", icon: Box, label: "Tools" },
     { value: "shapes", icon: Shapes, label: "Shapes" },
     { value: "animated", icon: Sparkles, label: "Animated" },
@@ -756,14 +810,14 @@ export const CloudServicesPanel = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                onClick={() => { setIsCollapsed(false); setActiveTab("databases"); }}
+                onClick={() => { setIsCollapsed(false); setActiveTab("technologies"); }}
                 className="p-2 rounded-lg hover:bg-muted transition-colors"
               >
-                <Database className="w-4 h-4 text-muted-foreground" />
+                <Layers className="w-4 h-4 text-muted-foreground" />
               </button>
             </TooltipTrigger>
             <TooltipContent side="right">
-              <p className="text-xs">Databases</p>
+              <p className="text-xs">Technologies</p>
             </TooltipContent>
           </Tooltip>
 

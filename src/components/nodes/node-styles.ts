@@ -5,6 +5,7 @@ type NodeStyle = { bg: string; border: string; icon: string };
 // Tailwind JIT requires full class names to be statically present in source.
 // Do NOT use dynamic class construction like `bg-${color}-100/20`.
 
+const proglangStyle: NodeStyle = { bg: "bg-indigo-100/20", border: "border-indigo-300/50", icon: "text-indigo-600" };
 const awsStyle: NodeStyle = { bg: "bg-orange-100/20", border: "border-orange-300/50", icon: "text-orange-600" };
 const azureStyle: NodeStyle = { bg: "bg-cyan-100/20", border: "border-cyan-300/50", icon: "text-cyan-600" };
 const animatedStyle: NodeStyle = { bg: "bg-violet-100/20", border: "border-violet-300/50", icon: "text-violet-600" };
@@ -98,6 +99,28 @@ export const nodeTypeStyles: Record<NodeType, NodeStyle> = {
   "sql-oracle": { bg: "bg-red-100/20", border: "border-red-300/50", icon: "text-red-600" },
   "sql-mssql": { bg: "bg-red-100/20", border: "border-red-300/50", icon: "text-red-600" },
   "sql-sqlalchemy": { bg: "bg-orange-100/20", border: "border-orange-300/50", icon: "text-orange-600" },
+  "proglang-apl": proglangStyle,
+  "proglang-ballerina": proglangStyle,
+  "proglang-c": proglangStyle,
+  "proglang-clojure": proglangStyle,
+  "proglang-clojurescript": proglangStyle,
+  "proglang-cpp": proglangStyle,
+  "proglang-csharp": proglangStyle,
+  "proglang-erlang": proglangStyle,
+  "proglang-fsharp": proglangStyle,
+  "proglang-go": proglangStyle,
+  "proglang-haskell": proglangStyle,
+  "proglang-jule": proglangStyle,
+  "proglang-nim": proglangStyle,
+  "proglang-objectivec": proglangStyle,
+  "proglang-perl": proglangStyle,
+  "proglang-purescript": proglangStyle,
+  "proglang-python": proglangStyle,
+  "proglang-ruby": proglangStyle,
+  "proglang-swift": proglangStyle,
+  "proglang-vala": proglangStyle,
+  "proglang-vyper": proglangStyle,
+  "proglang-zig": proglangStyle,
   "shape-circle": { bg: "bg-pink-100/20", border: "border-pink-300/50", icon: "text-pink-600" },
   "shape-square": { bg: "bg-blue-100/20", border: "border-blue-300/50", icon: "text-blue-600" },
   "shape-star": { bg: "bg-yellow-100/20", border: "border-yellow-300/50", icon: "text-yellow-600" },
