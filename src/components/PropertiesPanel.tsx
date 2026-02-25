@@ -74,6 +74,7 @@ export const PropertiesPanel = ({
 
   const nodeData = selectedNode?.data && isValidNodeData(selectedNode.data) ? selectedNode.data : undefined;
   const isCloudServiceNode = nodeData?.nodeType ? isCloudService(nodeData.nodeType as NodeType) : false;
+  const isProgLangNode = nodeData?.nodeType?.startsWith('proglang-') ?? false;
   const isShapeNode = nodeData?.nodeType?.startsWith('shape-') ?? false;
 
   useEffect(() => {
@@ -249,7 +250,7 @@ export const PropertiesPanel = ({
             </>
           )}
 
-          {isCloudServiceNode && (
+          {isCloudServiceNode && !isProgLangNode && (
               <div className="space-y-1">
                 <Label htmlFor="environment" className="text-xs text-muted-foreground">
                   Environment
