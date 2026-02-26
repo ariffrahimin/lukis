@@ -117,6 +117,15 @@ vi.mock("../../cloud-services/animated/worker.gif", () => ({ default: "animated-
 import { cloudServiceIcons, isCloudService } from "../node-icons";
 import type { NodeType } from "../../../types/diagrams";
 
+const allProglangTypes: NodeType[] = [
+  "proglang-apl", "proglang-ballerina", "proglang-c", "proglang-clojure",
+  "proglang-clojurescript", "proglang-cpp", "proglang-csharp", "proglang-erlang",
+  "proglang-fsharp", "proglang-go", "proglang-haskell", "proglang-jule",
+  "proglang-nim", "proglang-objectivec", "proglang-perl", "proglang-purescript",
+  "proglang-python", "proglang-ruby", "proglang-swift", "proglang-vala",
+  "proglang-vyper", "proglang-zig",
+];
+
 describe("isCloudService", () => {
   const cloudTypes: NodeType[] = [
     "gcp-cloud-run", "aws-ec2", "azure-vm", "oci-virtual-machine",
@@ -149,5 +158,21 @@ describe("cloudServiceIcons", () => {
       expect(value, `icon for "${key}" should be a truthy string`).toBeTruthy();
       expect(typeof value).toBe("string");
     }
+  });
+
+  it.each(allProglangTypes)(
+    "contains an icon entry for programming language type %s",
+    (type) => {
+      expect(
+        cloudServiceIcons[type],
+        `cloudServiceIcons is missing an entry for "${type}" — its icon will not render on the canvas`,
+      ).toBeTruthy();
+    },
+  );
+});
+
+describe("isCloudService — programming languages", () => {
+  it.each(allProglangTypes)("returns true for %s", (type) => {
+    expect(isCloudService(type)).toBe(true);
   });
 });
