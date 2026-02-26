@@ -595,7 +595,7 @@ export const CloudServicesPanel = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("cloud");
   const [expandedProviders, setExpandedProviders] = useState<Set<string>>(
-    new Set(["Amazon Web Services", "Google Cloud", "Microsoft Azure", "Oracle Cloud", "Animated", "SQL", "NoSQL", "Basic", "Shapes", "Software Process"])
+    new Set(["Amazon Web Services", "Google Cloud", "Microsoft Azure", "Oracle Cloud", "Animated", "SQL", "NoSQL", "Basic", "Shapes", "Software Process", "Programming Languages"])
   );
 
   const isSearching = searchQuery.trim() !== "";
