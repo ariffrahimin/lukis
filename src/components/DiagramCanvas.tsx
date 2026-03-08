@@ -39,6 +39,7 @@ import { toast } from 'sonner';
 import { LayoutGrid, HelpCircle, Layers } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { LayersPanel } from './LayersPanel';
+import { AdModal } from './AdModal';
 import { sortNodesForSubFlow } from '../utils/sort-nodes';
 import { cn } from '../lib/utils';
 
@@ -214,6 +215,9 @@ export const DiagramCanvas = () => {
 
   const [clipboard, setClipboard] = useState<{ nodes: Node[]; edges: Edge[] } | null>(null);
   const { saveState, undo, redo, canUndo, canRedo } = useUndoRedo();
+
+  const [pendingExport, setPendingExport] = useState<'json' | 'png' | 'gif' | null>(null);
+  const [adModalOpen, setAdModalOpen] = useState(false);
 
   const nodeTypes = useMemo(() => ({
     service: BaseNode,
@@ -854,7 +858,7 @@ export const DiagramCanvas = () => {
     }
   }, []);
 
-  const handleExport = useCallback((format: 'json' | 'png' | 'gif') => {
+  const executeExport = useCallback((format: 'json' | 'png' | 'gif') => {
     if (format === 'json') {
       const data = { nodes, edges };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -863,7 +867,7 @@ export const DiagramCanvas = () => {
       try {
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'diagram.json';
+        a.download = 'basically-diagram.json';
         a.click();
       } finally {
         URL.revokeObjectURL(url);
@@ -917,7 +921,7 @@ export const DiagramCanvas = () => {
             return;
           }
 
-          downloadBlob(blob, 'diagram.png');
+          downloadBlob(blob, 'basically-diagram.png');
           toast.success('Diagram exported');
         } catch (error) {
           console.error('PNG export error:', error);
@@ -1027,7 +1031,7 @@ export const DiagramCanvas = () => {
         const bytes = encoder.bytes();
         const bytesCopy = new Uint8Array(bytes);
         const blob = new Blob([bytesCopy], { type: 'image/gif' });
-        downloadBlob(blob, 'diagram.gif');
+        downloadBlob(blob, 'basically-diagram.gif');
         toast.success('Diagram exported');
       } catch (error) {
         console.error('GIF export error:', error);
@@ -1035,6 +1039,11 @@ export const DiagramCanvas = () => {
       }
     })();
   }, [downloadBlob, edges, exportFilter, getExportElement, nodes, reactFlowInstance, setEdges, setNodes, withInlinedEdgeStrokeStyles]);
+
+  const handleExport = useCallback((format: 'json' | 'png' | 'gif') => {
+    setPendingExport(format);
+    setAdModalOpen(true);
+  }, []);
 
   const handleImport = useCallback(() => {
     const input = document.createElement('input');
@@ -1476,6 +1485,20 @@ export const DiagramCanvas = () => {
           onOpenChange={setLayersPanelOpen}
         />
       )}
+
+      <AdModal
+        open={adModalOpen}
+        format={pendingExport}
+        onClose={() => {
+          setAdModalOpen(false);
+          if (pendingExport) executeExport(pendingExport);
+          setPendingExport(null);
+        }}
+        onDismiss={() => {
+          setAdModalOpen(false);
+          setPendingExport(null);
+        }}
+      />
     </div>
   );
 };
