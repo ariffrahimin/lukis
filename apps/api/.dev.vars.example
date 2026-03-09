@@ -1,0 +1,4 @@
+SUPABASE_URL=https://xxx.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+SUPABASE_JWT_SECRET=your-jwt-secret
+ALLOWED_ORIGIN=http://localhost:5173
