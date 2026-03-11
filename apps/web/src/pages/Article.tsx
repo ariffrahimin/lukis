@@ -2,12 +2,12 @@ import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { AdBanner } from "../components/AdBanner";
 import { Button } from "../components/ui/button";
-import { ArrowLeft, Loader2 } from "lucide-react";
-import { useArticle } from "../hooks/useArticles";
+import { ArrowLeft } from "lucide-react";
+import { getArticle } from "virtual:articles";
 
 export default function Article() {
   const { slug } = useParams<{ slug: string }>();
-  const { data: article, isLoading, error } = useArticle(slug || "");
+  const article = getArticle(slug || "");
 
   useEffect(() => {
     if (article?.title) {
@@ -35,21 +35,6 @@ export default function Article() {
       </header>
 
       <main className="mx-auto max-w-3xl px-6 py-12 pb-[140px]">
-        {isLoading && (
-          <div className="flex justify-center py-20">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-          </div>
-        )}
-
-        {error && (
-          <div className="text-center py-20 text-muted-foreground">
-            <p>Failed to load article. Please try again later.</p>
-            <Button variant="outline" size="sm" className="mt-4" asChild>
-              <Link to="/articles">Back to Articles</Link>
-            </Button>
-          </div>
-        )}
-
         {article && (
           <article>
             <header className="mb-8 space-y-3">
@@ -81,7 +66,7 @@ export default function Article() {
           </article>
         )}
 
-        {!isLoading && !error && !article && (
+        {!article && (
           <div className="text-center py-20 text-muted-foreground">
             <p>Article not found.</p>
             <Button variant="outline" size="sm" className="mt-4" asChild>

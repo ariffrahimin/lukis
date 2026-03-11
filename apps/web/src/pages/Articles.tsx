@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 import { AdBanner } from "../components/AdBanner";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { ArrowLeft, FileText, Loader2 } from "lucide-react";
-import { useArticles } from "../hooks/useArticles";
+import { ArrowLeft, FileText } from "lucide-react";
+import { getArticles } from "virtual:articles";
+
+const articles = getArticles();
 
 export default function Articles() {
-  const { data: articles, isLoading, error } = useArticles();
-
   useEffect(() => {
     document.title = "Articles - Basically";
   }, []);
@@ -43,26 +43,14 @@ export default function Articles() {
         </section>
 
         {/* Article list */}
-        {isLoading && (
-          <div className="flex justify-center py-20">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-          </div>
-        )}
-
-        {error && (
-          <div className="text-center py-20 text-muted-foreground">
-            <p>Failed to load articles. Please try again later.</p>
-          </div>
-        )}
-
-        {articles && articles.length === 0 && (
+        {articles.length === 0 && (
           <div className="text-center py-20 text-muted-foreground space-y-2">
             <FileText className="h-10 w-10 mx-auto opacity-40" />
             <p>No articles yet. Check back soon!</p>
           </div>
         )}
 
-        {articles && articles.length > 0 && (
+        {articles.length > 0 && (
           <div className="grid gap-4">
             {articles.map((article) => (
               <Link key={article.slug} to={`/articles/${article.slug}`}>
