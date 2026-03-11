@@ -107,7 +107,7 @@ export default function Guide() {
             <span className="text-muted-foreground font-normal text-sm">Guide</span>
           </span>
           <Button variant="ghost" size="sm" asChild>
-            <a href="/" className="gap-2">
+            <a href="/canvas" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
               Back to Canvas
             </a>
@@ -458,7 +458,7 @@ export default function Guide() {
           </p>
           <div className="flex justify-center gap-4">
             <Button asChild size="lg" className="gap-2">
-              <a href="/">
+              <a href="/canvas">
                 Start Building
                 <ArrowLeft className="h-4 w-4 rotate-180" />
               </a>

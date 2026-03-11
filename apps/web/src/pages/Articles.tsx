@@ -23,7 +23,7 @@ export default function Articles() {
             <span className="text-muted-foreground font-normal text-sm">Articles</span>
           </span>
           <Button variant="ghost" size="sm" asChild>
-            <a href="/" className="gap-2">
+            <a href="/canvas" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
               Back to Canvas
             </a>
@@ -87,7 +87,7 @@ export default function Articles() {
               <Link to="/guide">Read the Guide</Link>
             </Button>
             <Button size="sm" asChild>
-              <a href="/">Open Canvas</a>
+              <a href="/canvas">Open Canvas</a>
             </Button>
           </div>
         </section>

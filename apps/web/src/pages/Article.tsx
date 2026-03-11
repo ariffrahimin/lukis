@@ -27,7 +27,7 @@ export default function Article() {
             </Link>
           </Button>
           <Button variant="ghost" size="sm" asChild>
-            <a href="/" className="gap-2">
+            <a href="/canvas" className="gap-2">
               Back to Canvas
             </a>
           </Button>
