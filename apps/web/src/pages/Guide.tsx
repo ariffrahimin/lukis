@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { AdBanner } from "../components/AdBanner";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
@@ -106,7 +107,7 @@ export default function Guide() {
             <span className="text-muted-foreground font-normal text-sm">Guide</span>
           </span>
           <Button variant="ghost" size="sm" asChild>
-            <a href="/" className="gap-2">
+            <a href="/canvas" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
               Back to Canvas
             </a>
@@ -450,19 +451,25 @@ export default function Guide() {
         <Separator className="opacity-40" />
 
         {/* Bottom CTA */}
-        <section className="text-center py-8 space-y-4">
+        <section className="text-center py-8 pb-[106px] space-y-4">
           <h2 className="text-2xl font-bold tracking-tight">Ready to build?</h2>
           <p className="text-muted-foreground text-sm">
             You know the tools — now go create something great.
           </p>
-          <Button asChild size="lg" className="gap-2">
-            <a href="/">
-              Start Building
-              <ArrowLeft className="h-4 w-4 rotate-180" />
-            </a>
-          </Button>
+          <div className="flex justify-center gap-4">
+            <Button asChild size="lg" className="gap-2">
+              <a href="/canvas">
+                Start Building
+                <ArrowLeft className="h-4 w-4 rotate-180" />
+              </a>
+            </Button>
+            <Button variant="outline" size="lg" asChild>
+              <a href="/articles">Read Our Articles</a>
+            </Button>
+          </div>
         </section>
       </main>
+      <AdBanner />
     </div>
   );
 }

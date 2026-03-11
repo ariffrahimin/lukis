@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { type NodeType } from "../types/diagrams";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import { ScrollArea } from "./ui/scroll-area";
@@ -32,6 +33,7 @@ import {
   Shapes,
   GripVertical,
   Sparkles,
+  Pen,
 } from "lucide-react";
 
 // Shape Icons
@@ -724,10 +726,10 @@ export const CloudServicesPanel = ({
           {/* Mobile Header */}
           <SheetHeader className="flex-shrink-0 px-4 pt-5 pb-3">
             <SheetTitle className="flex items-center gap-2.5">
-              <div className="p-1.5 rounded-lg bg-primary/10">
-                <Layers className="w-4 h-4 text-primary" />
-              </div>
-              <span className="text-base font-semibold">Components</span>
+              <Link to="/" className="flex h-7 w-7 items-center justify-center rounded-md bg-primary shrink-0" title="Back to Home">
+                <Pen className="h-3.5 w-3.5 text-primary-foreground" />
+              </Link>
+              <Link to="/" className="text-base font-semibold hover:text-primary transition-colors">Basically</Link>
             </SheetTitle>
           </SheetHeader>
 
@@ -777,6 +779,22 @@ export const CloudServicesPanel = ({
     return (
       <div className="w-12 bg-background border-r border-border h-full flex flex-col items-center pt-3 gap-1">
         <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                to="/"
+                className="flex h-7 w-7 items-center justify-center rounded-md bg-primary"
+              >
+                <Pen className="h-3.5 w-3.5 text-primary-foreground" />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p className="text-xs">Back to Home</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <div className="w-6 h-px bg-border my-1" />
+
           <Tooltip>
             <TooltipTrigger asChild>
               <button
@@ -875,8 +893,10 @@ export const CloudServicesPanel = ({
         <div className="flex-shrink-0 px-3 pt-3 pb-2">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <Layers className="w-4 h-4 text-primary" />
-              <h3 className="font-semibold text-sm text-foreground">Components</h3>
+              <Link to="/" className="flex h-7 w-7 items-center justify-center rounded-md bg-primary shrink-0" title="Back to Home">
+                <Pen className="h-3.5 w-3.5 text-primary-foreground" />
+              </Link>
+              <Link to="/" className="font-semibold text-sm text-foreground hover:text-primary transition-colors">Basically</Link>
             </div>
             <button
               onClick={() => setIsCollapsed(true)}

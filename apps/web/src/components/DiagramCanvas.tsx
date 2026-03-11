@@ -39,7 +39,6 @@ import { toast } from 'sonner';
 import { LayoutGrid, HelpCircle, Layers } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { LayersPanel } from './LayersPanel';
-import { AdModal } from './AdModal';
 import { sortNodesForSubFlow } from '../utils/sort-nodes';
 import { cn } from '../lib/utils';
 
@@ -216,8 +215,6 @@ export const DiagramCanvas = () => {
   const [clipboard, setClipboard] = useState<{ nodes: Node[]; edges: Edge[] } | null>(null);
   const { saveState, undo, redo, canUndo, canRedo } = useUndoRedo();
 
-  const [pendingExport, setPendingExport] = useState<'json' | 'png' | 'gif' | null>(null);
-  const [adModalOpen, setAdModalOpen] = useState(false);
 
   const nodeTypes = useMemo(() => ({
     service: BaseNode,
@@ -1041,9 +1038,8 @@ export const DiagramCanvas = () => {
   }, [downloadBlob, edges, exportFilter, getExportElement, nodes, reactFlowInstance, setEdges, setNodes, withInlinedEdgeStrokeStyles]);
 
   const handleExport = useCallback((format: 'json' | 'png' | 'gif') => {
-    setPendingExport(format);
-    setAdModalOpen(true);
-  }, []);
+    executeExport(format);
+  }, [executeExport]);
 
   const handleImport = useCallback(() => {
     const input = document.createElement('input');
@@ -1486,19 +1482,6 @@ export const DiagramCanvas = () => {
         />
       )}
 
-      <AdModal
-        open={adModalOpen}
-        format={pendingExport}
-        onClose={() => {
-          setAdModalOpen(false);
-          if (pendingExport) executeExport(pendingExport);
-          setPendingExport(null);
-        }}
-        onDismiss={() => {
-          setAdModalOpen(false);
-          setPendingExport(null);
-        }}
-      />
     </div>
   );
 };
