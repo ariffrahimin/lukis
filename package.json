@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --filter @basically/web dev",
-    "build": "pnpm --filter @basically/web build",
+    "build": "pnpm --filter @basically/web build && cp -r apps/web/dist dist",
     "test": "pnpm --filter @basically/web test",
     "lint": "pnpm --filter @basically/web lint"
   },
