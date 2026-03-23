@@ -151,6 +151,8 @@ import proglangPureScriptIcon from "./cloud-services/programming-language/PureSc
 import proglangPythonIcon from "./cloud-services/programming-language/Python.svg";
 import proglangRubyIcon from "./cloud-services/programming-language/Ruby.svg";
 import proglangSwiftIcon from "./cloud-services/programming-language/Swift.svg";
+import proglangTypescriptIcon from "./cloud-services/programming-language/Typescript.svg";
+import proglangJavascriptIcon from "./cloud-services/programming-language/Javascript.svg";
 import proglangValaIcon from "./cloud-services/programming-language/Vala.svg";
 import proglangVyperIcon from "./cloud-services/programming-language/Vyper.svg";
 import proglangZigIcon from "./cloud-services/programming-language/Zig.svg";
@@ -370,6 +372,8 @@ const proglangProvider: CloudProvider = {
     { type: "proglang-python", label: "Python", icon: proglangPythonIcon },
     { type: "proglang-ruby", label: "Ruby", icon: proglangRubyIcon },
     { type: "proglang-swift", label: "Swift", icon: proglangSwiftIcon },
+    { type: "proglang-typescript", label: "TypeScript", icon: proglangTypescriptIcon },
+    { type: "proglang-javascript", label: "JavaScript", icon: proglangJavascriptIcon },
     { type: "proglang-vala", label: "Vala", icon: proglangValaIcon },
     { type: "proglang-vyper", label: "Vyper", icon: proglangVyperIcon },
     { type: "proglang-zig", label: "Zig", icon: proglangZigIcon },
