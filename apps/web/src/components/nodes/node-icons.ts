@@ -102,6 +102,8 @@ import proglangPureScriptIcon from "../cloud-services/programming-language/PureS
 import proglangPythonIcon from "../cloud-services/programming-language/Python.svg";
 import proglangRubyIcon from "../cloud-services/programming-language/Ruby.svg";
 import proglangSwiftIcon from "../cloud-services/programming-language/Swift.svg";
+import proglangTypescriptIcon from "../cloud-services/programming-language/Typescript.svg";
+import proglangJavascriptIcon from "../cloud-services/programming-language/Javascript.svg";
 import proglangValaIcon from "../cloud-services/programming-language/Vala.svg";
 import proglangVyperIcon from "../cloud-services/programming-language/Vyper.svg";
 import proglangZigIcon from "../cloud-services/programming-language/Zig.svg";
@@ -211,6 +213,8 @@ export const cloudServiceIcons: Record<string, string> = {
   "proglang-python": proglangPythonIcon,
   "proglang-ruby": proglangRubyIcon,
   "proglang-swift": proglangSwiftIcon,
+  "proglang-typescript": proglangTypescriptIcon,
+  "proglang-javascript": proglangJavascriptIcon,
   "proglang-vala": proglangValaIcon,
   "proglang-vyper": proglangVyperIcon,
   "proglang-zig": proglangZigIcon,

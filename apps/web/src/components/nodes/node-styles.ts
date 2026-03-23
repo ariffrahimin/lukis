@@ -118,6 +118,8 @@ export const nodeTypeStyles: Record<NodeType, NodeStyle> = {
   "proglang-python": proglangStyle,
   "proglang-ruby": proglangStyle,
   "proglang-swift": proglangStyle,
+  "proglang-typescript": proglangStyle,
+  "proglang-javascript": proglangStyle,
   "proglang-vala": proglangStyle,
   "proglang-vyper": proglangStyle,
   "proglang-zig": proglangStyle,

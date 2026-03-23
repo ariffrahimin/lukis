@@ -53,7 +53,7 @@ const getDefaultNodeStyle = (type: NodeType): { width: number; height: number } 
   return undefined;
 };
 
-const defaultNodeLabels: Record<NodeType, string> = {
+export const defaultNodeLabels: Record<NodeType, string> = {
   service: 'Service',
   database: 'Database',
   server: 'Server',
@@ -158,6 +158,8 @@ const defaultNodeLabels: Record<NodeType, string> = {
   'proglang-python': 'Python',
   'proglang-ruby': 'Ruby',
   'proglang-swift': 'Swift',
+  'proglang-typescript': 'TypeScript',
+  'proglang-javascript': 'JavaScript',
   'proglang-vala': 'Vala',
   'proglang-vyper': 'Vyper',
   'proglang-zig': 'Zig',
@@ -321,6 +323,8 @@ export const DiagramCanvas = () => {
     'proglang-python': BaseNode,
     'proglang-ruby': BaseNode,
     'proglang-swift': BaseNode,
+    'proglang-typescript': BaseNode,
+    'proglang-javascript': BaseNode,
     'proglang-vala': BaseNode,
     'proglang-vyper': BaseNode,
     'proglang-zig': BaseNode,
