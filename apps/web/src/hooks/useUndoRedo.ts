@@ -8,46 +8,52 @@ interface HistoryState {
 }
 
 export const useUndoRedo = (maxHistory: number = 50) => {
-  const [history, setHistory] = useState<HistoryState[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(-1);
+  const [state, setState] = useState<{
+    history: HistoryState[];
+    currentIndex: number;
+  }>({
+    history: [],
+    currentIndex: -1,
+  });
+
   const historyRef = useRef<HistoryState[]>([]);
   const currentIndexRef = useRef(-1);
 
-  // Sync refs with state using useEffect (not during render)
+  // Sync refs with state using useEffect
   useEffect(() => {
-    historyRef.current = history;
-    currentIndexRef.current = currentIndex;
-  }, [history, currentIndex]);
+    historyRef.current = state.history;
+    currentIndexRef.current = state.currentIndex;
+  }, [state]);
 
-  const canUndo = currentIndex > 0;
-  const canRedo = currentIndex < history.length - 1;
+  const canUndo = state.currentIndex > 0;
+  const canRedo = state.currentIndex < state.history.length - 1;
 
   const saveState = useCallback((nodes: Node[], edges: Edge[]) => {
-    setHistory((prev) => {
-      const newHistory = prev.slice(0, currentIndex + 1);
-      // Use structured cloning for better performance and safety
+    setState((prev) => {
+      const newHistory = prev.history.slice(0, prev.currentIndex + 1);
       const clonedState = {
         nodes: structuredClone(nodes),
         edges: structuredClone(edges)
       };
+      
       newHistory.push(clonedState);
       
       // Remove oldest entries if exceeding max history
-      if (newHistory.length > maxHistory) {
-        newHistory.shift();
-      }
+      const processedHistory = newHistory.length > maxHistory 
+        ? newHistory.slice(newHistory.length - maxHistory)
+        : newHistory;
       
-      // Update index to point to the latest state
-      setCurrentIndex(newHistory.length - 1);
-      
-      return newHistory;
+      return {
+        history: processedHistory,
+        currentIndex: processedHistory.length - 1
+      };
     });
-  }, [currentIndex, maxHistory]);
+  }, [maxHistory]);
 
   const undo = useCallback(() => {
     if (currentIndexRef.current > 0) {
       const newIndex = currentIndexRef.current - 1;
-      setCurrentIndex(newIndex);
+      setState(prev => ({ ...prev, currentIndex: newIndex }));
       return historyRef.current[newIndex];
     }
     return null;
@@ -56,7 +62,7 @@ export const useUndoRedo = (maxHistory: number = 50) => {
   const redo = useCallback(() => {
     if (currentIndexRef.current < historyRef.current.length - 1) {
       const newIndex = currentIndexRef.current + 1;
-      setCurrentIndex(newIndex);
+      setState(prev => ({ ...prev, currentIndex: newIndex }));
       return historyRef.current[newIndex];
     }
     return null;

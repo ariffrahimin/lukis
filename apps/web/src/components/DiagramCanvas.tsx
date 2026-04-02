@@ -33,7 +33,7 @@ import { Toolbar } from './Toolbar';
 import { PropertiesPanel } from './PropertiesPanel';
 import { CloudServicesPanel } from './CloudServicesPanel';
 import { isCloudService } from './nodes/node-icons';
-import { useUndoRedo } from '..//hooks/useUndoRedo';
+import { useUndoRedo } from '../hooks/useUndoRedo';
 import { useIsMobile, useIsTablet } from '../hooks/use-mobile';
 import { toast } from 'sonner';
 import { LayoutGrid, HelpCircle, Layers } from 'lucide-react';
@@ -216,6 +216,7 @@ export const DiagramCanvas = () => {
 
   const [clipboard, setClipboard] = useState<{ nodes: Node[]; edges: Edge[] } | null>(null);
   const { saveState, undo, redo, canUndo, canRedo } = useUndoRedo();
+  const skipNextSaveRef = useRef(false);
 
 
   const nodeTypes = useMemo(() => ({
@@ -685,6 +686,7 @@ export const DiagramCanvas = () => {
   const handleUndo = useCallback(() => {
     const state = undo();
     if (state) {
+      skipNextSaveRef.current = true;
       setNodes(state.nodes);
       setEdges(state.edges);
       toast.info('Undo');
@@ -694,6 +696,7 @@ export const DiagramCanvas = () => {
   const handleRedo = useCallback(() => {
     const state = redo();
     if (state) {
+      skipNextSaveRef.current = true;
       setNodes(state.nodes);
       setEdges(state.edges);
       toast.info('Redo');
@@ -1189,6 +1192,10 @@ export const DiagramCanvas = () => {
 
   // Save state when nodes or edges change
   useEffect(() => {
+    if (skipNextSaveRef.current) {
+      skipNextSaveRef.current = false;
+      return;
+    }
     if (nodes.length > 0 || edges.length > 0) {
       saveState(nodes, edges);
     }
