@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { type Node, type Edge } from '@xyflow/react';
 
 interface HistoryState {
@@ -13,9 +13,11 @@ export const useUndoRedo = (maxHistory: number = 50) => {
   const historyRef = useRef<HistoryState[]>([]);
   const currentIndexRef = useRef(-1);
 
-  // Update refs when state changes
-  historyRef.current = history;
-  currentIndexRef.current = currentIndex;
+  // Sync refs with state using useEffect (not during render)
+  useEffect(() => {
+    historyRef.current = history;
+    currentIndexRef.current = currentIndex;
+  }, [history, currentIndex]);
 
   const canUndo = currentIndex > 0;
   const canRedo = currentIndex < history.length - 1;

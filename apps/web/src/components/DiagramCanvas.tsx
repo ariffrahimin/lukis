@@ -354,11 +354,6 @@ export const DiagramCanvas = () => {
     'animated-worker': BaseNode,
   }), []);
 
-  // Save initial state
-  useEffect(() => {
-    saveState(initialNodes, initialEdges);
-  }, [saveState]);
-
   const onConnect = useCallback((connection: Connection) => {
     setEdges((eds) => addEdge({ 
       ...connection, 
