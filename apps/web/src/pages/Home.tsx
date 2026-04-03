@@ -352,6 +352,23 @@ export default function Home() {
           </div>
         </section>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-border/40 bg-background/60 backdrop-blur-xl py-8">
+        <div className="mx-auto max-w-6xl px-6 text-center text-sm text-muted-foreground">
+          <p>
+            Developed by{" "}
+            <a 
+              href="https://www.lamanhero.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="font-medium text-foreground transition-colors hover:text-primary"
+            >
+              lamanhero
+            </a>
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
