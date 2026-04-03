@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { AdBanner } from "../components/AdBanner";
+import lamanheroLogo from "../assets/lamanhero.png";
 import {
   ArrowRight,
   Pen,
@@ -354,7 +354,28 @@ export default function Home() {
         </section>
       </main>
 
-      <AdBanner />
+      {/* Footer */}
+      <footer className="border-t border-border/40 bg-background/60 backdrop-blur-xl py-8">
+        <div className="mx-auto max-w-6xl px-6 flex flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
+          <p>
+            Developed by{" "}
+            <a 
+              href="https://www.lamanhero.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="font-medium text-foreground transition-colors hover:text-primary inline-flex items-center"
+            >
+              <img 
+                src={lamanheroLogo} 
+                alt="lamanhero logo" 
+                className="h-5 w-auto ml-1 -mt-0.5 object-contain" 
+              />
+              <span className="sr-only">lamanhero</span>
+            </a>
+          </p>
+          <p className="text-xs opacity-80 italic">from developer for developer</p>
+        </div>
+      </footer>
     </div>
   );
 }

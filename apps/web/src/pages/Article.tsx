@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { AdBanner } from "../components/AdBanner";
 import { Button } from "../components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { getArticle } from "virtual:articles";
@@ -75,7 +74,6 @@ export default function Article() {
           </div>
         )}
       </main>
-      <AdBanner />
     </div>
   );
 }
