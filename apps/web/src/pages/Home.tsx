@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { AdBanner } from "../components/AdBanner";
 import {
   ArrowRight,
   Pen,
@@ -353,8 +352,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-
-      <AdBanner />
     </div>
   );
 }

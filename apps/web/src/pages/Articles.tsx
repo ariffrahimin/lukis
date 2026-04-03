@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { AdBanner } from "../components/AdBanner";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { ArrowLeft, FileText } from "lucide-react";
@@ -92,7 +91,6 @@ export default function Articles() {
           </div>
         </section>
       </main>
-      <AdBanner />
     </div>
   );
 }
