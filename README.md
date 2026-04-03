@@ -1,67 +1,32 @@
-# Lukis
+# Basically - Visual Diagram Editor
 
-A modern, interactive diagram builder built with React and TypeScript. Create beautiful system architecture diagrams, flowcharts, and network diagrams with an intuitive drag-and-drop interface.
+A modern, interactive diagram builder built with React and TypeScript. Create beautiful system architecture diagrams, flowcharts, and network diagrams with an intuitive drag-and-drop interface right in your browser.
+
+**Free &middot; No sign-up &middot; Browser-based**
 
 ## ✨ Features
 
 ### Core Functionality
-- **Interactive Canvas**: Smooth, responsive diagram editing with zoom, pan, and selection tools
-- **Drag & Drop**: Easily add nodes by dragging from the toolbar or clicking to place
-- **Smart Connections**: Create animated connections between nodes with various edge styles
-- **Undo/Redo**: Full history management with keyboard shortcuts (Ctrl+Z/Ctrl+Shift+Z)
-- **Import/Export**: Save and load diagrams as JSON files
-- **Invisible Anchor Points**: Connection handles only appear on hover for a clean canvas
+- **Interactive Canvas**: Smooth, responsive diagram editing with zoom, pan, and selection tools.
+- **Drag & Drop**: Easily add nodes by dragging from the components panel or clicking to place.
+- **Smart Edges**: Create animated connections between nodes with various edge styles (Bezier, Straight, Step, Smooth Step) and customizable markers.
+- **Sub-flows & Grouping**: Group related nodes into sub-flow containers for better organization.
+- **Undo/Redo**: Full history management with keyboard shortcuts (Ctrl+Z / Ctrl+Shift+Z).
+- **Import/Export**: Save and load diagrams as JSON files, or export as high-resolution PNGs and animated GIFs.
+- **Layers Panel**: Manage the z-order, visibility, and selection of all nodes and edges in your diagram.
 
-### Cloud Services Support
-- **Cloud Services Panel**: Dedicated left-side panel with 12+ cloud services
-- **Multi-Cloud Support**: Google Cloud Platform (GCP), Amazon Web Services (AWS), Microsoft Azure
-- **Icon-Based Nodes**: Cloud services display as actual service icons instead of rectangles
-- **Collapsible Categories**: Organized by cloud provider with expandable sections
-- **Hidable Panel**: Collapse the entire panel for maximum canvas space
-
-### Cloud Service Properties
-- **Region Configuration**: Specify cloud regions (us-west-2, europe-west1, etc.)
-- **Instance Types**: Define instance specifications (t3.micro, n1-standard-1, etc.)
-- **Environment Selection**: Choose between development, staging, production, testing
-- **Service-Specific Data**: Each cloud service type has relevant properties
-
-### Node Types
-#### Standard Nodes
-- **Service**: Microservices and backend services
-- **Database**: Data storage systems
-- **Server**: Infrastructure and servers
-- **Client**: Frontend applications and clients
-- **Storage**: File and object storage
-- **API Gateway**: API management layers
-- **Text**: Labels and annotations
-- **Group**: Container for organizing related nodes
-
-#### Cloud Services
-**Google Cloud Platform (GCP)**
-- Cloud Run
-- Cloud Storage
-- BigQuery
-- Pub/Sub
-
-**Amazon Web Services (AWS)**
-- EC2
-- S3
-- Lambda
-- RDS
-
-**Microsoft Azure**
-- Virtual Machines
-- Blob Storage
-- Functions
-- SQL Database
+### Extensive Component Library (130+ Nodes)
+- **Multi-Cloud Support (5 Providers)**: Amazon Web Services (AWS), Google Cloud (GCP), Microsoft Azure, and Oracle Cloud components.
+- **Technologies & Databases**: Wide range of NoSQL, SQL, and Programming Language nodes.
+- **Tools & Shapes**: Basic components, Software Process elements, and 11 distinct shapes.
+- **Animated Nodes**: 13 animated icons (like API, Rocket, Cloud) that bring your architecture diagrams to life.
 
 ### User Experience
-- **Keyboard Shortcuts**: Productivity shortcuts for common actions
-- **Minimap**: Navigate large diagrams with ease
-- **Properties Panel**: Edit node and edge properties in real-time
-- **Toast Notifications**: Friendly feedback for all actions
-- **Responsive Design**: Works on desktop and tablet devices
-- **Clean Interface**: Invisible connection points for uncluttered viewing
+- **Keyboard Shortcuts**: Productivity shortcuts for common actions and fast diagramming.
+- **Minimap**: Navigate large diagrams with ease.
+- **Properties Panel**: Edit node labels, descriptions, edge styles, and markers in real-time.
+- **Responsive Design**: Works perfectly on desktop and tablet devices.
+- **Sticky Notes & Text**: Add clear annotations and labels anywhere on the canvas.
 
 ## 🚀 Getting Started
 
@@ -74,7 +39,7 @@ A modern, interactive diagram builder built with React and TypeScript. Create be
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd lukis
+cd lukis # or your cloned directory name
 ```
 
 2. Install dependencies:
@@ -95,85 +60,47 @@ pnpm dev
 pnpm build
 ```
 
-### Preview Production Build
-
-```bash
-pnpm preview
-```
-
 ## 🎯 Usage
 
-### Creating Diagrams
+1. **The Canvas**: A full diagram editor with smart connectors, sub-flows, and layers. Drag, drop, and build.
+2. **The Guide**: A comprehensive built-in walkthrough of every tool, shortcut, and feature. From adding your first node to exporting a polished diagram.
+3. **The Articles**: Access insights on cloud architecture, system design patterns, and diagramming best practices right from the app.
 
-1. **Add Nodes**: 
-   - Use the toolbar for standard nodes
-   - Use the Cloud Services Panel for cloud infrastructure components
-   - Drag and drop or click to place nodes on the canvas
-2. **Connect Nodes**: Hover over a node to reveal connection points, then click and drag to another node
-3. **Edit Properties**: Select a node or edge to edit its properties in the side panel
-4. **Navigate**: Use mouse wheel to zoom, click and drag to pan, or use the minimap
+### Diagramming Workflow
 
-### Cloud Services Workflow
-
-1. **Open Panel**: Click the "Show Cloud Services" button if the panel is collapsed
-2. **Select Provider**: Expand GCP, AWS, or Azure categories to view services
-3. **Add Services**: Drag cloud service icons or click to add them to your diagram
-4. **Configure Properties**: Select cloud service nodes to set region, instance type, and environment
-5. **Toggle Labels**: Use the "Show Labels" switch to display service names under icons
-
-### Keyboard Shortcuts
-
-| Shortcut | Action |
-|----------|--------|
-| `Delete/Backspace` | Delete selected node/edge |
-| `Ctrl+Z` | Undo |
-| `Ctrl+Shift+Z` | Redo |
-| `V` | Select tool |
-| `H` | Pan tool |
-| `F` | Fit view to screen |
-
-### Toolbar Actions
-
-- **Select**: Select and move nodes/edges
-- **Pan**: Navigate the canvas
-- **Add Nodes**: Quick-add common node types
-- **Zoom Controls**: Zoom in/out and fit to view
-- **Undo/Redo**: Navigate history
-- **Import/Export**: Save and load diagrams
+1. **Add Nodes**: Open the Components Panel on the left and drag any item (Cloud service, database, shape, or animated node) onto the canvas.
+2. **Connect**: Hover over a node to reveal connection points, then drag to another node to create a connection. Customize the edge style in the Properties Panel.
+3. **Organize**: Use the Layers Panel (press `L`) to adjust z-index and visibility, or select multiple nodes and press `Cmd/Ctrl + G` to group them into a sub-flow.
+4. **Export**: Export your creation as a PNG for documentation, a JSON file for version control, or a GIF to show off animated nodes.
 
 ## 🛠️ Tech Stack
 
 ### Core Technologies
-- **React 19**: Modern React with latest features
-- **TypeScript**: Type-safe development
-- **Vite**: Fast build tool and dev server
+- **React 19**: Modern React with the latest features.
+- **TypeScript**: Type-safe development.
+- **Vite**: Fast build tool and dev server.
+- **pnpm workspaces**: Monorepo structure.
 
 ### UI & Styling
-- **Tailwind CSS**: Utility-first CSS framework
-- **Radix UI**: Accessible component primitives
-- **Lucide React**: Beautiful icon library
-- **shadcn/ui**: High-quality component library
+- **Tailwind CSS**: Utility-first CSS framework.
+- **Radix UI & shadcn/ui**: Accessible component primitives and high-quality UI design.
+- **Lucide React**: Beautiful icon library.
 
 ### Diagram Engine
-- **React Flow**: Powerful diagramming library
-- **UUID**: Unique identifier generation
+- **React Flow (@xyflow/react)**: Powerful diagramming library.
 
-### State Management
-- **React Query**: Server state management
-- **React Hook Form**: Form state management
-- **Zod**: Schema validation
-
-### Development Tools
-- **ESLint**: Code linting
-- **PostCSS**: CSS processing
-- **Autoprefixer**: CSS vendor prefixes
+### Export & Image Processing
+- **html-to-image**: Fast DOM to image conversion.
+- **gif.js.optimized / gifenc**: Client-side GIF generation.
 
 ## 📁 Project Structure
 
-```
-src/
+The project is structured as a monorepo using pnpm workspaces. The main web application is located in `apps/web`.
+
+```text
+apps/web/src/
 ├── components/
-│   ├── ui/                    # Reusable UI components
+│   ├── ui/                    # Reusable UI components (shadcn)
 │   ├── nodes/                 # Custom node components
 │   │   └── BaseNode.tsx       # Main node component with hover states
 │   ├── cloud-services/        # Cloud service icons and assets
@@ -183,44 +110,32 @@ src/
 │   ├── DiagramCanvas.tsx      # Main diagram editor
 │   ├── CloudServicesPanel.tsx # Cloud services panel
 │   ├── PropertiesPanel.tsx    # Node/edge properties editor
+│   ├── LayersPanel.tsx        # Layers management panel
 │   └── Toolbar.tsx            # Diagram toolbar
-├── hooks/
-│   ├── useUndoRedo.ts         # Undo/redo functionality
-│   └── use-toast.ts           # Toast notifications
-├── types/
-│   └── diagrams.ts            # TypeScript definitions with cloud services
 ├── lib/
-│   └── utils.ts                # Utility functions
+│   └── utils.ts               # Utility functions
 └── pages/
-   ├── Index.tsx               # Main page
-   └── NotFound.tsx             # 404 page
+   ├── Home.tsx                # Landing page
+   ├── Guide.tsx               # Guide page
+   ├── Articles.tsx            # Articles listing
+   ├── Article.tsx             # Single article view
+   └── NotFound.tsx            # 404 page
 ```
 
 ## 🎨 Customization
 
 ### Adding New Cloud Services
 
-1. Add SVG icons to `src/components/cloud-services/{provider}/`
-2. Update `NodeType` in `src/types/diagrams.ts`
-3. Add the new type to `defaultNodeLabels` in `DiagramCanvas.tsx`
-4. Update the `cloudServiceIcons` mapping in `BaseNode.tsx`
-5. Add the service to `CloudServicesPanel.tsx`
+1. Add SVG icons to `apps/web/src/components/cloud-services/{provider}/`
+2. Update `NodeType` definitions in the corresponding node configuration files
+3. Update the `cloudServiceIcons` mapping in `BaseNode.tsx`
+4. Add the service to `CloudServicesPanel.tsx`
 
 ### Adding New Node Types
 
-1. Update `NodeType` in `src/types/diagrams.ts`
-2. Add the new type to `defaultNodeLabels` in `DiagramCanvas.tsx`
-3. Update the toolbar items
-4. Create custom node components if needed
-5. Add styles to `nodeTypeStyles` in `BaseNode.tsx`
-
-### Styling
-
-The app uses a design system with CSS custom properties. Modify the theme by updating:
-
-- `tailwind.config.ts` for design tokens
-- Component-specific styles in their respective files
-- Global styles in `src/index.css`
+1. Create custom node components in `apps/web/src/components/nodes/` if needed
+2. Update the toolbar items in `Toolbar.tsx`
+3. Add styles to `nodeTypeStyles` in `BaseNode.tsx`
 
 ## 🤝 Contributing
 
@@ -234,20 +149,11 @@ The app uses a design system with CSS custom properties. Modify the theme by upd
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🔗 Related Projects
+## 🔗 Links
 
-- [React Flow](https://reactflow.dev/) - The powerful diagramming library behind Lukis
-- [Radix UI](https://www.radix-ui.com/) - Accessible component primitives
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-
-## 📞 Support
-
-If you encounter any issues or have questions:
-
-1. Check the [Issues](../../issues) page
-2. Create a new issue with detailed information
-3. Join our community discussions
+- **Developed by lamanhero**: [www.lamanhero.com](https://www.lamanhero.com)
+- **Live Demo**: [basically.my](https://basically.my/)
 
 ---
 
-Built with ❤️ using modern web technologies
+*From developer, for developer.* Built with ❤️ using modern web technologies.
